@@ -1,0 +1,6 @@
+[run]
+omit =
+    obsidian/dash/*
+    obsidian/tests/*
+    obsidian/experiment/benchmark/*
+    obsidian/plotting/branding.py
