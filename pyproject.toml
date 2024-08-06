@@ -1,12 +1,15 @@
 [tool.poetry]
-name = "obsidian"
-version = "0.7.6"
+name = "obsidian-apo"
+version = "0.7.10"
 description = "Automated experiment design and black-box optimization"
 authors = ["Kevin Stone <kevin.stone@merck.com>", "Yuting Xu <yuting.xu@merck.com"]
+packages = [
+    { include = "obsidian" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-torch = {version = "^2.3", source = "torch"}
+torch = "2.3.0"
 botorch = "^0.11.1"
 gpytorch = "^1.11"
 pandas = "^2.2.2"
@@ -17,41 +20,28 @@ shap = "^0.45.1"
 matplotlib = "^3.9.0"
 plotly = "^5.22.0"
 
-
-[tool.poetry.group.app.dependencies]
-flask = "^3.0.3"
-dash = "^2.17.1"
-dash-daq = "^0.5.0"
-dash-bootstrap-components = "^1.6.0"
-
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.2.2"
-xlrd = "^2.0.1"
-ipykernel = "^6.29.4"
-jupyterlab = "^4.2.2"
-flake8 = "^7.1.0"
-tabulate = "^0.9.0"
-pytest-cov = "^5.0.0"
-pip-licenses = "^5.0.0"
+flask = { version =  "^3.0.3", optional = true}
+dash = { version =  "^2.17.1", optional = true}
+dash-daq = { version =  "^0.5.0", optional = true}
+dash-bootstrap-components = { version =  "^1.6.0", optional = true}
+pytest = { version =  "^8.2.2", optional = true}
+xlrd = { version =  "^2.0.1", optional = true}
+ipykernel = { version =  "^6.29.4", optional = true}
+jupyterlab = { version =  "^4.2.2", optional = true}
+flake8 = { version =  "^7.1.0", optional = true}
+pytest-cov = { version =  "^5.0.0", optional = true}
+sphinx = { version =  "^7.3.7", optional = true}
+myst-parser = { version =  "^3.0.1", optional = true}
+pydata-sphinx-theme = { version =  "^0.15.4", optional = true}
+linkify-it-py = { version =  "^2.0.3", optional = true}
 
 
-[tool.poetry.group.docs.dependencies]
-sphinx = "^7.3.7"
-myst-parser = "^3.0.1"
-pydata-sphinx-theme = "^0.15.4"
-linkify-it-py = "^2.0.3"
+[tool.poetry.extras]
+app = ["flask", "dash", "dash-daq", "dash-bootstrap-components"]
+dev = ["pytest", "xlrd", "ipykernel", "jupyterlab", "flake8", "pytest-cov"]
+docs = ["sphinx", "myst-parser", "pydata-sphinx-theme", "linkify-it-py"]
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
-
-[[tool.poetry.source]]
-name = "torch"
-url = "https://download.pytorch.org/whl/cpu"
-priority = "supplemental"

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.10]
+### Added
+- First (working) release on PyPI
+
 ## [0.7.6]
 ### Added
 - Added DNN surrogate model using EnsemblePosterior. Requries PosteriorList and IndexSampler during optimization
