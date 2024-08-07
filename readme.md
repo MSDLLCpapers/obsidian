@@ -18,11 +18,6 @@ ReadMe
 [![PyPI](https://img.shields.io/pypi/v/obsidian-apo.svg?color=teal)](https://pypi.org/project/obsidian-apo/)
 [![Docs](https://img.shields.io/badge/read-docs-teal)](https://obsidian-apo.readthedocs.io/en/latest/index.html)
 
-<!--- RELEASE TODO
-![Isses]()
---->
-
-
 __obsidian__ is a library for algorithmic process design and black-box optimization using AI-guided experiment design
 
 

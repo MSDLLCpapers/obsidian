@@ -72,4 +72,4 @@ pytest -m "not slow"
 All new features should be fully covered by newly written pytests.
 
 ## 5. License
-By contributing to _obsidian_, you agree that your contributions will be licensed under the LICENSE file in the root directory.
+By contributing to _obsidian_, you agree that your contributions will be licensed under the package [LICENSE](https://github.com/MSDLLCpapers/obsidian/blob/main/LICENSE).
