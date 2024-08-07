@@ -276,7 +276,7 @@ class BayesianOptimizer(Optimizer):
         return config_save
     
     def __repr__(self):
-        return f'BayesianOptimizer(X_space={self.X_space}, surrogate={self.surrogate_type}, target={getattr(self,"target",None)})'
+        return f'BayesianOptimizer(X_space={self.X_space}, surrogate={self.surrogate_type}, target={getattr(self, "target", None)})'
 
     @classmethod
     def load_state(cls,

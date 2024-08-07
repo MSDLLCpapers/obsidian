@@ -6,7 +6,7 @@ When applied to chemical process optimization, the SMBO algorithms can effective
 
 The components typically involved in SMBO algorithms are illustrated in the figure below: 
 
-![SMBO_workflow](../figures/wiki_Section2_SMBO_workflow.png)
+![APO Workflow](https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/APO_workflow.png?raw=true)
 
 
 In this **_obsidian_** library: 
@@ -44,7 +44,7 @@ The data structure in a typical SMBO work flow includes:
 
 
 See section 
-[Data](4_Data.md)
+[Data](3_Data.md)
 and submodule
 [`parameters`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/parameters) 
 for more details. 
@@ -70,7 +70,7 @@ The SMBO workflow starts with collecting a set of initial experimental data $(X_
 At the $i^{th}$ iteration later, an updated surrogate model $\hat{f}_i$ is trained on all the available data $\{X_t,Y_t\}_{1 \leq t \leq i}$. As more data are accumulated with multiple rounds of optimization, we expect the surrogate function become more precise and better approximate the actual underlying functional relationship.
 
 See section
-[Surrogate Model](5_SurrogateModel.md) 
+[Surrogate Model](4_SurrogateModel.md) 
 and submodule
 [`surrogates`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/surrogates)
 for more details.
@@ -100,7 +100,7 @@ Exploitation means leveraging existing knowledge by selecting new conditions tha
 Exploration involves acquiring new information by sampling from less explored regions of the design space where the prediction uncertainty is higher. It may help to better understand the problem and improve surrogate model quality, which potentially lead to better long-term outcomes or reveal new possibilities.
 
 
-See section [Acquisition Function](6_AcquisitionFunction.md), 
+See section [Acquisition Function](5_AcquisitionFunction.md), 
 submodule [`acquisition`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/acquisition),
 and submodule [`objectives`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/objectives)
 for more details.

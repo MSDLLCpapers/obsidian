@@ -1,7 +1,7 @@
 # Additional Analysis and Visualization
 
 
-![SMBO_workflow](../figures/wiki_Section3_SMBO_additional.png)
+![APO Workflow](https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/APO_workflow.png?raw=true)
 
 This section introduces some additional components, such as retrospective analysis and visualization methods, that are not essential steps in a Sequential Model-Based Optimization (SMBO) algorithm but are valuable in real-world applications for several reasons.
 
