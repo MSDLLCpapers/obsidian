@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: pip install obsidian-apo pytest pytest-cov
       - name: Run tests and collect coverage
-        run: pytest --cov
+        run: pytest --cov .
       - name: Upload coverage reports to Codecov
         run: |
           curl -Os https://cli.codecov.io/latest/linux/codecov
