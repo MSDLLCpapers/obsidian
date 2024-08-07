@@ -1,6 +1,9 @@
-from torch import Tensor
+"""Wrapper class for combining multiple objectives into a single objective."""
+
 from .base import Objective
-from .obj_config import class_dict
+from .config import obj_class_dict
+
+from torch import Tensor
 
 
 class Objective_Sequence(Objective):
@@ -55,7 +58,7 @@ class Objective_Sequence(Objective):
         new_obj_list = []
         
         for obj_dict_i in obj_dict['obj_list']:
-            obj_class = class_dict[obj_dict_i['name']]
+            obj_class = obj_class_dict[obj_dict_i['name']]
             new_obj_list.append(obj_class.load_state(obj_dict_i))
  
         return cls(new_obj_list)

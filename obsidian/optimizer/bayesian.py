@@ -1,5 +1,15 @@
 """Bayesian Optimization: Select experiments from the predicted posterior and update the prior"""
 
+from .base import Optimizer
+
+from obsidian.parameters import ParamSpace, Target, Task
+from obsidian.surrogates import SurrogateBoTorch, DNN
+from obsidian.acquisition import aq_class_dict, aq_hp_defaults, valid_aqs
+from obsidian.surrogates import model_class_dict
+from obsidian.objectives import Index_Objective, Objective_Sequence
+from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning
+from obsidian.config import TORCH_DTYPE
+
 from botorch.acquisition.objective import MCAcquisitionObjective
 from botorch.optim import optimize_acqf, optimize_acqf_mixed
 from botorch.sampling import SobolQMCNormalSampler
@@ -8,20 +18,8 @@ from botorch.sampling.index_sampler import IndexSampler
 from botorch.models.model_list_gp_regression import ModelListGP
 from botorch.models.gpytorch import GPyTorchModel
 from botorch.models.model import ModelList
-
 from botorch.utils.sampling import draw_sobol_samples
 from botorch.utils.multi_objective.box_decompositions.non_dominated import NondominatedPartitioning
-
-
-from obsidian.parameters import ParamSpace, Target, Task
-from obsidian.surrogates import SurrogateBoTorch, DNN
-from obsidian.acquisition import aq_functions, aq_hp_defaults, valid_aqs
-from obsidian.surrogates import model_dict
-from obsidian.objectives import Index_Objective, Objective_Sequence
-from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning
-from obsidian.utils import TORCH_DTYPE
-
-from .base_optimizer import Optimizer
 
 import torch
 from torch import Tensor
@@ -105,8 +103,8 @@ class BayesianOptimizer(Optimizer):
                     raise ValueError('Surrogate argument must be a string, dict, or list of str/dict')
                 
         for surrogate_str in self.surrogate_type:
-            if surrogate_str not in model_dict.keys():
-                raise KeyError(f'Surrogate model must be selected from one of: {model_dict.keys()}')
+            if surrogate_str not in model_class_dict.keys():
+                raise KeyError(f'Surrogate model must be selected from one of: {model_class_dict.keys()}')
 
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -735,7 +733,7 @@ class BayesianOptimizer(Optimizer):
             if aq_str == 'RS':
                 candidates = torch.rand((m_batch, self.X_space.n_tdim), dtype=TORCH_DTYPE)
             else:
-                aq_func = aq_functions[aq_str](**aq_kwargs).to(TORCH_DTYPE)
+                aq_func = aq_class_dict[aq_str](**aq_kwargs).to(TORCH_DTYPE)
                 
                 # If there are any discrete values, we must used the mixed integer optimization
                 if fixed_features_list:
@@ -900,7 +898,7 @@ class BayesianOptimizer(Optimizer):
             if aq_str == 'RS':
                 a_joint = torch.tensor([float('nan')]).repeat(X_t.shape[0]).unsqueeze(1)
             else:
-                aq_func = aq_functions[aq_str](**aq_kwargs)
+                aq_func = aq_class_dict[aq_str](**aq_kwargs)
 
                 # Evaluate acquisition on individual samples, then jointly
                 a = []

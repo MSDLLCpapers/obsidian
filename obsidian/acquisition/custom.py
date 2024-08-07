@@ -1,7 +1,5 @@
 """Custom implementations of acquisition functions using BoTorch API"""
 
-import torch
-from torch import Tensor
 from botorch.acquisition.monte_carlo import MCAcquisitionFunction
 from botorch.sampling.normal import SobolQMCNormalSampler
 from botorch.utils import t_batch_mode_transform
@@ -10,27 +8,8 @@ from botorch.models.model import Model
 from botorch.sampling.base import MCSampler
 from botorch.acquisition.objective import MCAcquisitionObjective, PosteriorTransform
 
-# Botorch acquisition functions supported in obsidian
-from botorch.acquisition import qProbabilityOfImprovement, qUpperConfidenceBound, qSimpleRegret
-from botorch.acquisition.logei import qLogExpectedImprovement, qLogNoisyExpectedImprovement
-from botorch.acquisition.multi_objective.logei import qLogExpectedHypervolumeImprovement, qLogNoisyExpectedHypervolumeImprovement
-from botorch.acquisition.multi_objective.parego import qLogNParEGO
-from botorch.acquisition.active_learning import qNegIntegratedPosteriorVariance
-
-
-__all__ = [
-    "qMean",
-    "qSpaceFill",
-    "qProbabilityOfImprovement",
-    "qUpperConfidenceBound",
-    "qSimpleRegret",
-    "qLogExpectedImprovement",
-    "qLogNoisyExpectedImprovement",
-    "qLogExpectedHypervolumeImprovement",
-    "qLogNoisyExpectedHypervolumeImprovement",
-    "qLogNParEGO",
-    "qNegIntegratedPosteriorVariance",
-]
+import torch
+from torch import Tensor
 
 
 class qMean(MCAcquisitionFunction):

@@ -1,9 +1,10 @@
 """Constraints on the output responses of a model"""
 
+from obsidian.parameters import Target
+from obsidian.utils import unscale_samples
+
 import torch
 from torch import Tensor
-from obsidian.parameters import Target
-from .utils import unscale_samples
 
 # Negative values imply feasibility!
 # Note that these are OUTPUT constraints

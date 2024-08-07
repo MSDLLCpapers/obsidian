@@ -1,7 +1,6 @@
 """Surrogates: Regress a model to data to establish a system approximation"""
 
-from .surrogate_botorch import *
-from .GP_custom import *
-from .torch_custom import *
-from .surrogate_config import *
-from .utils import *
+from .botorch import *
+from .custom_GP import *
+from .custom_torch import *
+from .config import *

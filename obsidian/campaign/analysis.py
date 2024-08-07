@@ -1,10 +1,10 @@
 "Analysis utility functions for examining metrics over the context of an optimization campaign"
 
+from obsidian.parameters import Param_Continuous
+
 import numpy as np
 import pandas as pd
-
 import matplotlib.pyplot as plt
-from obsidian.parameters import Param_Continuous
 
 
 def plot_ofat_ranges(optimizer, ofat_ranges):

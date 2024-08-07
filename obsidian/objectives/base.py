@@ -1,10 +1,12 @@
 
 """Base class for obsidian objective functions"""
 
-from torch import Tensor
+from obsidian.utils import tensordict_to_dict
+
 from botorch.acquisition.multi_objective.objective import MCAcquisitionObjective, MCMultiOutputObjective
 from abc import abstractmethod
-from obsidian.surrogates.utils import tensordict_to_dict
+
+from torch import Tensor
 
 
 class Objective(MCMultiOutputObjective, MCAcquisitionObjective):

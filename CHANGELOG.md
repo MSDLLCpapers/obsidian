@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.11]
+### Added
+- Documentation improvements
+
+### Modified
+- Naming conventions for modules (config, utils, base)
+- Import order convention for modules
+
 ## [0.7.10]
 ### Added
 - First (working) release on PyPI

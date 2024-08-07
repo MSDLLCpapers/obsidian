@@ -1,17 +1,18 @@
 """Design initial experiments"""
 
-from scipy.stats import qmc
-import pandas as pd
-import warnings
 from .utils import factorial_DOE
-import torch
-from botorch.utils.sampling import draw_sobol_samples
-
-from numpy.typing import ArrayLike
-from torch import Tensor
 
 from obsidian.parameters import ParamSpace
 from obsidian.exceptions import UnsupportedError
+
+from botorch.utils.sampling import draw_sobol_samples
+from numpy.typing import ArrayLike
+from scipy.stats import qmc
+
+import torch
+from torch import Tensor
+import pandas as pd
+import warnings
 
 
 class ExpDesigner:

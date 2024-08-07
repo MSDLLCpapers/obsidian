@@ -1,17 +1,17 @@
 """Optimizer class definition"""
 
+from obsidian.parameters import ParamSpace, Target, Param_Observational
+from obsidian.exceptions import UnsupportedError
+
+from botorch.utils.multi_objective.box_decompositions.dominated import DominatedPartitioning
+from botorch.utils.multi_objective.pareto import is_non_dominated
+from abc import ABC, abstractmethod
+
 import pandas as pd
 import numpy as np
 import torch
 import random
 from torch import Tensor
-
-from botorch.utils.multi_objective.box_decompositions.dominated import DominatedPartitioning
-from botorch.utils.multi_objective.pareto import is_non_dominated
-
-from obsidian.parameters import ParamSpace, Target, Param_Observational
-from obsidian.exceptions import UnsupportedError
-from abc import ABC, abstractmethod
 
 
 class Optimizer(ABC):

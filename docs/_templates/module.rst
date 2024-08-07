@@ -60,7 +60,7 @@
    :template: module.rst
    :recursive:
 {% for item in modules %}
-{% if not item in ("aq_config", "surrogate_config", "obj_config") %}
+{% if not item in ("config") %}
    {{ item }}
 {%- endif %}
 {%- endfor %}

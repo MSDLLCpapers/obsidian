@@ -1,10 +1,10 @@
 """Parameters that can be sampled continuously between a minimum and maximum"""
 
+from .base import Parameter
+from .utils import transform_with_type
 
-from .base_parameter import Parameter
 import warnings
 import numpy as np
-from .utils import transform_with_type
 
 
 class Param_Continuous(Parameter):

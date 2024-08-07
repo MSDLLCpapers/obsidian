@@ -4,7 +4,7 @@ from dash import dcc, html, Dash, dash_table, callback, Output, Input, State, AL
 
 import pandas as pd
 
-from obsidian.plotting.plotly_plotting import surface_plot, factor_plot
+from obsidian.plotting.plotly import surface_plot, factor_plot
 from .utils import load_optimizer, center
 
 

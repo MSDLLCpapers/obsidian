@@ -1,8 +1,8 @@
-"""Utility functions for experiment handling"""
+
+from obsidian.exceptions import UnsupportedError
 
 import numpy as np
 from itertools import product
-from obsidian.exceptions import UnsupportedError
 
 
 def factorial_DOE(d: int,

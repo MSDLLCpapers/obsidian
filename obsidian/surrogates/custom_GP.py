@@ -1,10 +1,6 @@
 """Custom implementations of Gaussian Process models using BoTorch API"""
 
-import torch
-from torch import nn
-import gpytorch
-
-from obsidian.utils import TORCH_DTYPE
+from obsidian.config import TORCH_DTYPE
 
 from botorch.models.gpytorch import GPyTorchModel
 from gpytorch.distributions import MultivariateNormal
@@ -16,6 +12,10 @@ from gpytorch.models import ExactGP
 from gpytorch.kernels import ScaleKernel, MaternKernel
 from gpytorch.priors import GammaPrior
 from gpytorch.constraints import GreaterThan
+
+import torch
+from torch import nn
+import gpytorch
 
 
 class PriorGP(ExactGP, GPyTorchModel):

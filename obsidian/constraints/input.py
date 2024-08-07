@@ -1,10 +1,10 @@
 """Constraints on the input features of a parameter space"""
 
+from obsidian.parameters import ParamSpace, Param_Continuous
+from obsidian.config import TORCH_DTYPE
+
 import torch
 from torch import Tensor
-from obsidian.parameters import ParamSpace, Param_Continuous
-from obsidian.utils import TORCH_DTYPE
-
 
 # See  https://botorch.org/api/optim.html, optimize_acqf "equality_constraints", "inequality_constraints",
 # and "nonlinear_inequality_constraints"

@@ -1,9 +1,11 @@
 """Scalarization methods for reducing multi-output to single-output objectives"""
 
+from .base import Objective
+
+from obsidian.config import TORCH_DTYPE
+
 import torch
 from torch import Tensor
-from .base import Objective
-from obsidian.utils import TORCH_DTYPE
 
 # Reference: https://arxiv.org/pdf/1904.05760
 
