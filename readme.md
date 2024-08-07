@@ -17,6 +17,7 @@ ReadMe
 [![Issues](https://img.shields.io/github/issues/msdllcpapers/obsidian?color=teal)](https://github.com/MSDLLCpapers/obsidian/issues)
 [![PyPI](https://img.shields.io/pypi/v/obsidian-apo.svg?color=teal)](https://pypi.org/project/obsidian-apo/)
 [![Docs](https://img.shields.io/badge/read-docs-teal)](https://obsidian-apo.readthedocs.io/en/latest/index.html)
+[![Codecov](https://img.shields.io/codecov/c/github/kstone40/obsidian?color=teal)](https://codecov.io/github/kstone40/obsidian)
 
 __obsidian__ is a library for algorithmic process design and black-box optimization using AI-guided experiment design
 
