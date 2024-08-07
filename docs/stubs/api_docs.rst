@@ -4,10 +4,22 @@
 .. automodule:: obsidian
 
    
-
-
-
 .. rubric:: Modules
+
+.. autosummary::
+   :toctree: ../build/apidocs
+   :recursive:
+   :template: module.rst
+
+   obsidian.parameters
+   
+   obsidian.campaign
+
+   obsidian.optimizer
+
+   obsidian.surrogates
+
+   obsidian.experiment
 
 .. autosummary::
    :toctree: ../build/apidocs
@@ -16,29 +28,13 @@
 
    obsidian.acquisition
 
-   obsidian.constraints
-
-   obsidian.exceptions
-
    obsidian.objectives
 
    obsidian.plotting
 
-.. autosummary::
-   :toctree: ../build/apidocs
-   :recursive:
-   :template: module.rst
+   obsidian.constraints
 
-   obsidian.campaign
-
-   obsidian.experiment
-
-   obsidian.optimizer
-
-   obsidian.parameters
-
-   obsidian.surrogates
-
+   obsidian.exceptions
 
 Indices
 ~~~~~~~~~~~~~~~~~~

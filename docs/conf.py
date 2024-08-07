@@ -19,7 +19,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
-    'sphinx.ext.autosectionlabel',
     'myst_parser',
 ]
 
@@ -59,14 +58,11 @@ autodoc_default_options = {
     "member-order": "groupwise",
 }
 
-toc_object_entries_show_parents = 'hide'
-add_module_names = False
-
 autodoc_default_options = {'members': None,  # shows all members
                            'show-inheritance': True}
 
 autodoc_typehints = "signature"
-autoclass_content = "class"
+autoclass_content = "class"  # Use class docstring instead of __init__
 
 # Autosummary Options
 autosummary_imported_members = False
