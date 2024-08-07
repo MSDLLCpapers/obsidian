@@ -11,22 +11,25 @@ from botorch.sampling.base import MCSampler
 from botorch.acquisition.objective import MCAcquisitionObjective, PosteriorTransform
 
 # Botorch acquisition functions supported in obsidian
-from botorch.acquisition import qExpectedImprovement, qProbabilityOfImprovement, \
-    qUpperConfidenceBound, qNoisyExpectedImprovement, qSimpleRegret
-from botorch.acquisition.multi_objective.monte_carlo import qNoisyExpectedHypervolumeImprovement
+from botorch.acquisition import qProbabilityOfImprovement, qUpperConfidenceBound, qSimpleRegret
+from botorch.acquisition.logei import qLogExpectedImprovement, qLogNoisyExpectedImprovement
+from botorch.acquisition.multi_objective.logei import qLogExpectedHypervolumeImprovement, qLogNoisyExpectedHypervolumeImprovement
 from botorch.acquisition.multi_objective.parego import qLogNParEGO
+from botorch.acquisition.active_learning import qNegIntegratedPosteriorVariance
 
 
 __all__ = [
-    "qExpectedImprovement",
-    "qProbabilityOfImprovement",
-    "qUpperConfidenceBound",
-    "qNoisyExpectedImprovement",
-    "qSimpleRegret",
-    "qNoisyExpectedHypervolumeImprovement",
-    "qLogNParEGO",
     "qMean",
     "qSpaceFill",
+    "qProbabilityOfImprovement",
+    "qUpperConfidenceBound",
+    "qSimpleRegret",
+    "qLogExpectedImprovement",
+    "qLogNoisyExpectedImprovement",
+    "qLogExpectedHypervolumeImprovement",
+    "qLogNoisyExpectedHypervolumeImprovement",
+    "qLogNParEGO",
+    "qNegIntegratedPosteriorVariance",
 ]
 
 
