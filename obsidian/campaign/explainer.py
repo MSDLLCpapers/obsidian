@@ -1,20 +1,19 @@
 """Explainer Class: Surrogate Model Interpretation Methods"""
 
-import numpy as np
-import pandas as pd
-import torch
-
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
+from .analysis import sensitivity
 
 from obsidian.parameters import Param_Continuous, ParamSpace
 from obsidian.optimizer import Optimizer
 
 import shap
 from shap import KernelExplainer, Explanation
-from obsidian.plotting.shap_helper import partial_dependence, one_shap_value
+from obsidian.plotting.shap import partial_dependence, one_shap_value
 
-from obsidian.campaign.analysis import sensitivity
+import numpy as np
+import pandas as pd
+import torch
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 
 
 class Explainer():

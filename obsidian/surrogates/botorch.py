@@ -1,16 +1,16 @@
 """Surrogate models built using BoTorch API and torch_model objects"""
 
-from .surrogate_base import SurrogateModel
+from .base import SurrogateModel
+from .config import model_class_dict
 
-from .surrogate_config import model_dict
-from .utils import tensordict_to_dict, dict_to_tensordict
+from obsidian.utils import tensordict_to_dict, dict_to_tensordict
 from obsidian.exceptions import SurrogateFitError
-from obsidian.utils import TORCH_DTYPE
+from obsidian.config import TORCH_DTYPE
 
 from botorch.fit import fit_gpytorch_mll
-from gpytorch.mlls import ExactMarginalLogLikelihood
 from botorch.optim.fit import fit_gpytorch_mll_torch, fit_gpytorch_mll_scipy
 from botorch.models.gpytorch import GPyTorchModel
+from gpytorch.mlls import ExactMarginalLogLikelihood
 
 import torch
 import torch.nn as nn
@@ -84,18 +84,18 @@ class SurrogateBoTorch(SurrogateModel):
         if not all([isinstance(c, int) for c in cat_dims]):
             raise TypeError('cat_dims must be a list of integers')
 
-        if issubclass(model_dict[self.model_type], GPyTorchModel):
+        if issubclass(model_class_dict[self.model_type], GPyTorchModel):
             if self.model_type == 'GP' and cat_dims:  # If cat_dims is not an empty list, returns True
-                self.torch_model = model_dict['MixedGP'](train_X=X_p, train_Y=y_p, cat_dims=cat_dims).to(self.device)
+                self.torch_model = model_class_dict['MixedGP'](train_X=X_p, train_Y=y_p, cat_dims=cat_dims).to(self.device)
             else:
                 if self.model_type == 'MTGP':
-                    self.torch_model = model_dict[self.model_type](
+                    self.torch_model = model_class_dict[self.model_type](
                         train_X=X_p, train_Y=y_p, task_feature=task_feature, **self.hps).to(self.device)
                 else:
                     # Note: Doesn't matter if input empty dictionary as self.hps for model without those additional args
-                    self.torch_model = model_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device)
+                    self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device)
         else:
-            self.torch_model = model_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device).to(TORCH_DTYPE)
+            self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device).to(TORCH_DTYPE)
 
         return
 

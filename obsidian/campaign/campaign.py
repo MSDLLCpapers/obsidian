@@ -1,15 +1,13 @@
 """Campaign class definition"""
 
-import pandas as pd
-import torch
-
 from obsidian.parameters import ParamSpace, Target
 from obsidian.optimizer import Optimizer, BayesianOptimizer
 from obsidian.experiment import ExpDesigner
-from obsidian.objectives import Objective, Objective_Sequence
-from obsidian.objectives.obj_config import class_dict
+from obsidian.objectives import Objective, Objective_Sequence, obj_class_dict
 import obsidian
 
+import pandas as pd
+import torch
 import warnings
 
 
@@ -225,7 +223,7 @@ class Campaign():
             if obj_dict['objective']['name'] == 'Objective_Sequence':
                 new_objective = Objective_Sequence.load_state(obj_dict['objective'])
             else:
-                obj_class = class_dict[obj_dict['objective']['name']]
+                obj_class = obj_class_dict[obj_dict['objective']['name']]
                 new_objective = obj_class.load_state(obj_dict['objective'])
         else:
             new_objective = None

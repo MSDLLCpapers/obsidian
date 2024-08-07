@@ -6,7 +6,7 @@ import pandas as pd
 
 from obsidian.experiment import ParamSpace
 from obsidian.optimizer import BayesianOptimizer
-from obsidian.plotting.plotly_plotting import parity_plot
+from obsidian.plotting.plotly import parity_plot
 from .utils import load_optimizer, center
 
 

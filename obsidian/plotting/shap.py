@@ -9,6 +9,7 @@ from shap.plots._partial_dependence import compute_bounds
 
 from matplotlib.pyplot import get_cmap
 
+
 def one_shap_value(shap_value_new, expected_value, X_names):
     """
     Visualize the shap values of one data point

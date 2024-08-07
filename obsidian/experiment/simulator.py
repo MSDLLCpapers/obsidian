@@ -1,9 +1,10 @@
 """Simulate virtual experimental data"""
 
 from obsidian.parameters import ParamSpace
+
+from typing import Callable
 import pandas as pd
 import numpy as np
-from typing import Callable, List
 import warnings
 
 
@@ -18,7 +19,7 @@ class Simulator:
         X_space (ParamSpace): The ParamSpace object representing the allowable space for optimization.
         response_function (Callable): The callable function used to convert experiments to responses.
         name (str or list[str]): Name of the simulated output(s).
-        eps (float or List[float]): The simulated error to apply, as the standard deviation of the Standard Normal distribution.
+        eps (float or list[float]): The simulated error to apply, as the standard deviation of the Standard Normal distribution.
         kwargs (dict): Optional hyperparameters for the response function.
 
     Raises:
@@ -31,7 +32,7 @@ class Simulator:
                  X_space: ParamSpace,
                  response_function: Callable,
                  name: str | list[str] = 'Response',
-                 eps: float | List[float] = 0.0,
+                 eps: float | list[float] = 0.0,
                  **kwargs):
         
         if not callable(response_function):

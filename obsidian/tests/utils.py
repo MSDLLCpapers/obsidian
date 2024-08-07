@@ -1,9 +1,14 @@
+"""Utility functions for pytest tests"""
+
+from .param_configs import X_sp_default
+
 from obsidian import Campaign, ParamSpace, Target
-from obsidian.tests.param_configs import X_sp_default
 from obsidian.experiment import Simulator
 from obsidian.experiment.benchmark import shifted_parab
+
 from numpy.typing import ArrayLike
 from typing import Callable
+
 import pandas as pd
 import json
 

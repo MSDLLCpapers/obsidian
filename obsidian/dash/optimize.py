@@ -9,7 +9,7 @@ from obsidian.parameters import ParamSpace, Param_Categorical, Param_Ordinal, Pa
 from obsidian.campaign import Campaign
 from obsidian.parameters import Target
 
-from obsidian.plotting.plotly_plotting import parity_plot
+from obsidian.plotting.plotly import parity_plot
 from .utils import load_optimizer, center
 
 

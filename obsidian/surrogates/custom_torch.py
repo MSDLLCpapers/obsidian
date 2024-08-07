@@ -1,8 +1,9 @@
 """Custom implementations of PyTorch surrogate models using BoTorch API"""
 
-import torch.nn as nn
 from botorch.models.model import Model
 from botorch.posteriors.ensemble import Posterior, EnsemblePosterior
+
+import torch.nn as nn
 from torch import Tensor
 
 

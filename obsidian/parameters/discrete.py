@@ -1,14 +1,16 @@
 """Parameters that can only be sampled at specific values"""
 
-from .base_parameter import Parameter
-import pandas as pd
-import numpy as np
-from numpy.typing import ArrayLike
+from .base import Parameter
 from .utils import transform_with_type
 
-CAT_SEP = '^'  # Separator for one-hot encoded categories
+from obsidian.config import CAT_SEP
 
-    
+from numpy.typing import ArrayLike
+
+import pandas as pd
+import numpy as np
+
+
 class Param_Discrete(Parameter):
     """
     Represents a discrete parameter.

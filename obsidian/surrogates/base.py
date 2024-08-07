@@ -1,11 +1,13 @@
 """Surrogate model class definition"""
 
+from obsidian.config import TORCH_DTYPE
+
+from abc import ABC, abstractmethod
+
 import numpy as np
 import pandas as pd
 import torch
 import random
-from abc import ABC, abstractmethod
-from obsidian.utils import TORCH_DTYPE
 
 
 class SurrogateModel(ABC):

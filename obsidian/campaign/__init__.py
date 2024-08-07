@@ -1,5 +1,5 @@
 """Campaign: Track and manage optimizations"""
 
-from .campaign import *
 from .analysis import *
+from .campaign import *
 from .explainer import *
