@@ -4,3 +4,4 @@ from .surrogate_botorch import *
 from .GP_custom import *
 from .torch_custom import *
 from .surrogate_config import *
+from .utils import *

@@ -5,3 +5,4 @@ from .scalarize import *
 from .utils import *
 from .sequence import *
 from .base import *
+from .obj_config import *
