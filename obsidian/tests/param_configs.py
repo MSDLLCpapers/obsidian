@@ -15,7 +15,7 @@ params = [
         Param_Ordinal('Parameter 11', ['N'])
     ]
 
-default = [params[i] for i in [0, 1, 3, 6]]  # 2 continuous, 1 observational, 1 categorical
+default = [params[i] for i in [0, 1, 2, 6]]  # 2 continuous, 1 static, 1 categorical
 cont_small = [params[i] for i in [0, 1, 2]]  # continuous including edge cases
 numeric = [params[i] for i in [0, 1, 2, 3, 4, 5]]  # numeric including edge cases
 

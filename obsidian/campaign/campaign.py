@@ -4,6 +4,7 @@ from obsidian.parameters import ParamSpace, Target
 from obsidian.optimizer import Optimizer, BayesianOptimizer
 from obsidian.experiment import ExpDesigner
 from obsidian.objectives import Objective, Objective_Sequence, obj_class_dict
+from obsidian.exceptions import IncompatibleObjectiveError
 import obsidian
 
 import pandas as pd
@@ -52,8 +53,8 @@ class Campaign():
         designer = ExpDesigner(X_space, seed=seed) if designer is None else designer
         self.set_designer(designer)
         
-        self.set_objective(objective)
         self.set_target(target)
+        self.set_objective(objective)
         
         # Non-object attributes
         self.iter = 0
@@ -87,6 +88,10 @@ class Campaign():
         self.iter += 1
         self.data = pd.concat([self.data, new_data], axis=0, ignore_index=True)
         self.data.index.name = 'Observation ID'
+        self.data.index = self.data.index.astype('int')
+        
+        if self.optimizer.is_fit:
+            self._analyze()
 
     def clear_data(self):
         """Clears campaign data"""
@@ -115,10 +120,23 @@ class Campaign():
         """Campaign Objective function"""
         return self._objective
     
+    def _eval_objective(self):
+        """Evaluates objective and appends it to campaign data"""
+        df_o = self.o
+        for col in df_o.columns:
+            self.data[col] = df_o[col].values
+    
     def set_objective(self, objective: Objective | None):
-        """Sets the campaign objective function"""
+        """(Re)sets the campaign objective function"""
         self._objective = objective
-
+        if not self.data.empty:
+            # Remove previous objective evaluations
+            self.data = self.data.drop(
+                columns=[col for col in self.data.columns if 'Objective' in col]
+                )
+            if self.optimizer.is_fit:
+                self._analyze()
+                
     @property
     def target(self):
         """Campaign experimental target(s)"""
@@ -156,10 +174,7 @@ class Campaign():
         """
         Number of observations in training data
         """
-        if self.data is not None:
-            return self.data.shape[0]
-        else:
-            return 0
+        return self.data.shape[0]
 
     @property
     def y(self) -> pd.Series | pd.DataFrame:
@@ -188,6 +203,22 @@ class Campaign():
         f = pd.concat([t.transform_f(self.y[t.name]) for t in self.target], axis=1)
         return f
 
+    @property
+    def o(self) -> pd.Series | pd.DataFrame:
+        if self.objective:
+            try:
+                x = self.X_space.encode(self.data[list(self.X_space.X_names)]).values
+                o = self.objective(torch.tensor(self.f.values).unsqueeze(0),
+                                   X=torch.tensor(x)).squeeze(0)
+                if o.ndim < 2:
+                    o = o.unsqueeze(1)  # Rearrange into m x o
+                return pd.DataFrame(o.detach().cpu().numpy(),
+                                    columns=[f'Objective {o_i+1}' for o_i in range(o.shape[1])])
+            except Exception:
+                raise IncompatibleObjectiveError('Objective(s) did not successfully execute on sample')
+        else:
+            return None
+        
     @property
     def X(self) -> pd.DataFrame:
         """
@@ -242,6 +273,7 @@ class Campaign():
                            objective=new_objective,
                            seed=obj_dict['seed'])
         new_campaign.data = pd.DataFrame(obj_dict['data'])
+        new_campaign.data.index = new_campaign.data.index.astype('int')
         
         try:
             new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
@@ -273,7 +305,6 @@ class Campaign():
             raise ValueError('Must register data before fitting')
 
         self.optimizer.fit(self.data, target=self.target)
-        # self._analyze()
 
     def suggest(self,
                 optim_kwargs={}):
@@ -301,14 +332,21 @@ class Campaign():
         """
         iters = self.data['Iteration'].unique()
         hv = {}
+        
+        if self.objective:
+            out = self.o
+        else:
+            out = self.y
+
         for i in iters:
             iter_index = self.data.query(f'Iteration <= {i}').index
-            y_iter = self.y.loc[iter_index, :]
-            y_iter = torch.tensor(y_iter.values).to(self.optimizer.device)
-            hv[i] = self.optimizer.hypervolume(y_iter)
+            out_iter = out.loc[iter_index, :]
+            out_iter = torch.tensor(out_iter.values).to(self.optimizer.device)
+            hv[i] = self.optimizer.hypervolume(out_iter)
         
-        self.data['Hypervolume'] = self.data.apply(lambda x: hv[x['Iteration']], axis=1)
-
+        self.data['Hypervolume (iter)'] = self.data.apply(lambda x: hv[x['Iteration']], axis=1)
+        self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(out.values).to(self.optimizer.device))
+        
         return
 
     def _profile_max(self):
@@ -318,13 +356,21 @@ class Campaign():
         Returns:
             None
         """
-        y_max = self.data.groupby('Iteration', observed=True).max()[self.y_names].reset_index()
-        y_max = y_max.rename(columns={name: name+' (max)' for name in self.y_names})
-
-        # Reset aggregate columns if previously calculated
-        if any([name+' (max)' in self.data.columns for name in self.y_names]):
-            self.data = self.data.copy().drop(columns={name+' (max)' for name in self.y_names})
-        self.data = self.data.merge(y_max, on='Iteration')
+        
+        # Remove previous max-profiling
+        self.data = self.data.drop(
+            columns=[col for col in self.data.columns if '(max) (iter)' in col]
+        )
+        
+        if self.objective:
+            out_names = [col for col in self.data.columns if 'Objective' in col]
+        else:
+            out_names = self.y_names
+            
+        for out in out_names:
+            self.data[out+' (max) (iter)'] = self.data.apply(
+                lambda x: self.data.query(f'Iteration<={x["Iteration"]}')[out].max(), axis=1
+            )
 
         return
     
@@ -335,8 +381,16 @@ class Campaign():
         Returns:
             None
         """
+        if self.objective:
+            self._eval_objective()
         self._profile_max()
-        if self.n_response > 1:
+        if self._is_mo:
             self._profile_hv()
-            self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(self.y.values).to(self.optimizer.device))
+        else:
+            # Remove previous HV-profiling
+            self.data = self.data.drop(
+                columns=[col for col in self.data.columns
+                         if 'Hypervolume' in col or 'Pareto' in col]
+            )
+            
         return

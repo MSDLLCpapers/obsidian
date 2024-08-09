@@ -2,11 +2,11 @@ from obsidian import Campaign
 from obsidian.plotting import parity_plot, factor_plot, surface_plot, visualize_inputs
 
 import pytest
-from obsidian.tests.utils import DEFAULT_PATH
+from obsidian.tests.utils import DEFAULT_MOO_PATH
 import json
 
 
-with open(DEFAULT_PATH) as json_file:
+with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)
 
 campaign = Campaign.load_state(obj_dict)
