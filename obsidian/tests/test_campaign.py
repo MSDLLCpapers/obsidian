@@ -42,7 +42,7 @@ def test_campaign(X_space, sim_fcn, target):
     campaign2 = Campaign.load_state(obj_dict)
     campaign2.__repr__()
     
-    campaign2.set_objective(Identity_Objective())
+    campaign2.set_objective(Identity_Objective(mo=len(campaign.target) > 1))
     campaign2.suggest()
     
     
@@ -53,21 +53,25 @@ campaign = Campaign.load_state(obj_dict)
 X_space = campaign.X_space
 target = campaign.target
 
-test_objs = [Identity_Objective(), Scalar_WeightedNorm(weights=[1, 1]), Feature_Objective(X_space, indices=[0], coeff=[1]),
+test_objs = [Identity_Objective(mo=True),
+             Scalar_WeightedNorm(weights=[1, 1]),
+             Feature_Objective(X_space, indices=[0], coeff=[1]),
              Objective_Sequence([Utopian_Distance([1], target[0]), Index_Objective()]),
-             Bounded_Target(bounds=[(0, 1)], targets=target[0])]
+             Bounded_Target(bounds=[(0, 1), (0, 1)], targets=target),
+             None]
 
 
 @pytest.mark.parametrize('obj', test_objs)
 def test_campaign_objectives(obj):
     campaign.set_objective(obj)
-    campaign.objective.__repr__()
-    
+    if campaign.objective:
+        campaign.objective.__repr__()
+
     obj_dict = campaign.save_state()
     campaign2 = Campaign.load_state(obj_dict)
     campaign2.save_state()
     campaign2.__repr__()
-       
+     
         
 if __name__ == '__main__':
     pytest.main([__file__, '-m', 'not slow'])
