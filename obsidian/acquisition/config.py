@@ -28,13 +28,14 @@ aq_class_dict = {'EI': qLogExpectedImprovement,
 universal_aqs = ['RS', 'Mean', 'SF']
 valid_aqs = {'single': ['EI', 'NEI', 'PI', 'UCB', 'SR', 'NIPV'] + universal_aqs,
              'multi': ['EHVI', 'NEHVI', 'NParEGO'] + universal_aqs}
+aq_defaults = {'single': 'NEI', 'multi': 'NEHVI'}
 
 
 # For default values, 'optional' indicates whether or not a default value (or None) 'val' can be used
 aq_hp_defaults = {
-    'EI': {'Xi_f': {'val':  0, 'optional': True}},
+    'EI': {'inflate': {'val':  0, 'optional': True}},
     'NEI': {},
-    'PI': {'Xi_f': {'val':  0, 'optional': True}},
+    'PI': {'inflate': {'val':  0, 'optional': True}},
     'UCB': {'beta': {'val': 1, 'optional': True}},
     'SR': {},
     'RS': {},
