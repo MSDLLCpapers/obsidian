@@ -7,7 +7,7 @@ from obsidian.campaign import Campaign
 from obsidian.objectives import Identity_Objective, Scalar_WeightedNorm, Feature_Objective, \
     Objective_Sequence, Utopian_Distance, Index_Objective, Bounded_Target
 
-from obsidian.tests.utils import DEFAULT_PATH
+from obsidian.tests.utils import DEFAULT_MOO_PATH
 import json
 
 import pandas as pd
@@ -35,38 +35,43 @@ def test_campaign(X_space, sim_fcn, target):
     campaign.clear_data()
     Z0['Iteration'] = 5
     campaign.add_data(Z0)
+    campaign.y
     campaign.fit()
 
     obj_dict = campaign.save_state()
     campaign2 = Campaign.load_state(obj_dict)
     campaign2.__repr__()
     
-    campaign2.set_objective(Identity_Objective())
+    campaign2.set_objective(Identity_Objective(mo=len(campaign.target) > 1))
     campaign2.suggest()
     
     
-with open(DEFAULT_PATH) as json_file:
+with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)
 
 campaign = Campaign.load_state(obj_dict)
 X_space = campaign.X_space
 target = campaign.target
 
-test_objs = [Identity_Objective(), Scalar_WeightedNorm(weights=[1, 1]), Feature_Objective(X_space, indices=[0], coeff=[1]),
-             Objective_Sequence([Utopian_Distance([1], target), Index_Objective()]),
-             Bounded_Target(bounds=[(0, 1)], targets=target)]
+test_objs = [Identity_Objective(mo=True),
+             Scalar_WeightedNorm(weights=[1, 1]),
+             Feature_Objective(X_space, indices=[0], coeff=[1]),
+             Objective_Sequence([Utopian_Distance([1], target[0]), Index_Objective()]),
+             Bounded_Target(bounds=[(0, 1), (0, 1)], targets=target),
+             None]
 
 
 @pytest.mark.parametrize('obj', test_objs)
 def test_campaign_objectives(obj):
     campaign.set_objective(obj)
-    campaign.objective.__repr__()
-    
+    if campaign.objective:
+        campaign.objective.__repr__()
+
     obj_dict = campaign.save_state()
     campaign2 = Campaign.load_state(obj_dict)
     campaign2.save_state()
     campaign2.__repr__()
-       
+     
         
 if __name__ == '__main__':
     pytest.main([__file__, '-m', 'not slow'])
