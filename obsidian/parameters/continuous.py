@@ -23,10 +23,12 @@ class Param_Continuous(Parameter):
 
     @transform_with_type
     def unit_map(self, X: np.ndarray):
+        """Map from measured to 0,1 space"""
         return (X-self.min)/self.range if self.range != 0 else 0*X
         
     @transform_with_type
     def unit_demap(self, X: np.ndarray):
+        """Map from 0,1 to measured space"""
         return X*self.range+self.min
 
     encode = unit_map
@@ -35,9 +37,11 @@ class Param_Continuous(Parameter):
 
     @property
     def range(self):
+        """The range of the parameter (max - min)"""
         return self.max-self.min
     
     def __repr__(self):
+        """String representation of object"""
         return f"{self.__class__.__name__}(name={self.name}, min={self.min}, max={self.max})"
 
     def _validate_value(self, value: int | float):

@@ -34,19 +34,22 @@ class Objective_Sequence(Objective):
             obj._is_mo = True
     
     def __repr__(self):
+        """String representation of object"""
         return f'{self.__class__.__name__} (obj_list={self.obj_list})'
     
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
-        
+        """
+        Evaluate the objective function(s) on the candidate set samples, X
+        """
         for obj in self.obj_list:
             samples = obj.forward(samples, X=X)
 
         return samples
     
     def save_state(self) -> dict:
-        
+        """Saves the objective(s) to a state dictionary"""
         obj_dict = {'name': self.__class__.__name__,
                     'obj_list': [obj.save_state() for obj in self.obj_list]}
         
@@ -54,7 +57,7 @@ class Objective_Sequence(Objective):
     
     @classmethod
     def load_state(cls, obj_dict: dict):
-        
+        """Loads the objective(s) from a state dictionary"""
         new_obj_list = []
         
         for obj_dict_i in obj_dict['obj_list']:

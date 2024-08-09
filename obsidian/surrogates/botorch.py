@@ -25,6 +25,22 @@ class SurrogateBoTorch(SurrogateModel):
     BoTorch GP model, subclass of the obsidian SurrogateModel
 
     Attributes:
+        model_type (str): The type of model to be used.
+        
+            Defaults to ``'GP'``. Options are as follows:
+        
+            - ``'GP'``: Gaussian Process with default settings (Matern Kernel, Gamma covariance priors)
+            - ``'MixedGP'``: GP with mixed parameter types (continuous, categorical). Will be re-selected
+                by default if 'GP' is selected and input space is mixed.
+            - ``'DKL'``: GP with a NN feature-extractor (deep kernel learning)
+            - ``'GPflat'``: GP without priors. May result in optimization instability, but removes bias
+                for special situations.
+            - ``'GPprior'``: GP with custom priors on the mean, likelihood, and covariance
+            - ``'MTGP'``: Multi-task GP for multi-output optimization. Will be re-selected by default
+                if 'GP' is selected and the input space contains Task parameters.
+            - ``'DNN'``: Dropout neural network. Uses MC sampling to mask neurons during training and
+                to estimate uncertainty.
+              
         device (str): The device on which the model is run.
         hps (dict): Optional surrogate function hyperparameters.
         mll (ExactMarginalLogLikelihood): The marginal log likelihood of the model.
@@ -110,7 +126,7 @@ class SurrogateBoTorch(SurrogateModel):
         Args:
             X (pd.DataFrame): Input parameters for the training data
             y (pd.Series): Training data responses
-            cat_dims (list, optional): A list of indices for categorical dimensions in the input data. Default is None.
+            cat_dims (list, optional): A list of indices for categorical dimensions in the input data. Default is ``None``.
 
         Returns:
             None. Updates the surrogate model attributes, including regressed parameters.

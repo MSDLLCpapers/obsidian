@@ -37,6 +37,7 @@ class ExpDesigner:
         self.seed = seed
 
     def __repr__(self):
+        """String representation of object"""
         return f"obsidian ExpDesigner(X_space={self.X_space})"
 
     def initialize(self,
@@ -48,9 +49,9 @@ class ExpDesigner:
 
         Args:
             m_initial (int): The number of experiments to initialize.
-            method (str, optional): The method to use for initialization. Defaults to 'LHS'.
-            seed (int | None, optional): The randomization seed. Defaults to None.
-            sample_custom (Tensor | ArrayLike | None, optional): Custom samples for initialization. Defaults to None.
+            method (str, optional): The method to use for initialization. Defaults to ``'LHS'``.
+            seed (int | None, optional): The randomization seed. Defaults to ``None``.
+            sample_custom (Tensor | ArrayLike | None, optional): Custom samples for initialization. Defaults to ``None``.
 
         Returns:
             pd.DataFrame: The initialized experiment design.

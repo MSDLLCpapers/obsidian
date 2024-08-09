@@ -36,16 +36,19 @@ class Target_Transform(ABC):
     def forward(self,
                 X: Tensor,
                 fit: bool = False):
+        """Evaluate the forward transformation on input data X"""
         pass  # pragma: no cover
 
     @abstractmethod
     def inverse(self,
                 X: Tensor):
+        """Inverse transform the transformed data X_t"""
         pass  # pragma: no cover
 
     def __call__(self,
                  X: Tensor,
                  fit: bool = False):
+        """Shortcut to forward method"""
         return self.forward(X, fit)
         
 
@@ -56,10 +59,12 @@ class Identity_Scaler(Target_Transform):
     def forward(self,
                 X: Tensor,
                 fit: bool = False):
+        """Evaluate the forward transformation on input data X"""
         return X
     
     def inverse(self,
                 X: Tensor):
+        """Inverse transform the transformed data X_t"""
         return X
 
 
@@ -73,7 +78,7 @@ class Standard_Scaler(Target_Transform):
     def forward(self,
                 X: Tensor,
                 fit: bool = False):
-        
+        """Evaluate the forward transformation on input data X"""
         if fit:
             X_v = X[~X.isnan()]
             self.params = {'mu': X_v.mean(), 'sd': X_v.std()}
@@ -82,6 +87,7 @@ class Standard_Scaler(Target_Transform):
         return (X-self.params['mu'])/self.params['sd']
     
     def inverse(self, X):
+        """Inverse transform the transformed data X_t"""
         self._validate_fit()
         return X*self.params['sd']+self.params['mu']
 
@@ -103,7 +109,7 @@ class Logit_Scaler(Target_Transform):
 
     def _fit_minmax(self,
                     X: Tensor):
-
+        """Fits the min-max scale of the logit transform"""
         # Scale X into a range from 0-1 with buffer/2 on either side
         self.override_fit = False
         range_response = X.max()-X.min()
@@ -114,6 +120,7 @@ class Logit_Scaler(Target_Transform):
     def forward(self,
                 X: Tensor,
                 fit: bool = False):
+        """Evaluate the forward transformation on input data X"""
         # If fit is not called, and the range is valid, transform
         # If the range is invalid, fit the range first and warn
         if not fit or self.override_fit:
@@ -136,6 +143,7 @@ class Logit_Scaler(Target_Transform):
     
     def inverse(self,
                 X: Tensor):
+        """Inverse transform the transformed data X_t"""
         if self.standardize:
             self._validate_fit()
             X = X*self.params['sd']+self.params['mu']

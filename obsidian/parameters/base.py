@@ -18,14 +18,17 @@ class Parameter(ABC):
     @abstractmethod
     def _validate_value(self,
                         value: int | float | str):
+        """Validate data inputs"""
         pass  # pragma: no cover
 
     @abstractmethod
     def encode(X):
+        """Encode parameter to a format that can be used for training"""
         pass  # pragma: no cover
     
     @abstractmethod
     def decode(X):
+        """Decode parameter from transformed space"""
         pass  # pragma: no cover
 
     def save_state(self) -> dict:

@@ -128,8 +128,8 @@ class Optimizer(ABC):
 
         Args:
             f (Tensor): The data points to calculate the hypervolume for.
-            ref_point (list, optional): The reference point for the hypervolume calculation. Defaults to None.
-            weights (list, optional): The weights to apply to each objective. Defaults to None.
+            ref_point (list, optional): The reference point for the hypervolume calculation. Defaults to ``None``.
+            weights (list, optional): The weights to apply to each objective. Defaults to ``None``.
 
         Returns:
             float: The hypervolume value.
@@ -210,6 +210,7 @@ class Optimizer(ABC):
     def fit(self,
             Z: pd.DataFrame,
             target: Target | list[Target]):
+        """Fit the optimizer's surrogate models to data"""
         pass  # pragma: no cover
 
     @abstractmethod
@@ -217,22 +218,27 @@ class Optimizer(ABC):
                 X: pd.DataFrame,
                 return_f_inv: bool = True,
                 PI_range: float = 0.7):
+        """Predict the optimizer's target(s) at the candidate set X"""
         pass  # pragma: no cover
     
     @abstractmethod
     def suggest(self):
+        """Suggest the next optimal experiment(s)"""
         pass  # pragma: no cover
     
     @abstractmethod
     def maximize(self):
+        """Maximize the optimizer's target(s)"""
         pass  # pragma: no cover
 
     @abstractmethod
     def save_state(self):
+        """Save the optimizer to a state dictionary"""
         pass  # pragma: no cover
     
     @classmethod
     @abstractmethod
     def load_state(cls,
                    obj_dict: dict):
+        """Load the optimizer from a state dictionary"""
         pass  # pragma: no cover

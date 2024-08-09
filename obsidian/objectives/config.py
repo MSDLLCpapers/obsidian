@@ -1,3 +1,5 @@
+"""Method pointers and config for objective functions"""
+
 from .custom import (
     Identity_Objective,
     Feature_Objective,

@@ -18,8 +18,9 @@ class Simulator:
     Attributes:
         X_space (ParamSpace): The ParamSpace object representing the allowable space for optimization.
         response_function (Callable): The callable function used to convert experiments to responses.
-        name (str or list[str]): Name of the simulated output(s).
-        eps (float or list[float]): The simulated error to apply, as the standard deviation of the Standard Normal distribution.
+        name (str or list[str]): Name of the simulated output(s). Default is ``Response``.
+        eps (float or list[float]): The simulated error to apply, as the standard deviation of the Standard
+            Normal distribution. Default is ``0``.
         kwargs (dict): Optional hyperparameters for the response function.
 
     Raises:
@@ -47,6 +48,7 @@ class Simulator:
         self.kwargs = kwargs
     
     def __repr__(self):
+        """String representation of object"""
         return f" obsidian Simulator(response_function={self.response_function.__name__}, eps={self.eps})"
 
     def simulate(self,

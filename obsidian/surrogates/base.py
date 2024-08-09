@@ -104,25 +104,30 @@ class SurrogateModel(ABC):
     def fit(self,
             X: pd.DataFrame,
             y: pd.Series):
+        """Fit the surrogate model to data"""
         pass  # pragma: no cover
 
     @abstractmethod
     def predict(self,
                 X: pd.DataFrame):
+        """Predict outputs based on candidates X"""
         pass  # pragma: no cover
 
     @abstractmethod
     def score(self,
               X: pd.DataFrame,
               y: pd.Series):
+        """Score the model based on the given test data"""
         pass  # pragma: no cover
     
     @abstractmethod
     def save_state(self):
+        """Save the model to a state dictionary"""
         pass  # pragma: no cover
     
     @classmethod
     @abstractmethod
     def load_state(cls,
                    obj_dict: dict):
+        """Load the model from a state dictionary"""
         pass  # pragma: no cover

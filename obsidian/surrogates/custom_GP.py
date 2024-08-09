@@ -51,6 +51,7 @@ class PriorGP(ExactGP, GPyTorchModel):
         )
         
     def forward(self, x):
+        """Evaluate the forward pass of the model on inputs X"""
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
         return MultivariateNormal(mean_x, covar_x)
@@ -74,6 +75,7 @@ class FlatGP(ExactGP, GPyTorchModel):
         )
         
     def forward(self, x):
+        """Evaluate the forward pass of the model on inputs X"""
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
         return MultivariateNormal(mean_x, covar_x)
@@ -113,7 +115,7 @@ class DKLGP(ExactGP, GPyTorchModel):
         self.scale_to_bounds = gpytorch.utils.grid.ScaleToBounds(0, 1)
 
     def forward(self, x):
-
+        """Evaluate the forward pass of the model on inputs X"""
         # Pass the data through the feature extractor and scaler
         projected_x = self.feature_extractor(x)
         projected_x = self.scale_to_bounds(projected_x)

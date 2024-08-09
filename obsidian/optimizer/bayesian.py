@@ -4,7 +4,7 @@ from .base import Optimizer
 
 from obsidian.parameters import ParamSpace, Target, Task
 from obsidian.surrogates import SurrogateBoTorch, DNN
-from obsidian.acquisition import aq_class_dict, aq_hp_defaults, valid_aqs
+from obsidian.acquisition import aq_class_dict, aq_defaults, aq_hp_defaults, valid_aqs
 from obsidian.surrogates import model_class_dict
 from obsidian.objectives import Index_Objective, Objective_Sequence
 from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning
@@ -41,9 +41,25 @@ class BayesianOptimizer(Optimizer):
         X_space (ParamSpace): The parameter space defining the search space for the optimization.
         surrogate (str | dict | list[str] | list[dict], optional): The surrogate model(s) to use.
             It can be a string representing a single model type, a dictionary specifying multiple model types
-            with their hyperparameters, or a list of strings or dictionaries. Defaults to ['GP'].
-        seed (int | None, optional): The random seed to use. Defaults to None.
-        verbose (int, optional): The verbosity level. Defaults to 1.
+            with their hyperparameters, or a list of strings or dictionaries.
+            
+            Defaults to ``'GP'``. Options are as follows:
+            
+            - ``'GP'``: Gaussian Process with default settings (Matern Kernel, Gamma covariance priors)
+            - ``'MixedGP'``: GP with mixed parameter types (continuous, categorical). Will be re-selected
+              by default if 'GP' is selected and input space is mixed.
+            - ``'DKL'``: GP with a NN feature-extractor (deep kernel learning)
+            - ``'GPflat'``: GP without priors. May result in optimization instability, but removes bias
+              for special situations.
+            - ``'GPprior'``: GP with custom priors on the mean, likelihood, and covariance
+            - ``'MTGP'``: Multi-task GP for multi-output optimization. Will be re-selected by default
+              if 'GP' is selected and the input space contains Task parameters.
+            - ``'DNN'``: Dropout neural network. Uses MC sampling to mask neurons during training and
+              to estimate uncertainty.
+            
+            
+        seed (int | None, optional): The random seed to use. Defaults to ``None``.
+        verbose (int, optional): The verbosity level. Defaults to ``1``.
 
     Attributes:
         surrogate_type (list[str]): The shorthand name of each surrogate model.
@@ -60,7 +76,7 @@ class BayesianOptimizer(Optimizer):
     """
     def __init__(self,
                  X_space: ParamSpace,
-                 surrogate: str | dict | list[str] | list[dict] = ['GP'],
+                 surrogate: str | dict | list[str] | list[dict] = 'GP',
                  seed: int | None = None,
                  verbose: int = 1):
        
@@ -131,7 +147,7 @@ class BayesianOptimizer(Optimizer):
         Args:
             target (Target | list[Target] | None, optional): The target object or a list of target objects to be validated.
                 If None, the target object specified during the initialization of the optimizer will be used.
-                Defaults to None.
+                Defaults to ``None``.
 
         Raises:
             TypeError: If the target is not a Target object or a list of Target objects.
@@ -335,7 +351,7 @@ class BayesianOptimizer(Optimizer):
         Args:
             X (pd.DataFrame): Experiments to predict over.
             return_f_inv (bool, optional): Whether or not to return the inverse-transformed objective function,
-                which is the raw response (unscored). The default is True. Most internal calls set to False to handle
+                which is the raw response (unscored). The default is ``True``. Most internal calls set to ``False`` to handle
                 the transformed objective function.
             PI_range (float, optional): The nominal coverage range for the returned prediction interval
 
@@ -468,7 +484,7 @@ class BayesianOptimizer(Optimizer):
             X_t_pending (Tensor, optional): Suggested points yet to be run
             objective (GenericMCMultiOutputObjective or GenericMCObjective, optional):
                 The objective used foroptimization after calling the target models.
-                Default is `None`.
+                Default is ``None``.
 
         Returns:
             dict: The parsed acquisition function keyword arguments.
@@ -498,7 +514,7 @@ class BayesianOptimizer(Optimizer):
 
         # Improvement aqs based on inflation or deflation of best point
         if aq in ['EI', 'PI']:
-            o_max = o.max(dim=0).values * (1+hps['Xi_f'])
+            o_max = o.max(dim=0).values * (1+hps['inflate'])
             aq_kwargs.update({'best_f': o_max})
         
         # UCB based on: mu + sqrt(beta) * sqrt(variance) = mu + sqrt(beta) * sd
@@ -540,10 +556,10 @@ class BayesianOptimizer(Optimizer):
     def suggest(self,
                 m_batch: int = 1,
                 target: Target | list[Target] | None = None,
+                acquisition: list[str] | list[dict] = None,
                 optim_sequential: bool = True,
                 optim_samples: int = 512,
                 optim_restarts: int = 10,
-                acquisition: list[str] | list[dict] = None,
                 objective: MCAcquisitionObjective | None = None,
                 out_constraints: list[Callable] | None = None,
                 eq_constraints: tuple[Tensor, Tensor, float] | None = None,
@@ -558,32 +574,57 @@ class BayesianOptimizer(Optimizer):
         function calculated from the expectation of a surrogate model.
 
         Args:
-            m_batch (int, optional): The number of experiments to suggest at once. The default is `1`.
+            m_batch (int, optional): The number of experiments to suggest at once. The default is ``1``.
             target (Target or list of Target, optional): The response(s) to be used for optimization,
+            acquisition (list of str or list of dict, optional): Indicator for the desired acquisition function(s).
+                A list will propose experiments for each acquisition function based on ``optim_sequential``.
+                
+                The default is ``['NEI']`` for single-output and ``['NEHVI']`` for multi-output.
+                Options are as follows:
+                
+                - ``'EI'``: Expected Improvement (relative to best of ``y_train``). Accepts hyperparameter
+                  ``'inflate'``, a positive or negative float to inflate/deflate the best point for explore/exploit.
+                - ``'NEI'``: Noisy Expected Improvement. More robust than ``EI`` and uses all of ``y_train``,
+                  but accepts no hyperparameters.
+                - ``'PI'``: Probability of Improvement (relative to best of ``y_train``). Accepts hyperparameter
+                  ``'inflate'``, a positive or negative float to inflate/deflate the best point for explore/exploit.
+                - ``'UCB'``: Upper Confidence Bound. Accepts hyperparameter ``'beta'``, a positive float which sets
+                  the number of standard deviations above the mean.
+                - ``'SR'``: Simple Regret
+                - ``'RS'``: Random Sampling
+                - ``'Mean'``: Mean of the posterior distribution (pure exploitation/maximization of objective)
+                - ``'SF'``: Space Filling. Requests points that maximize the minimumd distance to ``X_train`` based
+                  on Euclidean distance.
+                - ``'NIPV'``: Negative Integrated Posterior Variance. Requests the point which most improves the prediction
+                  interval for a random selection of points in the design space. Used for active learning.
+                - ``'EHVI'``: Expected Hypervolume Improvement. Can accept a ``ref_point``, otherwise a point just
+                  below the minimum of ``y_train``.
+                - ``'NEHVI'``: Noisy Expected Hypervolume Improvement. Can accept a ``ref_point``, otherwise a point
+                  just below the minimum of ``y_train``.
+                - ``'NParEGO'``: Noisy Pareto Efficient Global Optimization. Can accept ``scalarization_weights``, a
+                  list of weights for each objective.
+                
             optim_sequential (bool, optional): Whether or not to optimize batch designs sequentially
-                (by fantasy) or simultaneously. Default is `True`.
+                (by fantasy) or simultaneously. Default is ``True``.
             optim_samples (int, optional): The number of samples to use for quasi Monte Carlo sampling
                 of the acquisition function. Also used for initializing the acquisition optimizer.
-                The default value is `512`.
+                The default value is ``512``.
             optim_restarts (int, optional): The number of restarts to use in the global optimization
-                of the acquisition function. The default value is `10`.
-            acquisition (list of str or list of dict, optional): Indicator for the desired acquisition function(s).
-                The default is `['EI']`. A list will propose experiments for each acquisition function
-                in parallel and independent.
+                of the acquisition function. The default value is ``10``.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
-                The default is `None`.
+                The default is ``None``.
             out_constraints (list of Callable, optional): A list of constraints to be applied to the output space.
-                The default is `None`.
+                The default is ``None``.
             eq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the equality
-                constraints, the target values, and the tolerance. The default is `None`.
+                constraints, the target values, and the tolerance. The default is ``None``.
             ineq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the inequality
-                constraints, the target values, and the tolerance. The default is `None`.
+                constraints, the target values, and the tolerance. The default is ``None``.
             nleq_constraints (tuple of Callable, bool, optional): A tuple of functions representing the nonlinear
                 inequality constraints and a boolean indicating whether the constraints are active.
-                The default is `None`.
-            task_index (int, optional): The index of the task to optimize for multi-task models. The default is `0`.
+                The default is ``None``.
+            task_index (int, optional): The index of the task to optimize for multi-task models. The default is ``0``.
             fixed_var (dict(str:float), optional): Name of a variable and setting, over which the
-                suggestion should be fixed. Default values is `None`
+                suggestion should be fixed. Default values is ``None``
             X_pending (pd.DataFrame, optional): Experiments that are expected to be run before the next optimal set
             eval_pending (pd.DataFrame, optional): Acquisition values associated with X_pending
 
@@ -634,7 +675,7 @@ class BayesianOptimizer(Optimizer):
 
         # Default to noisy expected improvement if no aq method is provided
         if not acquisition:
-            acquisition = ['NEI'] if optim_type == 'single' else ['NEHVI']
+            acquisition = [aq_defaults[optim_type]]
 
         if not isinstance(acquisition, list):
             raise TypeError('acquisition must be a list of strings or dictionaries')
@@ -794,8 +835,8 @@ class BayesianOptimizer(Optimizer):
             acquisition (str | dict, optional): Acquisition function name (str) or dictionary
                 containing the acquisition function name and its hyperparameters.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
-                The default is `None`.
-            eval_aq (bool, optional): Whether or not to also evaluate the aq function. The default is `False`.
+                The default is ``None``.
+            eval_aq (bool, optional): Whether or not to also evaluate the aq function. The default is ``False``.
         
         Returns:
             pd.DataFrame: Response prediction, pred interval, transformed mean, aq value,
@@ -873,7 +914,7 @@ class BayesianOptimizer(Optimizer):
         if eval_aq:
             # Default to noisy expected improvement if no aq method is provided
             if not acquisition:
-                acquisition = 'NEI' if optim_type == 'single' else 'NEHVI'
+                acquisition = [aq_defaults[optim_type]]
 
             if not isinstance(acquisition, (str, dict)):
                 raise TypeError('Acquisition must be either a string or a dictionary')
@@ -941,10 +982,10 @@ class BayesianOptimizer(Optimizer):
         Predicts the conditions which return the maximum response value within the parameter space.
 
         Args:
-            optim_samples (int): The number of samples to be used for optimization. Default is 1026.
-            optim_restarts (int): The number of restarts for the optimization process. Default is 50.
+            optim_samples (int): The number of samples to be used for optimization. Default is ``1026``.
+            optim_restarts (int): The number of restarts for the optimization process. Default is ``50``.
             fixed_var (dict(str:float), optional): Name of a variable and setting, over which the
-                            suggestion should be fixed. Default values is `None`
+                            suggestion should be fixed. Default values is ``None``
         Returns:
             tuple[pd.DataFrame, pd.DataFrame] = (X_suggest, eval_suggest)
                 X_suggest (pd.DataFrame): Experiment matrix of real input variables,

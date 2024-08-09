@@ -5,12 +5,13 @@ from obsidian.utils import unscale_samples
 
 import torch
 from torch import Tensor
+from typing import Callable
 
 # Negative values imply feasibility!
 # Note that these are OUTPUT constraints
 
 
-def OutConstraint_Blank(target: Target | list[Target]) -> callable:
+def OutConstraint_Blank(target: Target | list[Target]) -> Callable:
     """
     Dummy constraint function that proposes all samples as feasible.
 
@@ -29,7 +30,7 @@ def OutConstraint_Blank(target: Target | list[Target]) -> callable:
 
 
 def OutConstraint_L1(target: Target | list[Target],
-                     offset: int | float = 1) -> callable:
+                     offset: int | float = 1) -> Callable:
     """
     Calculates the L1 (absolute-value penalized) constraint
 

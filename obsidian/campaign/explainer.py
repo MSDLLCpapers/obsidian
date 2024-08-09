@@ -50,9 +50,11 @@ class Explainer():
     
     @property
     def optimizer(self):
+        """Explainer Optimizer object"""
         return self._optimizer
     
     def set_optimizer(self, optimizer: Optimizer):
+        """Sets the explainer optimizer"""
         self._optimizer = optimizer
     
     def shap_explain(self,
@@ -114,6 +116,7 @@ class Explainer():
         return
 
     def shap_summary(self) -> Figure:
+        """SHAP Summary Plot (Beeswarm)"""
         if not self.shap:
             raise ValueError('shap explainer is not fit.')
         
@@ -121,6 +124,7 @@ class Explainer():
         return fig
     
     def shap_summary_bar(self) -> Figure:
+        """SHAP Summary Plot (Bar Plot / Importance)"""
         if not self.shap:
             raise ValueError('shap explainer is not fit.')
          
@@ -136,7 +140,7 @@ class Explainer():
                      ace_opacity: float = 0.5,
                      ace_linewidth="auto"
                      ) -> Figure:
-        
+        """SHAP Partial Dependence Plot with ICE"""
         if not self.shap:
             raise ValueError('shap explainer is not fit.')
         
@@ -156,6 +160,7 @@ class Explainer():
     def shap_single_point(self,
                           X_new,
                           X_ref=None):
+        """SHAP Pair-wise Marginal Explanations"""
         if not self.shap:
             raise ValueError('shap explainer is not fit.')
         
@@ -181,7 +186,7 @@ class Explainer():
     def cal_sensitivity(self,
                         dx: float = 1e-6,
                         X_ref: pd.DataFrame | None = None) -> pd.DataFrame:
-        
+        """Local parameter sensitivity analysis"""
         df_sens = sensitivity(self.optimizer, dx=dx, X_ref=X_ref)
         
         return df_sens

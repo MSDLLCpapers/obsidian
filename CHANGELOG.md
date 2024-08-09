@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.12]
+### Added
+- More informative docstrings for optimizer.bayesian, optimizer.predict, to explain choices of surrogate models and aq_funcs
+
+### Modified
+- Renamed aq_func hyperparmeter "Xi_f" to "inflate"
+- Moved default aq_func choices for single/multi into aq_defaults of acquisition.config
+
 ## [0.7.11]
 ### Added
 - Documentation improvements

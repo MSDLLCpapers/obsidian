@@ -74,7 +74,7 @@ def plot_interactions(optimizer, cor, clamp=False):
         optimizer (BayesianOptimizer): The optimizer object which contains a surrogate that has been fit to data
             and can be used to make predictions.
         cor (np.ndarray): The correlation matrix representing the parameter interactions.
-        clamp (bool, optional): Whether to clamp the colorbar range to (0, 1). Defaults to False.
+        clamp (bool, optional): Whether to clamp the colorbar range to (0, 1). Defaults to ``False``.
 
     Returns:
         matplotlib.figure.Figure: The parameter interaction plot
@@ -112,10 +112,10 @@ def calc_ofat_ranges(optimizer, threshold, X_ref, PI_range=0.7,
         threshold (float): The response value threshold (minimum value) which would be considered passing for OFAT variations.
         PI_range (float, optional): The prediction interval coverage (fraction of density)
         steps (int, optional): The number of steps to use in the search for the OFAT boundaries.
-            The default value is 100.
+            The default value is ``100``.
         response_id (int, optional): The index of the relevant response within the fitted optimizer object.
-            The default value is 0.
-        calc_interacts (bool, optional): Whether or not to return the interaction matrix; default is True.
+            The default value is ``0``.
+        calc_interacts (bool, optional): Whether or not to return the interaction matrix; default is ``True``.
 
     Returns:
         ofat_ranges (pd.DataFrame): A dataframe describing the min/max OFAT values using each LB, UB, and average prediction.
@@ -206,9 +206,9 @@ def sensitivity(optimizer,
     Args:
         optimizer (BayesianOptimizer): The optimizer object which contains a surrogate that has been fit to data
         and can be used to make predictions.
-        dx (float, optional): The perturbation size for calculating the sensitivity. Defaults to 1e-6.
+        dx (float, optional): The perturbation size for calculating the sensitivity. Defaults to ``1e-6``.
         X_ref (pd.DataFrame | None, optional): The reference input values for calculating the sensitivity.
-            If None, the mean of X_space will be used as the reference. Defaults to None.
+            If None, the mean of X_space will be used as the reference. Defaults to ``None``.
 
     Returns:
         pd.DataFrame: A DataFrame containing the sensitivity values for each parameter in X_space.

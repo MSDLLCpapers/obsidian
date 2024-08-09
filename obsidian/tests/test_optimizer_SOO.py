@@ -104,7 +104,7 @@ def test_optimizer_suggest(m_batch, fixed_var):
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
 
 
-test_aqs = ['NEI', 'EI', {'EI': {'Xi_f': 0.05}}, {'EI': {'Xi_f': -0.05}},
+test_aqs = ['NEI', 'EI', {'EI': {'inflate': 0.05}}, {'EI': {'inflate': -0.05}},
             'PI', 'UCB', {'UCB': {'beta': 2}}, {'UCB': {'beta': 0}},
             'NIPV',
             'SF', 'RS', 'Mean', 'SR']
