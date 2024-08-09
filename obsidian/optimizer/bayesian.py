@@ -58,8 +58,8 @@ class BayesianOptimizer(Optimizer):
               to estimate uncertainty.
             
             
-        seed (int | None, optional): The random seed to use. Defaults to None.
-        verbose (int, optional): The verbosity level. Defaults to 1.
+        seed (int | None, optional): The random seed to use. Defaults to ``None``.
+        verbose (int, optional): The verbosity level. Defaults to ``1``.
 
     Attributes:
         surrogate_type (list[str]): The shorthand name of each surrogate model.
@@ -147,7 +147,7 @@ class BayesianOptimizer(Optimizer):
         Args:
             target (Target | list[Target] | None, optional): The target object or a list of target objects to be validated.
                 If None, the target object specified during the initialization of the optimizer will be used.
-                Defaults to None.
+                Defaults to ``None``.
 
         Raises:
             TypeError: If the target is not a Target object or a list of Target objects.
@@ -351,7 +351,7 @@ class BayesianOptimizer(Optimizer):
         Args:
             X (pd.DataFrame): Experiments to predict over.
             return_f_inv (bool, optional): Whether or not to return the inverse-transformed objective function,
-                which is the raw response (unscored). The default is True. Most internal calls set to False to handle
+                which is the raw response (unscored). The default is ``True``. Most internal calls set to ``False`` to handle
                 the transformed objective function.
             PI_range (float, optional): The nominal coverage range for the returned prediction interval
 
@@ -484,7 +484,7 @@ class BayesianOptimizer(Optimizer):
             X_t_pending (Tensor, optional): Suggested points yet to be run
             objective (GenericMCMultiOutputObjective or GenericMCObjective, optional):
                 The objective used foroptimization after calling the target models.
-                Default is `None`.
+                Default is ``None``.
 
         Returns:
             dict: The parsed acquisition function keyword arguments.
@@ -605,26 +605,26 @@ class BayesianOptimizer(Optimizer):
                   list of weights for each objective.
                 
             optim_sequential (bool, optional): Whether or not to optimize batch designs sequentially
-                (by fantasy) or simultaneously. Default is `True`.
+                (by fantasy) or simultaneously. Default is ``True``.
             optim_samples (int, optional): The number of samples to use for quasi Monte Carlo sampling
                 of the acquisition function. Also used for initializing the acquisition optimizer.
-                The default value is `512`.
+                The default value is ``512``.
             optim_restarts (int, optional): The number of restarts to use in the global optimization
-                of the acquisition function. The default value is `10`.
+                of the acquisition function. The default value is ``10``.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
-                The default is `None`.
+                The default is ``None``.
             out_constraints (list of Callable, optional): A list of constraints to be applied to the output space.
-                The default is `None`.
+                The default is ``None``.
             eq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the equality
-                constraints, the target values, and the tolerance. The default is `None`.
+                constraints, the target values, and the tolerance. The default is ``None``.
             ineq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the inequality
-                constraints, the target values, and the tolerance. The default is `None`.
+                constraints, the target values, and the tolerance. The default is ``None``.
             nleq_constraints (tuple of Callable, bool, optional): A tuple of functions representing the nonlinear
                 inequality constraints and a boolean indicating whether the constraints are active.
-                The default is `None`.
-            task_index (int, optional): The index of the task to optimize for multi-task models. The default is `0`.
+                The default is ``None``.
+            task_index (int, optional): The index of the task to optimize for multi-task models. The default is ``0``.
             fixed_var (dict(str:float), optional): Name of a variable and setting, over which the
-                suggestion should be fixed. Default values is `None`
+                suggestion should be fixed. Default values is ``None``
             X_pending (pd.DataFrame, optional): Experiments that are expected to be run before the next optimal set
             eval_pending (pd.DataFrame, optional): Acquisition values associated with X_pending
 
@@ -835,8 +835,8 @@ class BayesianOptimizer(Optimizer):
             acquisition (str | dict, optional): Acquisition function name (str) or dictionary
                 containing the acquisition function name and its hyperparameters.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
-                The default is `None`.
-            eval_aq (bool, optional): Whether or not to also evaluate the aq function. The default is `False`.
+                The default is ``None``.
+            eval_aq (bool, optional): Whether or not to also evaluate the aq function. The default is ``False``.
         
         Returns:
             pd.DataFrame: Response prediction, pred interval, transformed mean, aq value,
@@ -914,7 +914,7 @@ class BayesianOptimizer(Optimizer):
         if eval_aq:
             # Default to noisy expected improvement if no aq method is provided
             if not acquisition:
-                acquisition = 'NEI' if optim_type == 'single' else 'NEHVI'
+                acquisition = [aq_defaults[optim_type]]
 
             if not isinstance(acquisition, (str, dict)):
                 raise TypeError('Acquisition must be either a string or a dictionary')
@@ -982,10 +982,10 @@ class BayesianOptimizer(Optimizer):
         Predicts the conditions which return the maximum response value within the parameter space.
 
         Args:
-            optim_samples (int): The number of samples to be used for optimization. Default is 1026.
-            optim_restarts (int): The number of restarts for the optimization process. Default is 50.
+            optim_samples (int): The number of samples to be used for optimization. Default is ``1026``.
+            optim_restarts (int): The number of restarts for the optimization process. Default is ``50``.
             fixed_var (dict(str:float), optional): Name of a variable and setting, over which the
-                            suggestion should be fixed. Default values is `None`
+                            suggestion should be fixed. Default values is ``None``
         Returns:
             tuple[pd.DataFrame, pd.DataFrame] = (X_suggest, eval_suggest)
                 X_suggest (pd.DataFrame): Experiment matrix of real input variables,

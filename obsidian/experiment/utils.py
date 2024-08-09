@@ -19,11 +19,11 @@ def factorial_DOE(d: int,
     Args:
         d (int): Number of dimensions/inputs in the design.
         n_CP (int, optional): The number of centerpoints to include in the design, for estimating
-            uncertainty and curvature. Default is 3.
+            uncertainty and curvature. Default is ``3``.
         shuffle (bool, optional): Whether or not to shuffle the design or leave them in the default run
-            order. Default is True.
-        seed (int, optional): Randomization seed. Default is None.
-        full (bool, optional): Whether or not to run the full DOE. Default is False, which
+            order. Default is ``True``.
+        seed (int, optional): Randomization seed. Default is ``None``.
+        full (bool, optional): Whether or not to run the full DOE. Default is ``False``, which
             will lead to an efficient Res4+ design.
 
     Returns:

@@ -37,6 +37,7 @@ class Target():
         self.f_transform = f_transform
 
     def __repr__(self):
+        """String representation of object"""
         return f"{self.__class__.__name__}({self.name}, aim={self.aim})"
 
     def transform_f(self,
@@ -49,8 +50,8 @@ class Target():
 
         Args:
             f (array-like): The column(s) containing the response values (y)
-            inverse (bool, optional): An indicator to perform the inverse transform. Defaults to False.
-            fit (bool, optional): An indicator to fit the properties of the transform function. Defaults to False.
+            inverse (bool, optional): An indicator to perform the inverse transform. Defaults to ``False``.
+            fit (bool, optional): An indicator to fit the properties of the transform function. Defaults to ``False``.
 
         Returns:
             pd.Series: An array of transformed f values matching the responses in Z

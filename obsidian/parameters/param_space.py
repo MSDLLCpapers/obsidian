@@ -107,15 +107,19 @@ class ParamSpace(ABC):
         return
 
     def __iter__(self):
+        """Iterate over the parameters in the parameter space"""
         return iter(self.params)
 
     def __len__(self):
+        """Number of parameters in the parameter space"""
         return len(self.params)
         
     def __repr__(self):
+        """String representation of object"""
         return f"{self.__class__.__name__}(params={[p.name for p in self]})"
 
     def __getitem__(self, index: int) -> Parameter:
+        """Retrieve a parameter by index"""
         return self.params[index]
 
     def map_transform(self) -> dict:
@@ -198,15 +202,19 @@ class ParamSpace(ABC):
 
     # Define transformation methods using a handler method and lambdas; more readable on outer layer
     def unit_map(self, X):
+        """Map from measured to 0,1 space"""
         return self._transform(X, type='unit_map')
     
     def unit_demap(self, X):
+        """Map from 0,1 space to measured space"""
         return self._transform(X, type='unit_demap')
     
     def encode(self, X):
+        """Encode parameter to a format that can be used for training"""
         return self._transform(X, type='encode')
 
     def decode(self, X):
+        """Decode parameter from transformed space"""
         return self._transform(X, type='decode')
 
     def save_state(self) -> dict:

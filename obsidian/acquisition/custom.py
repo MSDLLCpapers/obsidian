@@ -40,6 +40,9 @@ class qMean(MCAcquisitionFunction):
     @t_batch_mode_transform()
     def forward(self,
                 x: Tensor) -> Tensor:
+        """
+        Evaluate the acquisition function on the candidate set x
+        """
         # x dimensions: b * q * d
         posterior = self.model.posterior(x)  # dimensions: b * q
         samples = self.get_posterior_samples(posterior)  # dimensions: n * b * q * o
@@ -81,6 +84,9 @@ class qSpaceFill(MCAcquisitionFunction):
     @t_batch_mode_transform()
     def forward(self,
                 x: Tensor) -> Tensor:
+        """
+        Evaluate the acquisition function on the candidate set x
+        """
         # x dimensions: b * q * d
         x_train = self.model.train_inputs[0][0]  # train_inputs is a list of tuples
         

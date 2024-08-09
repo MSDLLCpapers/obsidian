@@ -23,9 +23,9 @@ def parity_plot(optimizer: Optimizer,
             and can be used to make predictions.
         f_transform (bool, optional): An indicator for whether or not to plot the response value in the "objective
             function" form which is directly used by the optimizer, else using the "measured response" form which the
-            optimizer preproceses. Default value is `False` which plots the raw measured response scale.
+            optimizer preproceses. Default value is ``False`` which plots the raw measured response scale.
         response_id (int, optional): Index of the response for potential multi-response models.
-            Default value is `0` (single-response).
+            Default value is ``0`` (single-response).
 
     Returns:
         fig (Figure): The optimizer fit parity plot
@@ -99,16 +99,16 @@ def factor_plot(optimizer: Optimizer,
         optimizer (Optimizer): The optimizer object which contains a surrogate that has been fit to data
             and can be used to make predictions.
         feature_id (int, optional): The index of the desired variable to plot from the last data used
-            to fit the surrogate model. The default value is 0.
+            to fit the surrogate model. The default value is ``0``.
         response_id (int, optional): Index of the response for potential multi-response models.
-            Default value is 0 (single-response).
+            Default value is ``0`` (single-response).
         f_transform (bool, optional): An indicator for whether or not to plot the response value in the "objective
             function" form which is directly used by the optimizer, else using the
             "measured response" form which the optimizer preproceses. Default value is
-            False which plots the raw measured response scale.
+            ``False`` which plots the raw measured response scale.
         plotRef (bool, optional): An indicator for whether or not to plot the reference data points.
-            Default value is True.
-        ylim (tuple, optional): The y-axis limits for the plot. Default value is None.
+            Default value is ``True``.
+        ylim (tuple, optional): The y-axis limits for the plot. Default value is ``None``.
 
     Returns:
         fig (Figure): The matplotlib plot of response value versus 1 predictor variable.
@@ -199,17 +199,17 @@ def surface_plot(optimizer: Optimizer,
         optimizer (Optimizer): The optimizer object which contains a surrogate that has been fit to data
             and can be used to make predictions.
         feature_ids (list, optional): A list of integers containing the indices of the desired variables
-            to plot from the last data used to fit the surrogate model. Default value is `[0,1]`.
+            to plot from the last data used to fit the surrogate model. Default value is ``[0,1]``.
         f_transform (bool, optional): An indicator for whether or not to plot the response value in the "objective
             function" form which is directly used by the optimizer, else using the
             "measured response" form which the optimizer preprocesses. Default value is
-            `False` which plots the raw measured response scale.
+            ``False`` which plots the raw measured response scale.
         plot_bands (bool, optional): An indicator for whether or not to plot the confidence bands as a wire
-            frame around the surface plot. Default is `True`.
+            frame around the surface plot. Default is ``True``.
         plot_data (bool, optional): An indicator for whether or not to plot the raw data locations.
-            Default is `False`, as the data z-height can be misleading for >2D data on a 3D plot.
+            Default is ``False``, as the data z-height can be misleading for >2D data on a 3D plot.
         response_id (int, optional): Index of the response for potential multi-response models.
-            Default value is `0` (single-response).
+            Default value is ``0`` (single-response).
 
     Returns:
         fig (Figure): The matplotlib plot of surfaces over a 2-parameter grid.
@@ -327,11 +327,11 @@ def MOO_results(campaign: Campaign,
 
     Args:
         campaign (Campaign): The campaign object containing the data.
-        response_ids (list[int], optional): The indices of the responses to plot. Defaults to [0, 1].
+        response_ids (list[int], optional): The indices of the responses to plot. Defaults to ``[0, 1]``.
         color_feature_id (int | None, optional): The index of the feature to use for coloring the markers.
-            Defaults to None.
+            Defaults to ``None``.
         y_suggest (pd.DataFrame | None, optional): The suggested data for the responses.
-            Defaults to None.
+            Defaults to ``None``.
 
     Returns:
         Figure: The plotly figure.

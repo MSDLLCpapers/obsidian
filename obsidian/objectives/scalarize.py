@@ -21,6 +21,7 @@ class Scalarization(Objective):
         super().__init__(mo=False)
         
     def __repr__(self):
+        """String representation of object"""
         return f'{self.__class__.__name__} (weights={self.weights.tolist()})'
 
 
@@ -40,7 +41,9 @@ class Scalar_WeightedSum(Scalarization):
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
-        
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         return (self.weights * samples).sum(dim=-1)
 
 
@@ -73,7 +76,9 @@ class Scalar_WeightedNorm(Scalarization):
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
-        
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         return self.C*(self.weights * samples).norm(self.norm, dim=-1)
 
 
@@ -85,8 +90,8 @@ class Scalar_Chebyshev(Scalarization):
 
     Args:
         weights (list[float]): A list of weights to be applied to the response tensor.
-        alpha (float, optional): The scaling factor for the weighted sum. Defaults to 0.05.
-        augment (bool, optional): Flag indicating whether to perform augmentation. Defaults to True.
+        alpha (float, optional): The scaling factor for the weighted sum. Defaults to ``0.05``.
+        augment (bool, optional): Flag indicating whether to perform augmentation. Defaults to ``True``.
             
     """
     def __init__(self,
@@ -101,7 +106,9 @@ class Scalar_Chebyshev(Scalarization):
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
-        
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         # Augmentation seeks to maximize weighted sum
         delta = self.alpha * (self.weights * samples).sum(dim=-1) if self.augment else 0
         

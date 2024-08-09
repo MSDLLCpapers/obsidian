@@ -89,37 +89,45 @@ class Campaign():
         self.data.index.name = 'Observation ID'
 
     def clear_data(self):
+        """Clears campaign data"""
         self.data = None
 
     @property
     def optimizer(self) -> Optimizer:
+        """Campaign Optimizer"""
         return self._optimizer
     
     def set_optimizer(self, optimizer: Optimizer):
+        """Sets the campaign optimizer"""
         self._optimizer = optimizer
         
     @property
     def designer(self) -> ExpDesigner:
+        """Campaign Experimental Designer"""
         return self._designer
     
     def set_designer(self, designer: ExpDesigner):
+        """Sets the campaign experiment designer"""
         self._designer = designer
 
     @property
     def objective(self) -> Objective | None:
+        """Campaign Objective function"""
         return self._objective
     
     def set_objective(self, objective: Objective | None):
+        """Sets the campaign objective function"""
         self._objective = objective
 
     @property
     def target(self):
+        """Campaign experimental target(s)"""
         return self._target
 
     def set_target(self,
                    target: Target | list[Target]):
         """
-        Sets the target for the campaign.
+        Sets the experimental target context for the campaign.
 
         Args:
             target (Target | list[Target] | None): The target or list of targets to set.
@@ -243,6 +251,7 @@ class Campaign():
         return new_campaign
 
     def __repr__(self):
+        """String representation of object"""
         return f"obsidian Campaign for {getattr(self,'y_names', None)}; {getattr(self,'m_exp', 0)} observations"
 
     def initialize(self,

@@ -58,14 +58,17 @@ class Param_Discrete(Parameter):
 
     @property
     def min(self):
+        """Minimum parameter value (always 0 for discrete)"""
         return 0
 
     @property
     def nc(self):
+        """Number of discrete categories"""
         return len(self.categories)
         
     @property
     def max(self):
+        """Maximum parameter value (nc-1)"""
         return self.nc-1
         
     def _validate_value(self,
@@ -98,6 +101,7 @@ class Param_Discrete(Parameter):
             self._validate_value(c)
     
     def __repr__(self):
+        """String representation of object"""
         return f"{self.__class__.__name__}(name={self.name}, categories={self.categories})"
 
 
@@ -108,9 +112,11 @@ class Param_Ordinal(Param_Discrete):
     # Ordinal encoder maps to integers
 
     def encode(self, X: np.ndarray):
+        """Encode parameter to a format that can be used for training"""
         return self.unit_map(X)
     
     def decode(self, X: np.ndarray):
+        """Decode parameter from transformed space"""
         return self.unit_demap(X)
 
 
@@ -122,7 +128,7 @@ class Param_Categorical(Param_Discrete):
     # Categorical encoder maps to one-hot columns
     # No decorator on this, we need to handle dataframes
     def encode(self, X: str | ArrayLike):
-        
+        """Encode parameter to a format that can be used for training"""
         X_str = np.array(X).flatten().astype('U11')
         X_cat = pd.Series(X_str).astype(pd.CategoricalDtype(categories=self.categories))
         X_ohe = pd.get_dummies(X_cat, prefix_sep=CAT_SEP, dtype=float, prefix=self.name)
@@ -130,7 +136,7 @@ class Param_Categorical(Param_Discrete):
         return X_ohe
     
     def decode(self, X: ArrayLike):
-        
+        """Decode parameter from transformed space"""
         return [self.categories[int(x)] for x in np.array(X).argmax(axis=1)]
 
 
@@ -142,10 +148,12 @@ class Task(Param_Discrete):
 
     @transform_with_type
     def encode(self, X: np.ndarray):
+        """Encode parameter to a format that can be used for training"""
         return self.unit_map(X)*self.nc
     
     @transform_with_type
     def decode(self, X: np.ndarray):
+        """Decode parameter from transformed space"""
         return np.array(self.unit_demap(X/self.nc)).astype('U11')
 
 
@@ -160,14 +168,17 @@ class Param_Discrete_Numeric(Param_Discrete):
 
     @property
     def min(self):
+        """Minimum parameter value"""
         return np.array(self.categories).min()
 
     @property
     def max(self):
+        """Maximum parameter value"""
         return np.array(self.categories).max()
     
     @property
     def range(self):
+        """The range of the parameter (max - min)"""
         return self.max-self.min
 
     def __init__(self,
@@ -205,10 +216,12 @@ class Param_Discrete_Numeric(Param_Discrete):
 
     @transform_with_type
     def unit_map(self, X: np.ndarray):
+        """Map from measured to 0,1 space"""
         return (X-self.min)/self.range if self.range != 0 else 0*X
 
     @transform_with_type
     def unit_demap(self, X: np.ndarray):
+        """Map from 0,1 to measured space"""
         closest_idx = np.abs(np.array(self.categories)
                              - (X.flatten()[..., np.newaxis]*self.range+self.min)).argmin(axis=1)
         return np.array(self.categories)[closest_idx].reshape(X.shape)

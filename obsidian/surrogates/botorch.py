@@ -126,7 +126,7 @@ class SurrogateBoTorch(SurrogateModel):
         Args:
             X (pd.DataFrame): Input parameters for the training data
             y (pd.Series): Training data responses
-            cat_dims (list, optional): A list of indices for categorical dimensions in the input data. Default is None.
+            cat_dims (list, optional): A list of indices for categorical dimensions in the input data. Default is ``None``.
 
         Returns:
             None. Updates the surrogate model attributes, including regressed parameters.

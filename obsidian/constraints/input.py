@@ -31,9 +31,9 @@ def InConstraint_Generic(X_space: ParamSpace,
 
     Args:
         X_space (ParamSpace): The parameter space object.
-        indices (list[float | int], optional): The indices of the parameters to be constrained. Defaults to [0].
-        coeff (list[float | int | list], optional): The coefficients for the parameters in the constraint equation. Defaults to [0].
-        rhs (int | float, optional): The right-hand side value of the constraint equation. Defaults to -1.
+        indices (list[float | int], optional): The indices of the parameters to be constrained. Defaults to ``[0]``.
+        coeff (list[float | int | list], optional): The coefficients for the parameters in the constraint equation. Defaults to ``[0]``.
+        rhs (int | float, optional): The right-hand side value of the constraint equation. Defaults to ``-1``.
 
     Returns:
         tuple[Tensor, Tensor, Tensor]: A tuple containing the indices, coefficients, and right-hand side value of the constraint.
@@ -102,7 +102,7 @@ def InConstraint_ConstantDim(X_space: ParamSpace,
     Args:
         X_space (ParamSpace): The parameter space object.
         dim (int): The dimension of the constant parameter.
-        tol (int | float, optional): The tolerance value. Defaults to 0.01.
+        tol (int | float, optional): The tolerance value. Defaults to ``0.01``.
 
     Returns:
         tuple[callable, bool]: A tuple containing the constraint function and a boolean indicating if it is an inter-point constraint.

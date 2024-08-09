@@ -21,7 +21,9 @@ class Identity_Objective(Objective):
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
-        
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         return self.output_shape(samples)
 
 
@@ -34,9 +36,9 @@ class Feature_Objective(Objective):
     Args:
         X_space (ParamSpace): The parameter space.
         indices (list[float | int], optional): The indices of the parameters in the real space
-            to be used as features. Defaults to [0].
+            to be used as features. Defaults to ``[0]``.
         coeff (list[float | int | list], optional): The coefficients corresponding to each feature.
-            Defaults to [0].
+            Defaults to ``[0]``.
 
     Raises:
         ValueError: If the length of `indices` and `coeff` are not the same.
@@ -62,11 +64,15 @@ class Feature_Objective(Objective):
         self.X_space = X_space
     
     def __repr__(self):
+        """String representation of object"""
         return f'{self.__class__.__name__} (indices={self.indices.tolist()}, coeff={self.coeff.tolist()})'
 
     def forward(self,
                 samples: Tensor,
                 X: Tensor) -> Tensor:
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         # Ydim = s * b * q * m
         # Xdim = b * q * d
         # if q is 1, it is omitted
@@ -89,7 +95,7 @@ class Feature_Objective(Objective):
         return total_obj
     
     def save_state(self) -> dict:
-        
+        """Saves the objective to a state dictionary"""
         obj_dict = {'name': self.__class__.__name__,
                     'state_dict': tensordict_to_dict(self.state_dict()),
                     'X_space': self.X_space.save_state()}
@@ -98,7 +104,7 @@ class Feature_Objective(Objective):
     
     @classmethod
     def load_state(cls, obj_dict: dict):
-               
+        """Loads the objective from a state dictionary"""
         new_obj = cls(ParamSpace.load_state(obj_dict['X_space']),
                       **obj_dict['state_dict'])
         
@@ -148,16 +154,19 @@ class Utopian_Distance(Objective):
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
-        
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         distance = (-1)*(self.u_t-samples).abs()
         
         return self.output_shape(distance)
     
     def __repr__(self):
+        """String representation of object"""
         return f'{self.__class__.__name__} (utopian={self.utopian.tolist()})'
     
     def save_state(self) -> dict:
-        
+        """Saves the objective to a state dictionary"""
         obj_dict = {'name': self.__class__.__name__,
                     'state_dict': tensordict_to_dict(self.state_dict()),
                     'targets': [t.save_state() for t in self.targets]}
@@ -166,7 +175,7 @@ class Utopian_Distance(Objective):
     
     @classmethod
     def load_state(cls, obj_dict: dict):
-               
+        """Loads the objective from a state dictionary"""
         new_obj = cls(targets=[Target.load_state(t_dict) for t_dict in obj_dict['targets']],
                       **obj_dict['state_dict'])
         
@@ -183,7 +192,7 @@ class Bounded_Target(Objective):
             If a bound is None, it is ignored.
         targets (Target | list[Target]): The target or list of targets.
         tau (float, optional): The temperature parameter for the sigmoid function.
-            Defaults to 1e-3.
+            Defaults to ``1e-3``.
 
     Attributes:
         lb (torch.Tensor): The lower bounds for the targets.
@@ -229,12 +238,15 @@ class Bounded_Target(Objective):
         self.register_buffer('tau', tau)
 
     def __repr__(self):
+        """String representation of object"""
         return f'{self.__class__.__name__} (indices={self.indices.tolist()}, bounds={self.bounds})'
 
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
-        
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         approx_lb = torch.sigmoid((samples[..., self.indices] - self.lb) / self.tau)
         approx_ub = torch.sigmoid((self.ub - samples[..., self.indices]) / self.tau)
         product = approx_lb * approx_ub
@@ -243,7 +255,7 @@ class Bounded_Target(Objective):
         return self.output_shape(out)
 
     def save_state(self) -> dict:
-        
+        """Saves the objective to a state dictionary"""
         obj_dict = {'name': self.__class__.__name__,
                     'state_dict': tensordict_to_dict(self.state_dict()),
                     'bounds': self.bounds,
@@ -253,7 +265,7 @@ class Bounded_Target(Objective):
     
     @classmethod
     def load_state(cls, obj_dict: dict):
-               
+        """Loads the objective from a state dictionary"""
         new_obj = cls(targets=[Target.load_state(t_dict) for t_dict in obj_dict['targets']],
                       bounds=obj_dict['bounds'],
                       **obj_dict['state_dict'])
@@ -277,9 +289,13 @@ class Index_Objective(Objective):
         self.register_buffer('index', torch.tensor(index))
         
     def __repr__(self):
+        """String representation of object"""
         return f'{self.__class__.__name__} (index={self.index.item()})'
         
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
         return samples[..., self.index]

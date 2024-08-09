@@ -45,7 +45,7 @@ class DNN(Model):
         x = self.input_layer(x)
         x = self.middle_layers(x)
         x = self.outer_layer(x)
-                
+        """Evaluate the forward pass of the model on inputs X"""
         return x
 
     def posterior(self,
@@ -53,7 +53,7 @@ class DNN(Model):
                   n_sample: int = 1024,
                   output_indices: list[int] = None,
                   observation_noise: bool | Tensor = False) -> Posterior:
-        
+        """Calculates the posterior distribution of the model at X"""
         if not output_indices:
             output_indices = list(range(self._num_outputs))
         elif not all(0 <= i < self._num_outputs for i in output_indices):
@@ -74,4 +74,5 @@ class DNN(Model):
     
     @property
     def num_outputs(self) -> int:
+        """Number of outputs of the model"""
         return self._num_outputs
