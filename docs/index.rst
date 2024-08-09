@@ -1,7 +1,8 @@
-
 .. toctree::
    :hidden:
    :maxdepth: 2
+
+   GitHub <https://github.com/MSDLLCpapers/obsidian/>
 
    stubs/api_docs
 
