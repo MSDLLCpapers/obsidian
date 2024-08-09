@@ -3,8 +3,8 @@ name = "obsidian-apo"
 version = "0.7.12"
 description = "Automated experiment design and black-box optimization"
 authors = [
-    {name = "Kevin Stone, email = "kevin.stone38@gmail.com"},
-    {name = "Yuting Xu", email = "yuting.xu@merck.com"}
+    "Kevin Stone <kevin.stone38@gmail.com>",
+    "Yuting Xu <yuting.xu@merck.com>"
 ]
 packages = [
     { include = "obsidian" },
