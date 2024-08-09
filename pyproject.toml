@@ -2,15 +2,15 @@
 name = "obsidian-apo"
 version = "0.7.12"
 description = "Automated experiment design and black-box optimization"
-authors = [
-    {name = "Kevin Stone, email = "kevin.stone38@gmail.com"},
-    {name = "Yuting Xu", email = "yuting.xu@merck.com"}
-]
 packages = [
     { include = "obsidian" },
 ]
 
 [project]
+authors = [
+    {name = "Kevin Stone", email = "kevin.stone38@gmail.com"},
+    {name = "Yuting Xu", email = "yuting.xu@merck.com"}
+]
 readme = "readme.md"
 requires-python = ">=3.10"
 license = {text = "GPLv3"}
