@@ -22,7 +22,7 @@ To simplify the description, assuming the preferred direction of any response va
 
 If there are multiple experimental outcomes ($J \geq 1$), the $j^{th}$ outcome in vector $Y_i$ is denoted as $Y_i^{j}$.
 
-### Evaluating the Measured Experimental Conditions 
+#### Evaluating the Measured Experimental Conditions 
 
 A direct assessment of input features is assigning a binary indicator (True/False) to identify the best performer $X_{opt}$ or an opimal solution set $\chi_{opt}$.
  
@@ -58,7 +58,7 @@ For multi-objective optimization, the evaluation is subjective to user preferenc
 
 
 
-### The Overall Optimization Performance Metrics
+#### The Overall Optimization Performance Metrics
 
 To monitor the progress of SMBO workflow, we need to define a scalar evaluation metric to summarize performance over all the $N$ data points. 
 
@@ -75,14 +75,29 @@ To monitor the progress of SMBO workflow, we need to define a scalar evaluation 
 
 ---
 ## Surrogate Model Interpretation
+In this session, we assume the input feature $X$ is a $K$-dimensional vector $(X_1, X_2, ..., X_K)$, and all the model explanation techniques are applied to each surrogate model outcome individually. 
 
-### SHAP (SHapley Additive exPlanations) 
+#### SHAP (SHapley Additive exPlanations) 
 
-### Partial Dependence Plot
+We use the Kernel SHAP algorithm to estimate the Shapley values, which is a feature attribution method that quantifies the contribution of each feature towards the surrogate model's prediction for any input data, providing insights into variable importance and model explanation.
 
-### Individual Conditional Expectation 
+The Shapley value is a concept from game theory that aims to fairly allocate the total gains among the players in a coalitional game. In the original definition of the Shapley value, the contribution of each player is the difference in gains when including or excluding this player, averaged over all possible permutations of players. Let $v(S)$ be the gain of any player subset $S$, the Shapley value $\varphi_k(v)$ for the $k^{th}$ player is defined as:
 
-### Sensitivity Analysis 
+\begin{equation*}
+\varphi_k(v) = \frac{1}{K!} \sum_{S \subseteq K \setminus {k}} |S|! \times (K-|S|-1)! \times \big(v(S \cup \{k\}) - v(S)\big)
+\end{equation*}
+
+It can be used to explain the outputs of a machine learning model, where the input features are considered as the players and model prediction is interpreted as the total gains achieved through the collaborative effort of these features.  
+
+Calculating the exact Shapley values is not feasible due to the large number of $2^K$ possible subsets and the need to train a new prediction model for each possible subset of features for obtaining $v(S)$. 
+The Kernel SHAP algorithm implemented in [SHAP](https://github.com/shap/shap) package provides a model-agnostic and computationally efficient approach to estimate Shapley values.
+
+
+#### Partial Dependence Plot
+
+#### Individual Conditional Expectation 
+
+#### Sensitivity Analysis 
 
 
 
@@ -93,7 +108,7 @@ To monitor the progress of SMBO workflow, we need to define a scalar evaluation 
 
 
 
-### Prediction Uncertainty
+#### Prediction Uncertainty
 (TBA...)
 
 
