@@ -10,6 +10,7 @@
 - Fixed SHAP explainer analysis and visualization functions
 - Changed SHAP visualization colors to use obsidian branding
 - Moved sensitivity method from campaign.analysis to campaign.explainer
+- Moved Explainer testing from optimizer pytests to campaign pytests
 
 ### Removed
 - Removed code chunks regarding unused optional inputs to PDP ICE function imported from SHAP GitHub
