@@ -14,6 +14,7 @@
 - Moved sensitivity method from campaign.analysis to campaign.explainer
 - Moved Explainer testing from optimizer pytests to campaign pytests
 - Generalized plotting function MOO_results and renamed optim_progress
+- Campaign analysis and plotting methods fixed for 
 
 ### Removed
 - Removed code chunks regarding unused optional inputs to PDP ICE function imported from SHAP GitHub
