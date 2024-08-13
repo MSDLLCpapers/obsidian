@@ -7,6 +7,7 @@ from obsidian.campaign import Campaign, Explainer, calc_ofat_ranges
 from obsidian.objectives import Identity_Objective, Scalar_WeightedNorm, Feature_Objective, \
     Objective_Sequence, Utopian_Distance, Index_Objective, Bounded_Target
 from obsidian.plotting import plot_interactions, plot_ofat_ranges
+from obsidian.exceptions import IncompatibleObjectiveError, UnfitError
 
 
 from obsidian.tests.utils import DEFAULT_MOO_PATH
@@ -35,12 +36,18 @@ def test_campaign(X_space, sim_fcn, target):
     y0 = simulator.simulate(X0)
     Z0 = pd.concat([X0, y0], axis=1)
     campaign.m_exp
+    
+    # Test some conditional usage
     campaign.add_data(Z0)
+    campaign.fit()
     campaign.clear_data()
+    campaign.y
+    
     Z0['Iteration'] = 5
     campaign.add_data(Z0)
     campaign.y
     campaign.fit()
+    campaign.response_max
 
     obj_dict = campaign.save_state()
     campaign2 = Campaign.load_state(obj_dict)
@@ -70,6 +77,7 @@ def test_campaign_objectives(obj):
     campaign.set_objective(obj)
     if campaign.objective:
         campaign.objective.__repr__()
+    campaign.o
 
     obj_dict = campaign.save_state()
     campaign2 = Campaign.load_state(obj_dict)
@@ -80,6 +88,7 @@ def test_campaign_objectives(obj):
 
 def test_explain():
     exp = Explainer(campaign.optimizer)
+    exp.__repr__
     exp.shap_explain(n=50)
 
     exp.shap_summary()
@@ -103,10 +112,73 @@ X_ref_test = [None,
 
 @pytest.mark.parametrize('X_ref', X_ref_test)
 def test_analysis(X_ref):
+    ofat_ranges, _ = calc_ofat_ranges(campaign.optimizer, threshold=0.5, X_ref=X_ref, calc_interacts=False)
     ofat_ranges, cor = calc_ofat_ranges(campaign.optimizer, threshold=0.5, X_ref=X_ref)
-
     plot_interactions(campaign.optimizer, cor)
     plot_ofat_ranges(campaign.optimizer, ofat_ranges)
+    
+    ofat_ranges, cor = calc_ofat_ranges(campaign.optimizer, threshold=9999, X_ref=X_ref)
+    plot_interactions(campaign.optimizer, cor)
+    plot_ofat_ranges(campaign.optimizer, ofat_ranges)
+
+
+@pytest.mark.fast
+def test_campaign_validation():
+    
+    random_data = pd.DataFrame(data={'A': [1, 2, 3], 'B': [4, 5, 6]})
+    with pytest.raises(KeyError):
+        campaign.add_data(random_data)
+        
+    with pytest.raises(KeyError):
+        campaign.add_data(campaign.X)
+
+    with pytest.raises(IncompatibleObjectiveError):
+        campaign.set_objective(Identity_Objective(mo=False))
+        
+    with pytest.raises(ValueError):
+        campaign2 = Campaign(X_space, target)
+        campaign2.fit()
+
+
+@pytest.mark.fast
+def test_explainer_validation():
+    
+    campaign2 = Campaign(X_space, target)
+    with pytest.raises(UnfitError):
+        exp = Explainer(campaign2.optimizer)
+        
+    exp = Explainer(campaign.optimizer)
+    with pytest.raises(UnfitError):
+        exp.shap_summary()
+        
+    with pytest.raises(UnfitError):
+        exp.shap_summary_bar()
+        
+    with pytest.raises(UnfitError):
+        exp.shap_single_point(X_new=campaign.X_space.mean())
+    
+    random_data = pd.DataFrame(data={'A': [1], 'B': [4]})
+    long_data = pd.DataFrame(data={'Parameter 1': [1, 2], 'Parameter 2': [1, 2]})
+    
+    with pytest.raises(ValueError):
+        exp.shap_explain(n=50, X_ref=random_data)
+    
+    with pytest.raises(ValueError):
+        exp.shap_explain(n=50, X_ref=long_data)
+    
+    exp.shap_explain(n=50)
+    
+    with pytest.raises(ValueError):
+        exp.shap_single_point(X_new=random_data)
+    
+    with pytest.raises(ValueError):
+        exp.shap_single_point(X_new=campaign.X_space.mean(), X_ref=random_data)
+
+    with pytest.raises(ValueError):
+        exp.sensitivity(X_ref=random_data)
+    
+    with pytest.raises(ValueError):
+        exp.sensitivity(X_ref=long_data)
 
 
 if __name__ == '__main__':
