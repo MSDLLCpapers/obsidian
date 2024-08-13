@@ -95,11 +95,35 @@ The Kernel SHAP algorithm implemented in [SHAP](https://github.com/shap/shap) pa
 
 #### Partial Dependence Plot
 
+Partial Dependence Plot (PDP) is a powerful visualization tool used in the interpretation and explanation of complex machine learning models. 
+It helps to visualize the relationship between a specific feature and the target variable while holding all other features constant. 
+PDPs are particularly valuable when working with sophisticated models like deep neural networks, random forests, and gradient boosting machines, which are often considered "black boxes" due to their complexity. 
+By isolating the effect of a single feature, PDPs can reveal whether the relationship with the target variable is linear, monotonic, or more intricate. 
+They also have the ability to uncover interactions between features, providing deeper insights into the model's behavior. 
+One of the key advantages of PDP is their relative ease of computation and interpretation, making them an effective means of communicating model insights to both technical and non-technical audiences. 
+This versatility has made PDPs an essential technique in the field of explainable AI (XAI), allowing stakeholders to gain trust in and understanding of complex predictive models across various domains.          
+
 #### Individual Conditional Expectation 
+
+Individual Conditional Expectation (ICE) plots serve as a powerful complement to Partial Dependence Plots (PDPs), offering a granular, instance-level perspective that reveals how predictions change for individual data points as a feature value varies, thereby uncovering heterogeneous effects and non-linear relationships that might be obscured in the aggregate view provided by PDPs.
+While Partial Dependence Plots (PDPs) provide a global view of a feature's impact on model predictions, ICE plots offer a more granular, instance-level perspective. 
+These plots illustrate how the prediction for a specific data point changes as the value of a particular feature is varied, while keeping all other features constant. 
+This approach allows us to observe the model's behavior at a local level, providing crucial insights into how the model makes predictions for individual instances. 
+ICE plots are particularly valuable when dealing with complex, non-linear relationships or when there are significant interactions between features that might be obscured in aggregate visualizations. 
+By displaying a separate line for each instance in the dataset, ICE plots can reveal heterogeneity in feature effects that might be averaged out in PDPs. 
+This makes them especially useful for identifying subgroups within the data that may be affected differently by changes in a feature. 
+
 
 #### Sensitivity Analysis 
 
-
+Sensitivity analysis around the optimal solution, particularly after the suggestions have stabilized over several iterations, serves as a critical step in validating and understanding the robustness of the identified solution. 
+As the optimization process converges, it's essential to examine how small perturbations in the input variables affect the output, ensuring that the algorithm hasn't fallen into a local optimum or prematurely converged. 
+This analysis helps quantify the trade-off between exploration and exploitation, a key consideration in Bayesian optimization. 
+By systematically varying the parameters around the suggested optimal point, we can gauge the stability of the solution and identify any regions of high sensitivity. 
+This process not only provides insights into the model's behavior but also helps in assessing the reliability of the optimization results. 
+Moreover, sensitivity analysis can reveal potential areas for further refinement or highlight the need for additional iterations if the optimal point proves to be unstable. 
+In cases where the analysis indicates a robust optimal solution, it strengthens confidence in the APO outcome and provides valuable information about the parameter space surrounding the optimum. 
+This understanding is particularly crucial in complex, high-dimensional problems where visualizing the entire optimization landscape may not be feasible.
 
 
 
@@ -109,8 +133,13 @@ The Kernel SHAP algorithm implemented in [SHAP](https://github.com/shap/shap) pa
 
 
 #### Prediction Uncertainty
-(TBA...)
 
+Adding prediction intervals as an uncertainty metric to suggested candidates is crucial for enhancing both the performance and interpretability of the optimization process. 
+These intervals provide a quantifiable measure of uncertainty around predicted values, enabling a balanced approach between exploration of uncertain areas and exploitation of promising regions. 
+This balance is key to avoiding premature convergence to local optima and making more informed decisions about where to sample next. 
+Furthermore, they greatly enhance the explainability of the process by visually and numerically representing the model's confidence across the parameter space. 
+This additional context allows for clearer communication of potential risks and rewards associated with different candidate points. 
+By incorporating prediction intervals, APO becomes a more transparent and interpretable tool, which is crucial for its effective real-world applications where understanding the rationale behind suggestions is as important as the suggestions themselves.
 
 
 
