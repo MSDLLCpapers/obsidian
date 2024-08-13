@@ -97,7 +97,7 @@ class Param_Discrete(Parameter):
             self.categories = categories.split(',')
         else:
             self.categories = categories
-        for c in categories:
+        for c in self.categories:
             self._validate_value(c)
     
     def __repr__(self):
@@ -183,12 +183,14 @@ class Param_Discrete_Numeric(Param_Discrete):
 
     def __init__(self,
                  name,
-                 categories: int | float | list[int | float]):
-        if not isinstance(categories, (int, float, list)):
+                 categories: list[int | float]):
+        
+        if not isinstance(categories, list):
             raise TypeError('Categories must be a number or list of numbers')
-        if isinstance(categories, list):
-            if not all(isinstance(x, (int, float)) for x in categories):
-                raise TypeError('Categories must be a list of numbers')
+               
+        self.categories = categories
+        for c in self.categories:
+            self._validate_value(c)
         
         self.name = name
         self.categories = categories if isinstance(categories, list) else [categories]

@@ -15,6 +15,8 @@ import json
 import pandas as pd
 import pytest
 
+import matplotlib
+matplotlib.use('inline')
 
 target_test = [
     [Target(name='Response 1', f_transform='Standard', aim='max'),

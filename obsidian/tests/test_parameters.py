@@ -8,10 +8,17 @@ from obsidian.parameters import (
     Param_Ordinal,
     Param_Discrete,
     Task,
-    ParamSpace
+    ParamSpace,
+    Target,
+    Standard_Scaler,
+    Logit_Scaler
 )
 
+from obsidian.exceptions import UnsupportedError, UnfitError
+
 import numpy as np
+import pandas as pd
+import torch
 from pandas.testing import assert_frame_equal
 import pytest
 
@@ -74,7 +81,7 @@ test_params = [
         Param_Observational('Parameter 2', 0, 10),
         Param_Discrete_Numeric('Parameter 3', [-2, -1, 1, 2]),
         Param_Categorical('Parameter 4', ['A', 'B', 'C', 'D']),
-        Param_Ordinal('Parameter 5', ['A', 'B', 'C', 'D']),
+        Param_Ordinal('Parameter 5', 'A, B, C, D'),
         Task('Parameter 6', ['A', 'B', 'C', 'D']),
     ]
 
@@ -112,7 +119,97 @@ def test_param_encoding_types(param, check_type):
         assert X_u_inv == X
         if not isinstance(param, Param_Categorical):  # Categorical params don't decode to the same shape
             assert X_t_inv == X
-    
 
+
+# VALIDATION TESTS - Force errors to be raised in object usage
+
+numeric_list = [1, 2, 3, 4]
+number = 1
+string = 'A'
+string_list = ['A', 'B', 'C', 'D']
+
+
+@pytest.mark.fast
+def test_numeric_param_validation():
+    with pytest.raises(TypeError):
+        param = Param_Continuous('test', min=string, max=string)
+        
+    with pytest.raises(ValueError):
+        param = Param_Continuous('test', min=1, max=0)
+        param._validate_value(2)
+        
+    with pytest.raises(TypeError):
+        Param_Observational('test', min=string, max=string)
+
+
+@pytest.mark.fast
+def test_discrete_param_validation():
+    with pytest.raises(TypeError):
+        param = Param_Categorical('test', categories=numeric_list)
+        
+    with pytest.raises(ValueError):
+        param = Param_Categorical('test', categories=string_list)
+        param._validate_value('E')
+        
+    with pytest.raises(TypeError):
+        param = Param_Ordinal('test', categories=numeric_list)
+        
+    with pytest.raises(TypeError):
+        param = Param_Discrete_Numeric('test', categories=string_list)
+    
+    with pytest.raises(ValueError):
+        param = Param_Discrete_Numeric('test', categories=numeric_list)
+        param._validate_value(5)
+
+
+@pytest.mark.fast
+def test_paramspace_validation():
+    with pytest.raises(ValueError):
+        X_space = ParamSpace([test_params[0], test_params[0]])
+    
+    cat_sep_param = Param_Continuous('Parameter^1', 0, 10)
+    with pytest.raises(ValueError):
+        X_space = ParamSpace([test_params[0], cat_sep_param])
+        
+    with pytest.raises(UnsupportedError):
+        X_space = ParamSpace([Task('Parameter X', ['A', 'B', 'C', 'D']),
+                              Task('Parameter Y', ['A', 'B', 'C', 'D'])])
+
+    test_data = pd.DataFrame(np.random.uniform(0, 1, (10, 2)), columns=['Parameter X', 'Parameter Z'])
+    X_space = ParamSpace([Param_Continuous('Parameter X', min=0, max=1),
+                          Param_Continuous('Parameter Y', min=0, max=1)])
+    with pytest.raises(KeyError):
+        test_encoded = X_space.encode(test_data)
+        
+        
+@pytest.mark.fast
+def test_target_validation():
+    
+    with pytest.raises(ValueError):
+        Target('Response1', aim='maximize')
+    
+    with pytest.raises(KeyError):
+        Target('Response1', f_transform='quadratic')
+    
+    test_response = torch.rand(10)
+    with pytest.raises(UnfitError):
+        Target('Response1').transform_f(test_response)
+    
+    with pytest.raises(TypeError):
+        Target('Response1').transform_f('ABC')
+        
+    with pytest.raises(TypeError):
+        Target('Response1').transform_f(['A', 'B', 'C'])
+    
+    with pytest.raises(UnfitError):
+        transform_func = Standard_Scaler()
+        transform_func.forward(test_response)
+    
+    test_neg_response = -0.5 - torch.rand(10)
+    with pytest.warns(UserWarning):
+        transform_func = Logit_Scaler(range_response=100)
+        transform_func.forward(test_neg_response, fit=False)
+        
+        
 if __name__ == '__main__':
     pytest.main([__file__, '-m', 'fast'])

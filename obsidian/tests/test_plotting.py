@@ -13,6 +13,8 @@ import pytest
 from obsidian.tests.utils import DEFAULT_MOO_PATH
 import json
 
+import matplotlib
+matplotlib.use('inline')
 
 with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)

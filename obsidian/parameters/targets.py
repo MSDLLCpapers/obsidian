@@ -64,19 +64,24 @@ class Target():
         if not (isinstance(f, (pd.Series, pd.DataFrame, np.ndarray, list, float, int))
                 or torch.is_tensor(f)):
             raise TypeError('f being transformed must be numeric or array-like')
-
-        if not fit:
-            if not hasattr(self, 'f_transform_func'):
-                raise UnfitError('Transform function is being called without being fit first.')
-
+        
+        # Convert everything to numpy except Tensors
         if isinstance(f, (float, int)):
-            f = [f]
-
+            f = np.array([f])
+        if isinstance(f, (list)):
+            f = np.array(f)
         if isinstance(f, (pd.Series, pd.DataFrame)):
             f = f.values
 
         if not torch.is_tensor(f):
+            # Check that types are valid, then convert to Tensor
+            if not all(np.issubdtype(f_i.dtype, np.number) for f_i in f.flatten()):
+                raise TypeError('Each element of f being transformed must be numeric')
             f = torch.tensor(f)
+
+        if not fit:
+            if not hasattr(self, 'f_transform_func'):
+                raise UnfitError('Transform function is being called without being fit first.')
 
         if f.ndim == 1:
             f = f.reshape(-1, 1)

@@ -12,8 +12,9 @@ class Parameter(ABC):
                  name: str):
         self.name = name
 
+    @abstractmethod
     def __repr__(self):
-        return f"{self.__class__.__name__}(name={self.name})"
+        pass  # pragma: no cover
 
     @abstractmethod
     def _validate_value(self,
