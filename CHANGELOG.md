@@ -7,6 +7,7 @@
 ### Modified
 - Renamed aq_func hyperparmeter "Xi_f" to "inflate"
 - Moved default aq_func choices for single/multi into aq_defaults of acquisition.config
+- Fixed and improved campaign analysis methods
 
 ## [0.7.11]
 ### Added
