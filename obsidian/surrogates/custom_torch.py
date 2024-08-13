@@ -7,6 +7,16 @@ import torch.nn as nn
 from torch import Tensor
 
 
+class DNNPosterior(EnsemblePosterior):
+    
+    def __init__(self, values: Tensor):
+        super().__init__(values)
+         
+    def quantile(self, value: Tensor) -> Tensor:
+        """Quantile of the ensemble posterior"""
+        return self.values.quantile(q=value.to(self.values), dim=-3, interpolation='linear')
+
+
 class DNN(Model):
     def __init__(self,
                  train_X: Tensor,
@@ -50,7 +60,7 @@ class DNN(Model):
 
     def posterior(self,
                   X: Tensor,
-                  n_sample: int = 1024,
+                  n_sample: int = 16384,
                   output_indices: list[int] = None,
                   observation_noise: bool | Tensor = False) -> Posterior:
         """Calculates the posterior distribution of the model at X"""
@@ -68,7 +78,7 @@ class DNN(Model):
         y_out = self.forward(X_sample)
         self.eval()
         
-        post = EnsemblePosterior(y_out[..., output_indices])
+        post = DNNPosterior(y_out[..., output_indices])
         
         return post
     

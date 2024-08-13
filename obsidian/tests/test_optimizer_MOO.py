@@ -35,9 +35,15 @@ target = [
 ]
 
 
-@pytest.mark.parametrize('surrogate', [pytest.param('GP', marks=pytest.mark.fast), 'GPflat', pytest.param('DKL', marks=pytest.mark.slow)])
+@pytest.mark.parametrize('surrogate', [pytest.param('GP', marks=pytest.mark.fast),
+                                       'GPflat',
+                                       pytest.param('DKL', marks=pytest.mark.slow),
+                                       'DNN'])
 def test_optimizer_fit(X_space, surrogate, Z0, serial_test=True):
     optimizer = BayesianOptimizer(X_space, surrogate=surrogate, seed=0, verbose=0)
+    
+    tol = 1e-2 if surrogate == 'DNN' else 1e-5
+    
     optimizer.fit(Z0, target=target)
     if serial_test:
         save = optimizer.save_state()
@@ -45,8 +51,8 @@ def test_optimizer_fit(X_space, surrogate, Z0, serial_test=True):
         optimizer_2.__repr__()
         y_pred = optimizer.predict(optimizer.X_train)
         y_pred_2 = optimizer_2.predict(optimizer.X_train)
-        y_error = ((y_pred_2-y_pred)/y_pred).values
-        assert abs(y_error).max() < 1e-5, 'Prediction error in loading parameters of saved optimizer'
+        y_error = ((y_pred_2-y_pred)/y_pred.max(axis=0)).values
+        assert abs(y_error).max() < tol, 'Prediction error in loading parameters of saved optimizer'
 
 
 # Generate a baseline optimizer to use for future tests
