@@ -299,13 +299,16 @@ def surface_plot(optimizer: Optimizer,
     if plot_data:
         # Use a marker size which is larger if closer to the "other" values of the surface
         # Smaller markers mean there are other variables pulling it away from the surface plot
-        X_t_train_ex = optimizer.X_t_train.copy().drop(columns=[X0_name, X1_name]).values
-        X_t_test_ex = optimizer.X_space.encode(X_test.copy().drop(columns=[X0_name, X1_name]).drop_duplicates()).values
+        if len(optimizer.X_space) != 2:
+            X_t_train_ex = optimizer.X_t_train.copy().drop(columns=[X0_name, X1_name]).values
+            X_t_test_ex = optimizer.X_space.encode(X_test.copy().drop(columns=[X0_name, X1_name]).drop_duplicates()).values
 
-        if X_t_train_ex.shape[0] > 1:
-            X_t_dist = np.linalg.norm(X_t_train_ex-X_t_test_ex, ord=2, axis=1)
-            X_t_dist_scaled = (X_t_dist - X_t_dist.min())/(X_t_dist.max()-X_t_dist.min())
-            dist_scaled = 15-10*X_t_dist_scaled
+            if X_t_train_ex.shape[0] > 1:
+                X_t_dist = np.linalg.norm(X_t_train_ex-X_t_test_ex, ord=2, axis=1)
+                X_t_dist_scaled = (X_t_dist - X_t_dist.min())/(X_t_dist.max()-X_t_dist.min())
+                dist_scaled = 15-10*X_t_dist_scaled
+            else:
+                dist_scaled = 10
         else:
             dist_scaled = 10
         
