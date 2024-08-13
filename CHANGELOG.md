@@ -7,6 +7,7 @@
 - Docstrings and typing to Explainer methods
 - Campaign.out property to dynamically capture measured responses "y" or objectives as appropriate
 - Campaign.evaluate method to map optimizer.evaluate method
+- DNN to PyTests
 
 ### Modified
 - Fixed SHAP explainer analysis and visualization functions
@@ -15,6 +16,7 @@
 - Moved Explainer testing from optimizer pytests to campaign pytests
 - Generalized plotting function MOO_results and renamed optim_progress
 - Campaign analysis and plotting methods fixed for 
+- Greatly increased the number of samples used for DNNPosterior, increasing the stability of posterior predictions
 
 ### Removed
 - Removed code chunks regarding unused optional inputs to PDP ICE function imported from SHAP GitHub
