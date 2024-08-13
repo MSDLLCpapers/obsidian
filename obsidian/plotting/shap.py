@@ -1,105 +1,140 @@
+"""Custom plots for SHAP analysis visualization"""
+
+from .branding import obsidian_cm, obsidian_colors
+
+from shap.plots._partial_dependence import compute_bounds
+from shap.utils import convert_name
+
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+
 import numpy as np
 import pandas as pd
 
-from shap import Explanation
-from shap.plots.colors import blue_rgb, light_blue_rgb, red_blue_transparent, red_rgb
-from shap.utils import convert_name
-from shap.plots._partial_dependence import compute_bounds
-
-from matplotlib.pyplot import get_cmap
+from typing import Callable
 
 
-def one_shap_value(shap_value_new, expected_value, X_names):
+def one_shap_value(shap_value_new: np.ndarray,
+                   expected_value: float,
+                   X_names: list[str]) -> tuple[Figure, Figure]:
     """
     Visualize the shap values of one data point
+    
+    Args:
+        shap_value_new (np.ndarray): The SHAP values of a single data point
+            to be compared to a reference point.
+        expected_value (float): The expected value at the reference point.
+        X_names (list[str]): The names of the features.
+        
+    Returns:
+        Figure: The bar plot of SHAP values for the single data point.
+        Figure: The line plot of cumulative SHAP values for the data point in
+            comparison to the reference point.
+            
     """
     
-    cumulative_shap = np.cumsum(shap_value_new)
+    # First figure = Bar plot, just SHAP values of the new point
     pred_new = expected_value + np.sum(shap_value_new)
     
-    fig1 = plt.figure(figsize=(8, 6))
-    plt.bar(range(len(shap_value_new)), shap_value_new)
+    fig_bar = plt.figure(figsize=(8, 6))
+    plt.bar(range(len(shap_value_new)), shap_value_new, color=obsidian_colors.primary.teal)
     
     plt.xticks(range(len(shap_value_new)), X_names)
     plt.ylabel('SHAP Value')
     plt.xlabel('Feature')
     plt.title('SHAP Values for Single Datapoint')
     plt.axhline(0, color='grey', linestyle='--')
-    plt.close(fig1)
+    plt.close(fig_bar)
 
-    fig2 = plt.figure(figsize=(8, 6))
+    # Second figure = Line plot, cumulative SHAP values from new point to reference
+    fig_line = plt.figure(figsize=(8, 6))
     
+    cumulative_shap = np.cumsum(shap_value_new)
     y = cumulative_shap+expected_value
     n = len(cumulative_shap)
     
-    plt.plot(range(n), y, color = 'steelblue')
-    plt.scatter(range(n), y, color='blue')
+    plt.plot(range(n), y, color=obsidian_colors.primary.teal)
+    plt.scatter(range(n), y, color=obsidian_colors.secondary.light_teal)
     
     plt.vlines(0, expected_value, y[0], colors='steelblue', linestyles='solid')
-    plt.scatter(0, expected_value, color='purple')
-    plt.scatter(n-1, y[-1], color='pink')
+    plt.scatter(0, expected_value, color=obsidian_colors.accent.vista_blue)
+    plt.scatter(n-1, y[-1], color=obsidian_colors.secondary.blue)
     
     plt.xticks(range(n), X_names)
     plt.xlabel('Feature')
     plt.ylabel('Cumulative SHAP Value')
     plt.title('Cumulative SHAP Values for Single Datapoint')
-    plt.axhline(expected_value, color='purple', linestyle='--',label='Reference')
-    plt.axhline(pred_new, color='pink', linestyle='--',label='New Data')
-    plt.ylim([min(min(y),expected_value)*0.98, max(max(y),expected_value)*1.02])
+    plt.axhline(expected_value, color=obsidian_colors.accent.vista_blue,
+                linestyle='--', label='Reference')
+    plt.axhline(pred_new, color=obsidian_colors.secondary.blue,
+                linestyle='--', label='New Data')
+    plt.ylim([min(min(y), expected_value)*0.98, max(max(y), expected_value)*1.02])
     plt.legend()
-    plt.close(fig2)
+    plt.close(fig_line)
     
-    return fig1, fig2
+    return fig_bar, fig_line
 
 
-def partial_dependence(ind, model, data,
-                       ice_color_var=None,
-                       xmin="percentile(0)", xmax="percentile(100)",
-                       npoints=None, feature_names=None, hist=True, model_expected_value=False,
-                       feature_expected_value=False, shap_values=None,
-                       ylabel=None, ice=True, ace_opacity=1, pd_opacity=1, pd_linewidth=2,
-                       ace_linewidth='auto', ax=None, show=True):
+def partial_dependence(ind: int | tuple[int],
+                       model: Callable,
+                       data: pd.DataFrame,
+                       ice_color_var: int | str | None = 0,
+                       xmin: str | tuple[float] | float = "percentile(0)",
+                       xmax: str | tuple[float] | float = "percentile(100)",
+                       npoints: int | None = None,
+                       feature_names: list[str] | None = None,
+                       hist: bool = False,
+                       ylabel: str | None = None,
+                       ice: bool = True,
+                       ace_opacity: float = 1,
+                       pd_opacity: float = 1,
+                       pd_linewidth: float = 2,
+                       ace_linewidth: str | float = 'auto',
+                       ax: Axes | None = None,
+                       show: bool = True) -> Figure:
     """
     Calculates and plots the partial dependence of a feature or a pair of features on the model's output.
 
-    This function is revised from the partial_dependence_plot function in shap package, 
-    in order to color the ICE curves by certain feature for checking interaction between features. 
+    This function is revised from the partial_dependence_plot function in shap package,
+    in order to color the ICE curves by certain feature for checking interaction between features.
     Ref: https://github.com/shap/shap/blob/master/shap/plots/_partial_dependence.py
 
     Args:
-        ind (int or tuple): The index or indices of the feature(s) to calculate the partial dependence for.
-        model: The model used for prediction.
-        data: The input data used for prediction.
-        ice_color_var: The index of the feature used for coloring the ICE lines (for 1D partial dependence plot).
-        xmin (str or tuple or float): The minimum value(s) for the feature(s) range.
-        xmax (str or tuple or float): The maximum value(s) for the feature(s) range.
-        npoints (int): The number of points to sample within the feature(s) range.
-        feature_names (list): The names of the features.
-        hist (bool): Whether to plot the histogram of the feature(s).
-        model_expected_value (bool or float): Whether to plot the model's expected value line.
-        feature_expected_value (bool): Whether to plot the feature's expected value line.
-        shap_values: The SHAP values used for plotting.
-        ylabel (str): The label for the y-axis.
-        ice (bool): Whether to plot the Individual Conditional Expectation (ICE) lines.
-        ace_opacity (float): The opacity of the ACE lines.
-        pd_opacity (float): The opacity of the PDP line.
-        pd_linewidth (float): The linewidth of the PDP line.
-        ace_linewidth (float or str): The linewidth of the ACE lines. Set to 'auto' for automatic calculation.
-        ax: The matplotlib axis to plot on.
-        show (bool): Whether to show the plot.
+        ind (int | tuple): The index or indices of the feature(s) to calculate
+            the partial dependence for.
+        model (Callable): The model used for prediction.
+        data (pd.DataFrame): The input data used for prediction.
+        ice_color_var (int | str, optional): The index of the feature used for coloring
+            the ICE lines (for 1D partial dependence plot). Default is ``0``.
+        xmin (str | tuple | float, optional): The minimum value(s) for the feature(s) range.
+            Default is ``"percentile(0)"``.
+        xmax (str | tuple | float): The maximum value(s) for the feature(s) range.
+            Default is ``"percentile(100)"``.
+        npoints (int, optional): The number of points to sample within the feature(s) range.
+            By default, will use ``100`` points for 1D PDP and ``20`` points for 2D PDP.
+        feature_names (list[str], optional): The names of the features. Will default to
+            the names of the DataFrame columns.
+        hist (bool, optional): Whether to plot the histogram of the feature(s). Default
+            is ``False``.
+        ylabel (str, optional): The label for the y-axis. Default is ``None``.
+        ice (bool, optional): Whether to plot the Individual Conditional Expectation (ICE) lines.
+            Default is ``True``.
+        ace_opacity (float, optional): The opacity of the ACE lines. Default is ``1``.
+        pd_opacity (float, optional): The opacity of the PDP line. Default is ``1``.
+        pd_linewidth (float, optional): The linewidth of the PDP line. Default is ``2``.
+        ace_linewidth (float | str, optional): The linewidth of the ACE lines. Default is ``'auto'``
+            for automatic calculation.
+        ax (Axes, optional): The matplotlib axis to plot on. By default will attach to Figure.gca().
+        show (bool, optional): Whether to show the plot. Default is ``True``.
 
     Returns:
         tuple: A tuple containing the matplotlib figure and axis objects if `show` is False, otherwise None.
     """
 
-    if isinstance(data, Explanation):
-        features = data.data
-        shap_values = data
-    else:
-        features = data
+    features = data
 
-    # convert from DataFrames if we got any
+    # Convert from DataFrame if used
     use_dataframe = False
     if isinstance(features, pd.DataFrame):
         if feature_names is None:
@@ -110,7 +145,7 @@ def partial_dependence(ind, model, data,
     if feature_names is None:
         feature_names = ["Feature %d" % i for i in range(features.shape[1])]
 
-    # this is for a 1D partial dependence plot
+    # 1D PDP
     if type(ind) is not tuple:
         ind = convert_name(ind, None, feature_names)
         xv = features[:, ind]
@@ -127,10 +162,6 @@ def partial_dependence(ind, model, data,
                     ice_vals[i, :] = model(pd.DataFrame(features_tmp, columns=feature_names))
                 else:
                     ice_vals[i, :] = model(features_tmp)
-            # if linewidth is None:
-            #     linewidth = 1
-            # if opacity is None:
-            #     opacity = 0.5
 
         features_tmp = features.copy()
         vals = np.zeros(npoints)
@@ -148,7 +179,6 @@ def partial_dependence(ind, model, data,
             fig = plt.gcf()
             ax1 = plt.gca()
 
-        # fig, ax1 = plt.subplots(figsize)
         ax2 = ax1.twinx()
 
         # the histogram of the data
@@ -159,32 +189,33 @@ def partial_dependence(ind, model, data,
         # ice line plot
         if ice:
             if ace_linewidth == "auto":
-                ace_linewidth = min(1, 50/ice_vals.shape[1])  # pylint: disable=unsubscriptable-object
-            # -------------------------- Revised
+                ace_linewidth = min(1, 50/ice_vals.shape[1])
+                
             if ice_color_var is None:
-                ax1.plot(xs, ice_vals, color=light_blue_rgb, linewidth=ace_linewidth, alpha=ace_opacity)
+                ax1.plot(xs, ice_vals, color=obsidian_colors.secondary.light_teal,
+                         linewidth=ace_linewidth, alpha=ace_opacity)
             else:
                 if not isinstance(ice_color_var, int):
                     ice_color_var = convert_name(ice_color_var, None, feature_names)
-                colormap = get_cmap('coolwarm')
+                colormap = obsidian_cm.obsidian_viridis
                 color_vals = features[:, ice_color_var]
                 colorbar_min = color_vals.min()
                 colorbar_max = color_vals.max()
                 color_vals = (color_vals - colorbar_min)/(colorbar_max-colorbar_min)
-                for i in range(ice_vals.shape[0]):
+                for i in range(ice_vals.shape[1]):
                     ax1.plot(xs, ice_vals[:, i], color=colormap(color_vals[i]),
                              linewidth=ace_linewidth, alpha=ace_opacity)
                 cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=colormap,
-                                                        norm=plt.Normalize(
-                                                            vmin=colorbar_min, vmax=colorbar_max)), ax=ax1)
+                                                          norm=plt.Normalize(
+                                                              vmin=colorbar_min, vmax=colorbar_max)),
+                                    ax=ax1)
                 cbar.set_label('Color by ' + feature_names[ice_color_var])
-            # --------------------------
 
         # the line plot
         ax1.plot(xs, vals, color="black", linewidth=pd_linewidth, alpha=pd_opacity)
         # Revised: PDP line from blue_rgb to black
 
-        ax2.set_ylim(0, features.shape[0])  # ax2.get_ylim()[0], ax2.get_ylim()[1] * 4)
+        ax2.set_ylim(0, features.shape[0])
         ax1.set_xlabel(feature_names[ind], fontsize=13)
         if ylabel is None:
             if not ice:
@@ -206,66 +237,12 @@ def partial_dependence(ind, model, data,
         ax2.spines['left'].set_visible(False)
         ax2.spines['bottom'].set_visible(False)
 
-        if feature_expected_value is not False:
-            ax3 = ax2.twiny()
-            ax3.set_xlim(xmin, xmax)
-            mval = xv.mean()
-            ax3.set_xticks([mval])
-            ax3.set_xticklabels(["E["+str(feature_names[ind])+"]"])
-            ax3.spines['right'].set_visible(False)
-            ax3.spines['top'].set_visible(False)
-            ax3.tick_params(length=0, labelsize=11)
-            ax1.axvline(mval, color="#999999", zorder=-1, linestyle="--", linewidth=1)
-
-        if model_expected_value is not False or shap_values is not None:
-            if model_expected_value is True:
-                if use_dataframe:
-                    model_expected_value = model(pd.DataFrame(features, columns=feature_names)).mean()
-                else:
-                    model_expected_value = model(features).mean()
-            else:
-                model_expected_value = shap_values.base_values
-            ymin, ymax = ax1.get_ylim()
-            ax4 = ax2.twinx()
-            ax4.set_ylim(ymin, ymax)
-            ax4.set_yticks([model_expected_value])
-            ax4.set_yticklabels(["E[f(x)]"])
-            ax4.spines['right'].set_visible(False)
-            ax4.spines['top'].set_visible(False)
-            ax4.tick_params(length=0, labelsize=11)
-            ax1.axhline(model_expected_value, color="#999999", zorder=-1, linestyle="--", linewidth=1)
-
-        if shap_values is not None:
-            # vals = shap_values.values[:, ind]
-            # if shap_value_features is None:
-            #     shap_value_features = features
-            #     assert shap_values.shape == features.shape
-            # #sample_ind = 18
-            # vals = shap_values[:, ind]
-            # if type(model_expected_value) is bool:
-            #     if use_dataframe:
-            #         model_expected_value = model(pd.DataFrame(features, columns=feature_names)).mean()
-            #     else:
-            #         model_expected_value = model(features).mean()
-            # if isinstance(shap_value_features, pd.DataFrame):
-            #     shap_value_features = shap_value_features.values
-            markerline, stemlines, _ = ax1.stem(
-                shap_values.data[:, ind], shap_values.base_values + shap_values.values[:, ind],
-                bottom=shap_values.base_values,
-                markerfmt="o", basefmt=" ", use_line_collection=True
-            )
-            stemlines.set_edgecolors([red_rgb if v > 0 else blue_rgb for v in vals])
-            plt.setp(stemlines, 'zorder', -1)
-            plt.setp(stemlines, 'linewidth', 2)
-            plt.setp(markerline, 'color', "black")
-            plt.setp(markerline, 'markersize', 4)
-
         if show:
             plt.show()
         else:
             return fig, ax1
 
-    # this is for a 2D partial dependence plot
+    # 2D PDP
     else:
         ind0 = convert_name(ind[0], None, feature_names)
         ind1 = convert_name(ind[1], None, feature_names)
@@ -298,12 +275,7 @@ def partial_dependence(ind, model, data,
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
 
-#         x = y = np.arange(-3.0, 3.0, 0.05)
-#         X, Y = np.meshgrid(x, y)
-#         zs = np.array(fun(np.ravel(X), np.ravel(Y)))
-#         Z = zs.reshape(X.shape)
-
-        ax.plot_surface(x0, x1, vals, cmap=red_blue_transparent)
+        ax.plot_surface(x0, x1, vals, cmap=obsidian_cm.obsidian_viridis)
 
         ax.set_xlabel(feature_names[ind0], fontsize=13)
         ax.set_ylabel(feature_names[ind1], fontsize=13)

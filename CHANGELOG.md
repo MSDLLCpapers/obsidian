@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.13]
+
+### Added
+- Campaign.Explainer now added to PyTests
+- Docstrings and typing to Explainer methods
+
+### Modified
+- Fixed SHAP explainer analysis and visualization functions
+- Changed SHAP visualization colors to use obsidian branding
+- Moved sensitivity method from campaign.analysis to campaign.explainer
+
+### Removed
+- Removed code chunks regarding unused optional inputs to PDP ICE function imported from SHAP GitHub
+
 ## [0.7.12]
 ### Added
 - More informative docstrings for optimizer.bayesian, optimizer.predict, to explain choices of surrogate models and aq_funcs
