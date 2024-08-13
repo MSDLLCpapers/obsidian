@@ -3,10 +3,11 @@ obsidian
 ReadMe
 -->
 
+<div class="dark-light">
 <p align="center">
   <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" width="100" alt = "obsidian logo">
 </p>
-
+</div>
 
 <div align="center">
 
