@@ -1,9 +1,11 @@
 [flake8]
+
 # VScode adds blank whitespaces
 extend-ignore = W293
+# More manageable for desktop editing
 max-line-length = 140
-per-file-ignores =
 
+per-file-ignores =
     # Imported but unused / Unable to detect names
     __init__.py: F401, F403
     obsidian/dash/*: F401, F403
@@ -16,6 +18,4 @@ exclude =
     demo/
     logs/
     dev/
-    source/
     docs/
-    build/

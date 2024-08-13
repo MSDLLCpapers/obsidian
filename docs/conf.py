@@ -86,7 +86,7 @@ html_theme_options = {
       "alt_text": "obsidian - Home",
       "text": "obsidian APO",
       "image_light": "_static/obsidian_logo.svg",
-      "image_dark": "_static/obsidian_logo.svg",
+      "image_dark": "_static/obsidian_logo_dark.svg",
   },
   "icon_links": [
       {

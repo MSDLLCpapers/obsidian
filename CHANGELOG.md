@@ -5,12 +5,16 @@
 ### Added
 - Campaign.Explainer now added to PyTests
 - Docstrings and typing to Explainer methods
+- Campaign.out property to dynamically capture measured responses "y" or objectives as appropriate
+- Campaign.evaluate method to map optimizer.evaluate method
 
 ### Modified
 - Fixed SHAP explainer analysis and visualization functions
 - Changed SHAP visualization colors to use obsidian branding
 - Moved sensitivity method from campaign.analysis to campaign.explainer
 - Moved Explainer testing from optimizer pytests to campaign pytests
+- Generalized plotting function MOO_results and renamed optim_progress
+- Campaign analysis and plotting methods fixed for 
 
 ### Removed
 - Removed code chunks regarding unused optional inputs to PDP ICE function imported from SHAP GitHub

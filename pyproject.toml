@@ -30,10 +30,10 @@ keywords = [
 ]
 
 [project.urls]
-Homepage = "https://obsidian-apo.readthedocs.io/"
-Documentation = "https://obsidian-apo.readthedocs.io/en/latest/stubs/api_docs.html"
+Homepage = "https://msdllcpapers.github.io/obsidian/"
+Documentation = "https://msdllcpapers.github.io/obsidian/stubs/api_docs.html"
 Repository = "https://github.com/MSDLLCpapers/obsidian/"
-Changelog = "https://obsidian-apo.readthedocs.io/en/latest/stubs/changelog.html"
+Changelog = "https://msdllcpapers.github.io/obsidian/stubs/changelog.html"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -62,11 +62,12 @@ sphinx = { version =  "^7.3.7", optional = true}
 myst-parser = { version =  "^3.0.1", optional = true}
 pydata-sphinx-theme = { version =  "^0.15.4", optional = true}
 linkify-it-py = { version =  "^2.0.3", optional = true}
+tcl = { version = "^0.2", optional = true}
 
 
 [tool.poetry.extras]
 app = ["flask", "dash", "dash-daq", "dash-bootstrap-components"]
-dev = ["pytest", "xlrd", "ipykernel", "jupyterlab", "flake8", "pytest-cov"]
+dev = ["pytest", "xlrd", "ipykernel", "jupyterlab", "flake8", "pytest-cov", "tcl"]
 docs = ["sphinx", "myst-parser", "pydata-sphinx-theme", "linkify-it-py"]
 
 
