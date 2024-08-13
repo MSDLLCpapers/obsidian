@@ -4,7 +4,7 @@ ReadMe
 -->
 
 <p align="center">
-  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.png?raw=true" width="100" alt = "obsidian logo">
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" width="100" alt = "obsidian logo">
 </p>
 
 
