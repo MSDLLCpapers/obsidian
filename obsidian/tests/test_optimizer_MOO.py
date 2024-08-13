@@ -8,8 +8,7 @@ from obsidian.optimizer import BayesianOptimizer
 from obsidian.constraints import OutConstraint_Blank, InConstraint_Generic, InConstraint_ConstantDim
 from obsidian.objectives import Identity_Objective, Index_Objective, Utopian_Distance, Objective_Sequence, Bounded_Target, \
       Scalar_WeightedSum, Scalar_WeightedNorm, Scalar_Chebyshev
-from obsidian.campaign.explainer import Explainer
-
+      
 import pandas as pd
 import numpy as np
 import pytest
@@ -160,13 +159,6 @@ def test_combo_constraints():
 def test_objective(m_batch, obj):
     X_suggest, eval_suggest = optimizer.suggest(m_batch=m_batch, objective=obj,  **test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
-
-
-@pytest.mark.fast
-def test_explain():
-    model_exp = Explainer(optimizer)
-    model_exp.shap_explain(responseid=1, n=10)
-    df_sens = model_exp.cal_sensitivity(dx=0.01)
 
 
 if __name__ == '__main__':

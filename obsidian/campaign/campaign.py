@@ -29,6 +29,7 @@ class Campaign():
         m_exp (int): The number of observations in campaign.data
         y (pd.Series): The response data in campaign.data
         f (pd.Series): The transformed response data
+        o (pd.Series): The objective function evaluated on f
         X (pd.DataFrame): The input features of campaign.data
         response_max (float | pd.Series): The maximum for each response
         target (Target | list[Target]): The target(s) for optimization.
@@ -207,7 +208,7 @@ class Campaign():
     def o(self) -> pd.Series | pd.DataFrame:
         if self.objective:
             try:
-                x = self.X_space.encode(self.data[list(self.X_space.X_names)]).values
+                x = self.X_space.encode(self.X).values
                 o = self.objective(torch.tensor(self.f.values).unsqueeze(0),
                                    X=torch.tensor(x)).squeeze(0)
                 if o.ndim < 2:
@@ -224,7 +225,7 @@ class Campaign():
         """
         Feature columns of the training data
         """
-        return self.data[self.X_space.X_names]
+        return self.data[list(self.X_space.X_names)]
             
     def save_state(self) -> dict:
         """

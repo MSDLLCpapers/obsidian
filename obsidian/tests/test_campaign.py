@@ -3,7 +3,7 @@ from obsidian.tests.param_configs import X_sp_cont_ndims, X_sp_default
 from obsidian.parameters import Target
 from obsidian.experiment import Simulator
 from obsidian.experiment.benchmark import two_leaves, shifted_parab
-from obsidian.campaign import Campaign
+from obsidian.campaign import Campaign, Explainer
 from obsidian.objectives import Identity_Objective, Scalar_WeightedNorm, Feature_Objective, \
     Objective_Sequence, Utopian_Distance, Index_Objective, Bounded_Target
 
@@ -72,6 +72,25 @@ def test_campaign_objectives(obj):
     campaign2.save_state()
     campaign2.__repr__()
      
-        
+
+def test_explain():
+    exp = Explainer(campaign.optimizer)
+    exp.shap_explain(n=50)
+
+    exp.shap_summary()
+    fig = exp.shap_summary_bar()
+    exp.shap_pdp_ice(ind=0, ice_color_var=None, npoints=10)
+    exp.shap_pdp_ice(ind=0, npoints=10)
+    exp.shap_pdp_ice(ind=(0, 1), npoints=5)
+
+    X_new = campaign.X.iloc[0, :]
+    X_ref = campaign.X.loc[1, :]
+    df_shap_value_new, fig_bar, fig_line = exp.shap_single_point(X_new)
+    df_shap_value_new, fig_bar, fig_line = exp.shap_single_point(X_new, X_ref=X_ref)
+
+    df_sens = exp.sensitivity()
+    df_sens = exp.sensitivity(X_ref=X_ref)
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-m', 'not slow'])
