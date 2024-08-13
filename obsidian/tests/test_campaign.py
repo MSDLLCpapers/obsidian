@@ -71,6 +71,7 @@ def test_campaign_objectives(obj):
     campaign2 = Campaign.load_state(obj_dict)
     campaign2.save_state()
     campaign2.__repr__()
+    campaign2.clear_objective()
      
 
 def test_explain():

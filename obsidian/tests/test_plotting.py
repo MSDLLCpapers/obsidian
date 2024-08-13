@@ -1,5 +1,13 @@
 from obsidian import Campaign
-from obsidian.plotting import parity_plot, factor_plot, surface_plot, visualize_inputs
+from obsidian.plotting import (
+    parity_plot,
+    factor_plot,
+    surface_plot,
+    visualize_inputs,
+    optim_progress
+)
+
+from obsidian.objectives import Scalar_WeightedSum
 
 import pytest
 from obsidian.tests.utils import DEFAULT_MOO_PATH
@@ -52,6 +60,16 @@ def test_surface_plot(feature_id):
 def test_surface_plot_options():
     fig = surface_plot(optimizer, plot_bands=False, plot_data=True)
     fig = surface_plot(optimizer, f_transform=True)
+
+
+@pytest.mark.fast
+def test_optim_progress_plot():
+    campaign.clear_objective()
+    X_suggest, eval_suggest = campaign.suggest(optim_samples=2, optim_restarts=1)
+    fig = optim_progress(campaign, X_suggest=X_suggest)
+    obj = Scalar_WeightedSum(weights=[1, 1])
+    campaign.set_objective(obj)
+    fig = optim_progress(campaign, X_suggest=X_suggest)
 
 
 if __name__ == '__main__':
