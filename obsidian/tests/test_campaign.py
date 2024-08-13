@@ -3,9 +3,11 @@ from obsidian.tests.param_configs import X_sp_cont_ndims, X_sp_default
 from obsidian.parameters import Target
 from obsidian.experiment import Simulator
 from obsidian.experiment.benchmark import two_leaves, shifted_parab
-from obsidian.campaign import Campaign, Explainer
+from obsidian.campaign import Campaign, Explainer, calc_ofat_ranges
 from obsidian.objectives import Identity_Objective, Scalar_WeightedNorm, Feature_Objective, \
     Objective_Sequence, Utopian_Distance, Index_Objective, Bounded_Target
+from obsidian.plotting import plot_interactions, plot_ofat_ranges
+
 
 from obsidian.tests.utils import DEFAULT_MOO_PATH
 import json
@@ -91,6 +93,18 @@ def test_explain():
 
     df_sens = exp.sensitivity()
     df_sens = exp.sensitivity(X_ref=X_ref)
+
+
+X_ref_test = [None,
+              campaign.X.iloc[campaign.y.idxmax()['Response 1'], :]]
+
+
+@pytest.mark.parametrize('X_ref', X_ref_test)
+def test_analysis(X_ref):
+    ofat_ranges, cor = calc_ofat_ranges(campaign.optimizer, threshold=0.5, X_ref=X_ref)
+
+    plot_interactions(campaign.optimizer, cor)
+    plot_ofat_ranges(campaign.optimizer, ofat_ranges)
 
 
 if __name__ == '__main__':
