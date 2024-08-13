@@ -3,9 +3,9 @@
 
 ![APO Workflow](https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/APO_workflow.png?raw=true)
 
-This section introduces some additional components, such as retrospective analysis and visualization methods, that are not essential steps in a Sequential Model-Based Optimization (SMBO) algorithm but are valuable in real-world applications for several reasons.
+This section introduces some additional components, such as retrospective analysis and visualization methods, that are not essential steps in a Algorithmic Process Optimization (APO) algorithm but are valuable in real-world applications for several reasons.
 
-* The technical details involved in SMBO algorithms, such as surrogate models and acquisition functions, may seem complicated to users with non-quantitative background. As a result, the entire workflow of suggesting new experimental conditions may appear to be a black box for users, which hampers the adoption of this this powerful process optimization technique. Various performance metrics and model interpretation methods help to bridge this gap by providing users with a better intuitive understanding of the underlying algorithms and revealing the decision-making processes involved.
+* The technical details involved in APO algorithms, such as surrogate models and acquisition functions, may seem complicated to users with non-quantitative background. As a result, the entire workflow of suggesting new experimental conditions may appear to be a black box for users, which hampers the adoption of this this powerful process optimization technique. Various performance metrics and model interpretation methods help to bridge this gap by providing users with a better intuitive understanding of the underlying algorithms and revealing the decision-making processes involved.
 
 * The variable importance analysis and/or model interpretation tools can provide critical insights into the optimization process, aiding in a deeper understanding of the variables that influenced the selection of optimal solution and the relationships between input variables, which could be confirmed with additional experiments or scientific domain experts.
 
@@ -60,7 +60,7 @@ For multi-objective optimization, the evaluation is subjective to user preferenc
 
 #### The Overall Optimization Performance Metrics
 
-To monitor the progress of SMBO workflow, we need to define a scalar evaluation metric to summarize performance over all the $N$ data points. 
+To monitor the progress of APO workflow, we need to define a scalar evaluation metric to summarize performance over all the $N$ data points. 
 
 * Single-objective optimization: The optimal value (either max or min, depends on target specification) of measured experimental outcome. 
 
