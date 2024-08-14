@@ -85,8 +85,8 @@ html_theme_options = {
   "logo": {
       "alt_text": "obsidian - Home",
       "text": "obsidian APO",
-      "image_light": "_static/obsidian_logo.png",
-      "image_dark": "_static/obsidian_logo.png",
+      "image_light": "_static/obsidian_logo.svg",
+      "image_dark": "_static/obsidian_logo_dark.svg",
   },
   "icon_links": [
       {
@@ -109,7 +109,7 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["mycss.css"]
-html_favicon = "_static/obsidian_logo.png"
+html_favicon = "_static/obsidian_logo.svg"
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

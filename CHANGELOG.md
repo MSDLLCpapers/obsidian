@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.8.0]
+### Added
+- Major improvements to testing and numerous small bug fixes to improve code robustness
+- Code coverage > 90%
+- New method for asserting equivalence of state_dicts during serialization
+
+### Modified
+- Objective PyTests separated
+- Constraint PyTests separated
+
+## [0.7.13]
+### Added
+- Campaign.Explainer now added to PyTests
+- Docstrings and typing to Explainer methods
+- Campaign.out property to dynamically capture measured responses "y" or objectives as appropriate
+- Campaign.evaluate method to map optimizer.evaluate method
+- DNN to PyTests
+
+### Modified
+- Fixed SHAP explainer analysis and visualization functions
+- Changed SHAP visualization colors to use obsidian branding
+- Moved sensitivity method from campaign.analysis to campaign.explainer
+- Moved Explainer testing from optimizer pytests to campaign pytests
+- Generalized plotting function MOO_results and renamed optim_progress
+- Campaign analysis and plotting methods fixed for 
+- Greatly increased the number of samples used for DNNPosterior, increasing the stability of posterior predictions
+
+### Removed
+- Removed code chunks regarding unused optional inputs to PDP ICE function imported from SHAP GitHub
+
 ## [0.7.12]
 ### Added
 - More informative docstrings for optimizer.bayesian, optimizer.predict, to explain choices of surrogate models and aq_funcs

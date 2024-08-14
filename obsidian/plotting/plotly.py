@@ -321,50 +321,61 @@ def surface_plot(optimizer: Optimizer,
     return fig
 
 
-def MOO_results(campaign: Campaign,
-                response_ids: list[int] = [0, 1],
-                color_feature_id: int | None = None,
-                y_suggest: pd.DataFrame | None = None) -> Figure:
+def optim_progress(campaign: Campaign,
+                   response_ids: int | tuple[int] | None = None,
+                   color_feature_id: int | None | str = 'Iteration',
+                   X_suggest: pd.DataFrame | None = None) -> Figure:
     """
-    Generates a plotly figure to visualize multi-objective optimization (MOO) results.
+    Generates a plotly figure to visualize optimization progress
 
     Args:
         campaign (Campaign): The campaign object containing the data.
         response_ids (list[int], optional): The indices of the responses to plot. Defaults to ``[0, 1]``.
         color_feature_id (int | None, optional): The index of the feature to use for coloring the markers.
-            Defaults to ``None``.
-        y_suggest (pd.DataFrame | None, optional): The suggested data for the responses.
+            Defaults to ``None``, which will color by iteration.
+        X_suggest (pd.DataFrame | None, optional): The suggested next experiments to evaluate.
             Defaults to ``None``.
 
     Returns:
         Figure: The plotly figure.
 
-    Raises:
-        ValueError: If the campaign has less than two responses.
-        ValueError: If the response ID is out of range.
-        ValueError: If the color feature ID is out of range.
-        ValueError: If the suggested data does not contain all responses.
     """
     fig = go.Figure()
 
-    if not campaign._is_moo:
-        raise ValueError('Campaign must have at least two responses for MOO results')
+    if response_ids is None:
+        if campaign._is_mo:
+            response_ids = (0, 1)
+        else:
+            response_ids = (0)
+    if isinstance(response_ids, int):
+        response_ids = (response_ids,)
+
+    # Extract input and output names
+    out_names = []
+    for id in response_ids:
+        out_names.append(campaign.out.columns[id])
+    X_names = list(campaign.X.columns)
+
     for id in response_ids:
         if id >= campaign.n_response:
             raise ValueError(f'Response ID {id} is out of range')
-    if color_feature_id is not None:
+    if isinstance(color_feature_id, int):
         if color_feature_id >= len(campaign.X_space):
             raise ValueError(f'Color feature ID {color_feature_id} is out of range')
+        x_color_name = X_names[color_feature_id]
+    if isinstance(color_feature_id, str):
+        if color_feature_id not in campaign.data.columns:
+            raise ValueError(f'Color feature {color_feature_id} is not in the data')
+        x_color_name = color_feature_id
 
-    response_0 = campaign.y_names[response_ids[0]]
-    response_1 = campaign.y_names[response_ids[1]]
-    X_names = list(campaign.X_space.X_names)
-
-    yexp_0 = campaign.data[response_0]
-    yexp_1 = campaign.data[response_1]
+    # Unpack experimental data to plot progress
+    out_exp = campaign.out[out_names]
+    if not campaign._is_mo:
+        # In this case, we only have 1 response to plot, so use the index on x-axis
+        out_exp = out_exp.reset_index(drop=False).rename(columns={'index': 'Experiment'})
+        out_names.insert(0, 'Experiment')
 
     if color_feature_id is not None:
-        x_color_name = campaign.X_space.X_names[color_feature_id]
         x_color = campaign.data[x_color_name]
         marker_dict = dict(color=x_color,
                            colorscale=[[0, obsidian_colors.rich_blue],
@@ -372,13 +383,12 @@ def MOO_results(campaign: Campaign,
                                        [1, obsidian_colors.lemon]],
                            showscale=True,
                            colorbar=dict(title=x_color_name))
-
     else:
         x_color = None
         marker_dict = dict(color=obsidian_colors.primary.teal)
 
     fig.add_trace(go.Scatter(
-        x=yexp_0, y=yexp_1,
+        x=out_exp.iloc[:, 0], y=out_exp.iloc[:, 1],
         mode='markers',
         marker=marker_dict,
         customdata=campaign.data[X_names],
@@ -386,41 +396,68 @@ def MOO_results(campaign: Campaign,
 
     template = ["<b>"+str(name)+": "+" %{customdata["+str(i)+"]:.3G}</b><br>"
                 for i, name in enumerate(X_names)]
-    fig.update_traces(hovertemplate=''.join(template))
+    fig.update_traces(hovertemplate=''.join(template) + out_names[0]
+                      + ": %{x:.3G}<br>" + out_names[1] + ": %{y:.3G}<br>")
 
-    if y_suggest is not None:
-        if not all(y+' (pred)' in y_suggest.columns for y in campaign.y_names):
+    if X_suggest is not None:
+        if not all(x in X_suggest.columns for x in campaign.X.columns):
             raise ValueError('Suggested data must contain all responses')
         
-        y_0 = y_suggest[response_0 + ' (pred)']
-        y_1 = y_suggest[response_1 + ' (pred)']
-        lb_0 = y_suggest[response_0 + ' lb']
-        ub_0 = y_suggest[response_0 + ' ub']
-        lb_1 = y_suggest[response_1 + ' lb']
-        ub_1 = y_suggest[response_1 + ' ub']
+        eval_suggest = campaign.evaluate(X_suggest)
+        
+        if campaign.objective is None:
+            y_mu = []
+            lb = []
+            ub = []
+            for response in out_names:
+                y_mu.append(eval_suggest[response + ' (pred)'])
+                lb.append(eval_suggest[response + ' lb'])
+                ub.append(eval_suggest[response + ' ub'])
+            error_y_plus = ub[1] - y_mu[1]
+            error_y_minus = y_mu[1] - lb[1]
+            error_x_plus = ub[0] - y_mu[0]
+            error_x_minus = y_mu[0] - lb[0]
+            
+            y_mu = pd.concat(y_mu, axis=1)
+            
+            hovertext = out_names[0] + ' :%{x:.3G} +%{error_x.array:.2G}/- \
+                        %{error_x.arrayminus:.2G}<br>' + out_names[1] + ': %{y:.3G} \
+                            +%{error_y.array:.2G}/-%{error_y.arrayminus:.2G}'
+            
+        else:
+            if campaign._is_mo:
+                y_mu = eval_suggest[out_names]
+            else:
+                y_mu = eval_suggest[out_names[-1]]
+                m_data = len(out_exp)
+                m_suggest = len(X_suggest)
+                y_mu = pd.concat([pd.DataFrame(np.arange(m_data, m_data+m_suggest), columns=['Experiment']),
+                                  y_mu], axis=1)
+            error_y_plus = error_y_minus = error_x_minus = error_x_plus = None
+
+            hovertext = out_names[0] + ' :%{x:.3G}' + '<br>' \
+                + out_names[1] + ' :%{y:.3G}'
 
         fig.add_trace(go.Scatter(
-            x=y_0,
-            y=y_1,
+            x=y_mu.iloc[:, 0],
+            y=y_mu.iloc[:, 1],
             mode='markers',
             marker=dict(color=obsidian_colors.accent.pastel_blue,
                         symbol='diamond-open',
                         size=7,
                         line=dict(width=2)),
             name='Suggested',
-            error_y={'array': ub_1 - y_1,
-                     'arrayminus': y_1 - lb_1,
+            error_y={'array': error_y_plus,
+                     'arrayminus': error_y_minus,
                      'color': 'gray', 'thickness': 1},
-            error_x={'array': ub_0 - y_0,
-                     'arrayminus': y_0 - lb_0,
+            error_x={'array': error_x_plus,
+                     'arrayminus': error_x_minus,
                      'color': 'gray', 'thickness': 1},
-            hovertemplate=response_0 + ' :%{x:.3G} +%{error_x.array:.2G}/- \
-                        %{error_x.arrayminus:.2G}<br>' + response_1 + ': %{y:.3G} \
-                            +%{error_y.array:.2G}/-%{error_y.arrayminus:.2G}'))
+            hovertemplate=hovertext))
         
     fig.update_layout(
-        xaxis_title=response_0,
-        yaxis_title=response_1,
+        xaxis_title=out_names[0],
+        yaxis_title=out_names[1],
         title='Optimization Results'
     )
 
@@ -433,6 +470,6 @@ def MOO_results(campaign: Campaign,
         x=0.95
     ))
 
-    fig.update_layout(coloraxis_colorbar_title_text='your title')
     fig.update_layout(width=500, height=400, template='ggplot2')
+    
     return fig

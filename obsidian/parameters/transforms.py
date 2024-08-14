@@ -127,7 +127,7 @@ class Logit_Scaler(Target_Transform):
             X_s = self.params['scale']*(X - self.params['loc'])
             valid_range = (X_s >= 0).all() and (X_s <= 1).all()
             if not valid_range:
-                warnings.warn('Invalid range provided for logit scaler, proceeding with min-max fit')
+                warnings.warn('Invalid range provided for logit scaler, proceeding with min-max fit', UserWarning)
                 self._fit_minmax(X)
                 return self.forward(X)
         else:

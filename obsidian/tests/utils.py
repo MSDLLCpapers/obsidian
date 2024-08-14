@@ -1,4 +1,4 @@
-"""Utility functions for pytest tests"""
+"""Utility functions for PyTest unit testing"""
 
 from obsidian.tests.param_configs import X_sp_default, X_sp_cont_ndims
 
@@ -11,10 +11,44 @@ from numpy.typing import ArrayLike
 from typing import Callable
 
 import pandas as pd
+import numpy as np
 import json
 
+# Default campaigns for testing without having to re-run optimization
 DEFAULT_MOO_PATH = 'obsidian/tests/default_campaign_MOO.json'
 DEFAULT_SOO_PATH = 'obsidian/tests/default_campaign_SOO.json'
+
+
+def equal_state_dicts(e1: dict | str | float | int,
+                      e2: dict | str | float | int) -> bool:
+    """
+    Recursively compare two dictionaries, and allow for floating-point error
+    """
+    # If the values are equal, skip
+    if not e1 == e2:
+        # First, make sure we are comparing the same type
+        assert type(e1) == type(e2), f'Type mismatch at {e1} != {e2}'
+        
+        # If they are dictionaries, compare elements recursively
+        if isinstance(e1, dict):
+            assert e1.keys() == e2.keys(), f'Keys mismatch at {e1.keys()} != {e2.keys()}'
+            for k, v in e1.items():
+                equal_state_dicts(v, e2[k])
+                
+        # If they are lists, compare elements recursively
+        elif isinstance(e1, list):
+            assert len(e1) == len(e2), f'Length mismatch at {len(e1)} != {len(e2)}'
+            for e1_i, e2_i in zip(e1, e2):
+                equal_state_dicts(e1_i, e2_i)
+                
+        # Otherwise, if it is numerical, check for floating-point error
+        elif isinstance(e1, (float, int)):
+            if not (np.isnan(e1) and np.isnan(e2)):
+                assert (e1-e2)/e1 < 1e-6, f'{e1} != {e2}'
+        else:
+            raise ValueError(f'{e1} != {e2}')
+        
+    return True
 
 
 def approx_equal(x1: ArrayLike | float | int,
