@@ -98,7 +98,7 @@ class Campaign():
 
     def clear_data(self):
         """Clears campaign data"""
-        self.data = None
+        self.data = pd.DataFrame()
 
     @property
     def optimizer(self) -> Optimizer:
@@ -189,12 +189,11 @@ class Campaign():
         """
         Experimental response data
 
-        Raises:
-            ValueError: If no target(s) are specified.
         """
-        if not self.target:
-            raise ValueError('No target(s) specified')
-        return self.data[self.y_names]
+        if not self.data.empty:
+            return self.data[self.y_names]
+        else:
+            return None
 
     @property
     def response_max(self) -> float | pd.Series:
@@ -296,10 +295,7 @@ class Campaign():
         new_campaign.data = pd.DataFrame(obj_dict['data'])
         new_campaign.data.index = new_campaign.data.index.astype('int')
         
-        try:
-            new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
-        except KeyError:
-            new_campaign.iter = 0
+        new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
 
         return new_campaign
 

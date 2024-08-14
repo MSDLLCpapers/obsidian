@@ -1,7 +1,16 @@
 # Changelog
 
-## [0.7.13]
+## [0.8.0]
+### Added
+- Major improvements to testing and numerous small bug fixes to improve code robustness
+- Code coverage > 90%
+- New method for asserting equivalence of state_dicts during serialization
 
+### Modified
+- Objective PyTests separated
+- Constraint PyTests separated
+
+## [0.7.13]
 ### Added
 - Campaign.Explainer now added to PyTests
 - Docstrings and typing to Explainer methods

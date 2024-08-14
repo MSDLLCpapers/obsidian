@@ -1,3 +1,5 @@
+"""PyTests for obsidian.plotting"""
+
 from obsidian import Campaign
 from obsidian.plotting import (
     parity_plot,
@@ -13,6 +15,9 @@ import pytest
 from obsidian.tests.utils import DEFAULT_MOO_PATH
 import json
 
+# Avoid using TkAgg which causes Tcl issues during testing
+import matplotlib
+matplotlib.use('inline')
 
 with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)

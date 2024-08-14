@@ -2,6 +2,7 @@
 
 from obsidian.parameters import Param_Continuous, ParamSpace
 from obsidian.optimizer import Optimizer
+from obsidian.exceptions import UnfitError
 
 import shap
 from shap import KernelExplainer, Explanation
@@ -36,7 +37,7 @@ class Explainer():
                  X_space: ParamSpace | None = None) -> None:
         
         if not optimizer.is_fit:
-            raise ValueError('Surrogate model in optimizer is not fit to data. ')
+            raise UnfitError('Surrogate model in optimizer is not fit to data. ')
         
         self.set_optimizer(optimizer)
         self.X_space = optimizer.X_space if X_space is None else X_space
@@ -117,7 +118,7 @@ class Explainer():
     def shap_summary(self) -> Figure:
         """SHAP Summary Plot (Beeswarm)"""
         if not self.shap:
-            raise ValueError('shap explainer is not fit.')
+            raise UnfitError('SHAP explainer is not fit.')
         
         fig = plt.figure()
         shap.summary_plot(self.shap['values'], self.shap['X_sample'],
@@ -129,7 +130,7 @@ class Explainer():
     def shap_summary_bar(self) -> Figure:
         """SHAP Summary Plot (Bar Plot / Importance)"""
         if not self.shap:
-            raise ValueError('shap explainer is not fit.')
+            raise UnfitError('SHAP explainer is not fit.')
          
         fig = plt.figure()
         shap.plots.bar(self.shap['explanation'],
@@ -159,7 +160,7 @@ class Explainer():
                     
         """
         if not self.shap:
-            raise ValueError('shap explainer is not fit.')
+            raise UnfitError('SHAP explainer is not fit.')
         
         fig, ax = partial_dependence(
                 ind=ind,
@@ -193,7 +194,7 @@ class Explainer():
         
         """
         if not self.shap:
-            raise ValueError('shap explainer is not fit.')
+            raise UnfitError('SHAP explainer is not fit.')
 
         if isinstance(X_new, pd.Series):
             X_new = X_new.copy().to_frame().T
