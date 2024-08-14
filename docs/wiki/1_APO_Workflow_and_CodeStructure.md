@@ -48,7 +48,9 @@ The data structure in a typical APO work flow includes:
 See section 
 [Data](3_Data.md)
 and submodule
-[`parameters`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/parameters) 
+[`parameters`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/parameters),
+and submodule 
+[`objectives`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/objectives)
 for more details. 
 
 
