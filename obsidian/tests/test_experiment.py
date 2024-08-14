@@ -1,3 +1,5 @@
+"""PyTests for obsidian.experiment"""
+
 from obsidian.tests.param_configs import test_X_space
 
 from obsidian.experiment import ExpDesigner, Simulator
