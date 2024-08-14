@@ -87,8 +87,8 @@ class Target():
             f = f.reshape(-1, 1)
 
         if inverse:
-            f_obj = self.f_transform_func.inverse(f)
-            return pd.Series(f_obj.flatten(), name=self.name) * self.multiplier
+            f_obj = self.f_transform_func.inverse(f * self.multiplier)
+            return pd.Series(f_obj.flatten(), name=self.name)
         else:
             if fit:
                 self.f_transform_func = f_transform_dict[self.f_transform]()
