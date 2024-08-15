@@ -3,15 +3,27 @@ obsidian
 ReadMe
 -->
 
-<div class="dark-light">
-<p align="center">
-  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" width="100" alt = "obsidian logo">
-</p>
+
+<!---
+Use JS to dynamically change the linked image based on the light/dark theme
+--->
+<script type="text/javascript">
+var observer = new MutationObserver(function(mutations) {
+    const dark = document.documentElement.dataset.theme == 'dark';
+    document.getElementsByClassName('mainlogo')[0].src = dark ? 'https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo_dark.svg?raw=true' : "https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true";
+})
+observer.observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+</script>
+<link rel="preload" href="_static/obsidian_logo_dark.svg" as="image">
+
+<div align = "center">
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" class="mainlogo dark-light" width="100" alt = "obsidian logo">
 </div>
+
 
 <div align="center">
 
-# obsidian
+<h1> obsidian</h1>
 
 ![Supports Python](https://img.shields.io/badge/Python-3.10-teal)
 [![License](https://img.shields.io/badge/license-GPLv3-teal.svg)](https://github.com/MSDLLCpapers/obsidian/blob/main/LICENSE)
