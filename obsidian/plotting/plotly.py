@@ -3,6 +3,7 @@
 from obsidian.campaign import Campaign
 from obsidian.optimizer import Optimizer
 from obsidian.exceptions import UnfitError, UnsupportedError
+from obsidian.parameters import Param_Continuous
 from .branding import obsidian_colors
 
 import plotly.graph_objects as go
@@ -407,8 +408,9 @@ def optim_progress(campaign: Campaign,
         customdata=campaign.data[X_names],
         name='Data'))
 
-    template = ["<b>"+str(name)+": "+" %{customdata["+str(i)+"]:.3G}</b><br>"
-                for i, name in enumerate(X_names)]
+    template = ["<b>"+str(param.name)+": "+" %{customdata["+str(i)+"]"
+                + (":.3G}"if isinstance(param, Param_Continuous) else "}") + "</b><br>"
+                for i, param in enumerate(campaign.X_space)]
     fig.update_traces(hovertemplate=''.join(template) + out_names[0]
                       + ": %{x:.3G}<br>" + out_names[1] + ": %{y:.3G}<br>")
 
