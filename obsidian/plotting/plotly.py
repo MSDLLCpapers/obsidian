@@ -371,7 +371,7 @@ def optim_progress(campaign: Campaign,
     X_names = list(campaign.X.columns)
 
     for id in response_ids:
-        if id >= campaign.n_response:
+        if id >= len(out_names):
             raise ValueError(f'Response ID {id} is out of range')
     if isinstance(color_feature_id, int):
         if color_feature_id >= len(campaign.X_space):
