@@ -5,7 +5,8 @@ Tutorials
     :titlesonly:
     :glob:
 
-    ../../stubs/tutorials/*
+    ../../stubs/tutorials/Simple single objective.rst
+    ../../stubs/tutorials/Constrained multi-output min-max.rst
 
 Indices
 ~~~~~~~~~~~~~~~~~~
