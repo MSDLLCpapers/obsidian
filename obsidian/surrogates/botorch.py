@@ -206,7 +206,7 @@ class SurrogateBoTorch(SurrogateModel):
         
         # Calculate a final loss and R2 train score
         loss = self.loss = self.loss_fcn(self.torch_model(X_p), y_p).sum().detach().cpu().data.numpy().tolist()
-        score = self.score = corr_matrix[0][1]**2
+        score = self.r2_score = corr_matrix[0][1]**2
         
         return loss, score
     
