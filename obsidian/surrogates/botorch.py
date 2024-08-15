@@ -46,7 +46,7 @@ class SurrogateBoTorch(SurrogateModel):
         mll (ExactMarginalLogLikelihood): The marginal log likelihood of the model.
         torch_model (torch.nn.Module): The torch model for the surrogate.
         loss (float): The loss of the model.
-        score (float): The R2 score of the model.
+        r2_score (float): The R2 score of the model.
     """
     def __init__(self,
                  model_type: str = 'GP',
