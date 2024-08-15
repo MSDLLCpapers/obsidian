@@ -55,22 +55,35 @@ def parity_plot(optimizer: Optimizer,
     y_true = y_true[y_name].values
     
     RMSE = ((y_true-y_pred)/y_true)**2
+    NRMSE = RMSE/(y_true.max()-y_true.min())
     
     y_min = np.min([y_true.min(), y_pred.min()])
     y_max = np.max([y_true.max(), y_pred.max()])
     abs_margin = 0.1
     y_abs = [y_min/(1+abs_margin), y_max*(1+abs_margin)]
     
+    error_y = y_ub - y_pred
+    error_y_minus = y_pred - y_lb
+    
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(x=y_true, y=y_pred,
-                             error_y={'array': y_ub - y_pred,
-                                      'arrayminus': y_pred - y_lb,
+                             error_y={'array': [f'{y:.3G}' for y in error_y],
+                                      'arrayminus': [f'{y:.3G}' for y in error_y_minus],
                                       'color': 'gray', 'thickness': 0.5},
                              mode='markers',
                              name='Observations',
-                             marker={'color': RMSE, 'colorscale': 'Viridis', 'size': 15},
+                             marker={'color': NRMSE, 'size': 15,
+                                     'cmax': 0.5, 'cmin': 0,
+                                     'colorscale': [[0, obsidian_colors.rich_blue],
+                                                    [0.5, obsidian_colors.teal],
+                                                    [1, obsidian_colors.lemon]],
+                                     'colorbar': dict(title=dict(text='NRMSE', font=dict(size=10)))
+                                     },
+                             showlegend=False
                              ))
+    
+    fig.update_traces(hovertemplate="(%{x:.3G}, %{y:.3G}) +%{error_y.array:.3G}/-%{error_y.arrayminus:.3G}")
     
     fig.add_trace(go.Scatter(x=y_abs, y=y_abs,
                              mode='lines',
@@ -81,7 +94,7 @@ def parity_plot(optimizer: Optimizer,
     fig.update_xaxes(title_text=f'Actual Response ({y_name})')
     fig.update_yaxes(title_text=f'Predicted Response ({y_name})')
     fig.update_layout(template='ggplot2', title='Parity Plot',
-                      autosize=False, height=400, width=600)
+                      autosize=False, height=400, width=500)
     
     return fig
 
