@@ -244,7 +244,7 @@ class BayesianOptimizer(Optimizer):
             
             if self.verbose > 0:
                 print(f'{self.surrogate_type[i]} model has been fit \
-                      to data with a train-score of: {self.surrogate[i].score:.3g} for response: {self.y_names[i]}')
+                      to data with a train-score of: {self.surrogate[i].r2_score:.3g} for response: {self.y_names[i]}')
         return
     
     def save_state(self) -> dict:
