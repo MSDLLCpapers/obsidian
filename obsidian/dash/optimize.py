@@ -117,7 +117,7 @@ def setup_optimize_callbacks(app):
             [
              dbc.ListGroupItem(['Model Type: ', f'{optimizer.surrogate_type}']),
              dbc.ListGroupItem(['Data Name: ', filename]),
-             dbc.ListGroupItem(['R', html.Sup('2'), ' Score: ', f'{optimizer.surrogate[0].score: .4g}']), # for SOO only
+             dbc.ListGroupItem(['R', html.Sup('2'), ' Score: ', f'{optimizer.surrogate[0].r2_score: .4g}']), # for SOO only
              dbc.ListGroupItem(['Marginal Log Likelihood: ', f'{optimizer.surrogate[0].loss: .4g}']), # for SOO only
             ], flush=True
         )
