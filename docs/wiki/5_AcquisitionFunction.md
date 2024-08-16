@@ -8,7 +8,9 @@ The [`obsidian.acquisition`](https://github.com/MSDLLCpapers/obsidian/tree/main/
 
 Typically, users don't need to interact with acquisition functions directly. 
 The `BayesianOptimizer` class handles the selection and use of acquisition functions. 
-The acquisition function, including its hyperparameters, could be specified as an input argument when calling the `suggest` method:
+The acquisition functions, as well as their hyperparameters, could be specified as an input argument when calling the `suggest` method.
+
+The format of `acquisition` should be a list of strings (if using default hyperparameters) and/or dictionaries, where the key is an acquisition function name and the value is a nested dictionary storing its hyperparameter:
 
 ```python
 # DO NOT RUN
@@ -28,28 +30,42 @@ X_suggest, eval_suggest = optimizer.suggest(acquisition=['EI',{'UCB':{'beta':0.1
 
 ## 3. Customization Options
 
-### 3.1 Available Surrogate Models and Hyperparameters
+### 3.1 Available Acquisition Function Names 
 
-The acquisition submodule includes multiple acquisition functions, both standard `BoTorch` acquisition functions and custom implementations.
+The acquisition submodule includes multiple acquisition functions, both standard `BoTorch` acquisition functions and custom implementations. 
+Below are several categories of options for the `acquisition` argument, each followed by a short description. 
 
-#### Standard Acquisition Functions
+#### Standard Acquisition Functions from BoTorch
 
-- Expected Improvement (EI)
-- Probability of Improvement (PI)
-- Upper Confidence Bound (UCB)
-- Noisy Expected Improvement (NEI)
-- Expected Hypervolume Improvement (EHVI)
-- Noisy Expected Hypervolume Improvement (NEHVI)
+- EI: Expected Improvement
+- NEI: Noisy Expected Improvement
+- PI: Probability of Improvement
+- UCB: Upper Confidence Bound
+- SR: Simple Regret
+- EHVI: Expected Hypervolume Improvement
+- NEHVI: Noisy Expected Hypervolume Improvement
+- NParEGO: Random augmented chebyshev scalarization with Noisy Expected Improvement
+- NIPV: Integrated Negative Posterior Variance
 
 #### Custom Acquisition Functions
 
-- qMean: Optimizes for the maximum value of the posterior mean
-- qSpaceFill: Optimizes for the maximum value of minimum distance between a point and the training data
+- Mean: qMean: Optimizes for the maximum value of the posterior mean
+- SF: qSpaceFill: Optimizes for the maximum value of minimum distance between a point and the training data
+
+#### Baseline: No Acquisition Function
+
+- RS: Random sampling from the parameter space
+
+
+### 3.2 Shared Hyperparameters 
+
+There are some commonly used hyperparameters that could apply to multiple acquisition functions. 
+
 
 
 ---------------
 
-## 4. Understanding Acquisition Functions
+## 4. Understanding Acquisition Functions and Hyperparameters
 
 ### 3.1 Expected Improvement (EI)
 
