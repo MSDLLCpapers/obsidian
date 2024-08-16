@@ -2,13 +2,37 @@
 
 ## 1. Introduction
 
-The `obsidian.acquisition` submodule is a crucial component of the Obsidian Bayesian optimization library. It provides acquisition functions that guide the optimization process by determining which points in the parameter space should be evaluated next. These acquisition functions balance exploration of uncertain areas and exploitation of promising regions, which is key to efficient optimization.
+The [`obsidian.acquisition`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/acquisition) submodule is a crucial component of the Obsidian APO library. It provides acquisition functions that guide the optimization process by determining which points in the parameter space should be evaluated next. These acquisition functions balance exploration of uncertain areas and exploitation of promising regions, which is key to efficient optimization.
 
-## 2. Key Components
+## 2. Basic Syntax
 
-The acquisition submodule includes several acquisition functions, both standard and custom implementations:
+Typically, users don't need to interact with acquisition functions directly. 
+The `BayesianOptimizer` class handles the selection and use of acquisition functions. 
+The acquisition function, including its hyperparameters, could be specified as an input argument when calling the `suggest` method:
 
-### 2.1 Standard Acquisition Functions
+```python
+# DO NOT RUN
+from obsidian.optimizer import BayesianOptimizer
+
+optimizer = BayesianOptimizer(X_space=param_space)
+
+# Use one acquisition function EI per iteration
+X_suggest, eval_suggest = optimizer.suggest(acquisition=['EI'])
+
+# Use two acquisition functions EI and UCB per iteration
+X_suggest, eval_suggest = optimizer.suggest(acquisition=['EI','UCB'])
+
+# Use two acquisition functions EI and UCB per iteration, while specifying hyperparameters for UCB
+X_suggest, eval_suggest = optimizer.suggest(acquisition=['EI',{'UCB':{'beta':0.1}}])
+```
+
+## 3. Customization Options
+
+### 3.1 Available Surrogate Models and Hyperparameters
+
+The acquisition submodule includes multiple acquisition functions, both standard `BoTorch` acquisition functions and custom implementations.
+
+#### Standard Acquisition Functions
 
 - Expected Improvement (EI)
 - Probability of Improvement (PI)
@@ -17,12 +41,15 @@ The acquisition submodule includes several acquisition functions, both standard 
 - Expected Hypervolume Improvement (EHVI)
 - Noisy Expected Hypervolume Improvement (NEHVI)
 
-### 2.2 Custom Acquisition Functions
+#### Custom Acquisition Functions
 
 - qMean: Optimizes for the maximum value of the posterior mean
 - qSpaceFill: Optimizes for the maximum value of minimum distance between a point and the training data
 
-## 3. Understanding Acquisition Functions
+
+---------------
+
+## 4. Understanding Acquisition Functions
 
 ### 3.1 Expected Improvement (EI)
 
