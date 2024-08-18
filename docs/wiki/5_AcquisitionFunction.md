@@ -125,9 +125,9 @@ PI is designed to aid in the efficient selection of candidate points by quantify
 Different from EI, which measures the expected amount of improvement by integrating over the posterior distribution, PI directly evaluates the probability of outperforming the best value, emphasizing the likelihood of improvement rather than the magnitude of improvement.
 
 Mathematical formulation:
-$$
+\begin{equation*}
 PI(x) = P(\hat{f}(x) > y_{best})
-$$
+\end{equation*}
 where $y_{best}$ is the current best observed value and the $\hat{f}$ is the trained surrogate function. 
 
 _Optional hyperparameters:_
@@ -142,10 +142,10 @@ _Optional hyperparameters:_
 **Example usage:**
 ```python
 # Use the default inflate = 0
-X_suggest, eval_suggest = campaign.suggest(acquisition=['PI'])
+X_suggest, eval_suggest = optimizer.suggest(acquisition=['PI'])
 
 # Adjust the hyperparameter inflate
-X_suggest, eval_suggest = campaign.suggest(acquisition=[{'PI': {'inflate': 0.05}}])
+X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'PI': {'inflate': 0.05}}])
 ```
 
 ### 3.4 Upper Confidence Bound (UCB)
@@ -153,9 +153,9 @@ X_suggest, eval_suggest = campaign.suggest(acquisition=[{'PI': {'inflate': 0.05}
 UCB balances exploration and exploitation by selecting points with high predicted values or high uncertainty.
 
 Mathematical formulation:
-$$
+\begin{equation*}
 UCB(x) = \mu(x) + \beta * \sigma(x) 
-$$
+\end{equation*}
 
 where $\mu(x)$ is the predicted mean at the candidate point $x$, $\sigma(x)$ is the predicted standard deviation which is associated with uncertainty, and $\beta$ is a parameter that controls the exploration-exploitation trade-off. 
 
