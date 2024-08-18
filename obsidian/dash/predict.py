@@ -3,10 +3,6 @@ from .utils import load_optimizer, center
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Dash, dash_table, callback, Output, Input, State, ALL, MATCH
 
-#from obsidian.experiment import ParamSpace
-#from obsidian.optimizer import BayesianOptimizer
-#from obsidian.plotting.plotly_plotting import parity_plot
-
 import pandas as pd
 import base64
 import io
@@ -36,7 +32,7 @@ def setup_predict(app, app_tabs):
         html.Br(),
         html.Br(),
         dbc.Card([
-            dbc.CardHeader('template'),
+            dbc.CardHeader('Example Prediction Input'),
             dbc.CardBody([
                 html.Div(id='div-template', children=[], style={'overflow-x': 'scroll'})
                 ]),
@@ -51,23 +47,23 @@ def setup_predict(app, app_tabs):
     template_downloader = html.Div(children=[dbc.Button('Download Template Candidates', id='button-download_template',
                                                         className='me-2', color='primary'),
                                              dcc.Download(id='downloader-template')],
-                                   style={'textAlign': 'center','margin-top': '15px'})
+                                   style={'textAlign': 'center', 'margin-top': '15px'})
 
     default_data = pd.DataFrame()
     
     # Data upload
     uploader_1 = dcc.Upload(id='uploader-X1',
-                          children=html.Div(['Upload Data: Drag and Drop or ',
-                                             html.A('Select Files')]),
-                          style={
+                            children=html.Div(['Upload Data: Drag and Drop or ',
+                                               html.A('Select Files')]),
+                            style={
                               'width': '100%', 'height': '60px',
                               'lineHeight': '60px', 'borderWidth': '1px',
                               'borderStyle': 'dashed', 'borderRadius': '5px',
                               'textAlign': 'center', 'margin': '10px'
                               },
-                          multiple=False,
-                          filename='Example Data'
-                          )
+                            multiple=False,
+                            filename='Example Data'
+                            )
     
     # Data store
     storage_X1 = dcc.Store(id='store-X1', data=default_data.to_dict())
@@ -89,7 +85,7 @@ def setup_predict(app, app_tabs):
          ]))
 
     row1 = dbc.Row([dbc.Col([xspace_df_div], width=4),
-                    dbc.Col([template_div, template_downloader], width=8)],style={'margin-top': '15px'})
+                    dbc.Col([template_div, template_downloader], width=8)], style={'margin-top': '15px'})
     row2 = dbc.Row([uploader_1, preview_1], style={'margin-top': '15px'})
     
     # Add all of these elements to the app
@@ -112,7 +108,7 @@ def setup_predict_callbacks(app):
     def config_tableView(clicked, config):
         if config is None:
             return 0, None, {'overflow-x': 'scroll'}
-        #print(config)
+        
         df_xspace = pd.DataFrame(config['xspace'])
         tables = [center(make_table(df_xspace))]
         return 0, tables, {'overflow-x': 'scroll'}
@@ -134,6 +130,7 @@ def setup_predict_callbacks(app):
         df_template = designer.initialize(3, 'LHS')
         tables = [center(make_table(df_template))]
         return 0, tables, df_template.to_dict()
+    
     # Download Template
     @app.callback(
         Output('downloader-template', 'data'),
@@ -144,7 +141,6 @@ def setup_predict_callbacks(app):
     def download_template(n_clicks, data):
         df = pd.DataFrame(data)
         return dcc.send_data_frame(df.to_csv, 'NewDataTemplate.csv', index=False)
-    
     
     # Save the uploaded data into the data-store
     @app.callback(
@@ -168,7 +164,7 @@ def setup_predict_callbacks(app):
         State('store-fit', 'data'),
         State('store-config', 'data'),
     )
-    def preview_X1(data, filename,opt_save, config):
+    def preview_X1(data, filename, opt_save, config):
         df = pd.DataFrame(data)
         optimizer = load_optimizer(config, opt_save)
         preds = optimizer.predict(df)
@@ -176,5 +172,3 @@ def setup_predict_callbacks(app):
         return make_table(df_output, fill_width=True), filename
     
     return
-
-

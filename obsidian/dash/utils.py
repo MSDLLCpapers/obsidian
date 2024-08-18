@@ -4,9 +4,9 @@ from dash.dash_table.Format import Format, Scheme
 import dash_daq as daq
 import pandas as pd
 
-#from obsidian.experiment import ParamSpace
 from obsidian.parameters import ParamSpace, Param_Categorical, Param_Ordinal, Param_Continuous
 from obsidian.optimizer import BayesianOptimizer
+
 
 def center(element):
     return html.Div(html.Div(element, style={'display': 'inline-block'}), style={'textAlign': 'center'})
