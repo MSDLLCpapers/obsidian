@@ -65,10 +65,10 @@ The `acquisition` parameter should be always a list, containing either string or
 * If specifying custom hyperparameters for an acquisition function, use a dictionary element where the key is the acquisition function name and the value is a nested dictionary storing its hyperparameters (e.g., {'UCB': {'beta': 0.1}} for Upper Confidence Bound with a specified beta parameter).
 
 
-## 3. Single-Objective Optimization: Acquisition Functions and Hyperparameters
+## 3. Single-Objective Optimizatio Acquisition Functions
 
 
-### 3.1 Expected Improvement (EI)
+### Expected Improvement (EI)
 
 EI calculates the expected amount by which we will improve upon the current best observed value.
 
@@ -107,7 +107,7 @@ _Optional hyperparameters:_
     X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'EI': {'inflate': 0.05}}])
     ```
 
-### 3.2 Noisy Expected Improvement (NEI)
+### Noisy Expected Improvement (NEI)
 
 NEI is a variant of EI that accounts for noise in the observations, making it more suitable for real-world problems with measurement uncertainty. It allows for more robust decision-making in selecting the next point for evaluation. 
 
@@ -119,7 +119,7 @@ Currently NEI doesn't accept additional hyperparameters.
 X_suggest, eval_suggest = optimizer.suggest(acquisition=['NEI'])
 ```
 
-### 3.3 Probability of Improvement (PI)
+### Probability of Improvement (PI)
 
 PI is designed to aid in the efficient selection of candidate points by quantifying the probability of improving upon the current best observed value.
 Different from EI, which measures the expected amount of improvement by integrating over the posterior distribution, PI directly evaluates the probability of outperforming the best value, emphasizing the likelihood of improvement rather than the magnitude of improvement.
@@ -148,7 +148,7 @@ X_suggest, eval_suggest = optimizer.suggest(acquisition=['PI'])
 X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'PI': {'inflate': 0.05}}])
 ```
 
-### 3.4 Upper Confidence Bound (UCB)
+### Upper Confidence Bound (UCB)
 
 UCB balances exploration and exploitation by selecting points with high predicted values or high uncertainty.
 
@@ -172,34 +172,46 @@ X_suggest, eval_suggest = optimizer.suggest(acquisition=['UCB'])
 X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'UCB': {'beta': 2.0}}])
 ```
 
-## 4. Multi-Objective Optimization: Acquisition Functions and Hyperparameters
+## 4. Multi-Objective Optimization Acquisition Functions
+
+### Hypervolume Improvement
+
+One of the most well-known and widely used acquisition functions for multi-objective optimization is the Hypervolume Improvement-based acquisition functions. 
+The Hypervolume is a measure of the covered area in the objective space that is dominated by a given Pareto front; therefore, it is often used to quantify the quality of a Pareto front approximation. (See also Section [Additional Analysis](2_Analysis_and_Visualization.md))
+
+There are two available options in `obsidian`: 
+* **Expected Hypervolume Improvement (EHVI)**
+* **Noisy Expected Hypervolume Improvement (NEHVI)**
 
 
+The EHVI and NEHVI acquisition functions aim to select the next set of input points that would maximize the hypervolume of the Pareto front. They differ in the consideration of noise in the objective function evaluations, with NEHVI explicitly accounting for noisy observations while EHVI assumes noise-free evaluations.
 
-### 4.1 Expected Hypervolume Improvement (EHVI)
+NEHVI enables more robust optimization in the presence of noisy observations, improving the reliability of the optimization process. However, the incorporation of noise modeling in NEHVI may lead to increased computational complexity, as it often requires a larger number of Monte Carlo samples to accurately capture the noise characteristics, potentially making it more computationally intensive than EHVI in scenarios with significant noise.
 
+_Hyperparameters:_
+* ref_point: The reference point for computing the hypervolume. Default value for each dimension is the minimum value minus 10% of the range.
 
+**Example usage:**
 
-### 4.2 Expected Hypervolume Improvement (NEHVI)
+```python
+# Using default values for ref_point:
+X_suggest, eval_suggest = optimizer.suggest(acquisition=['EHVI'])
+X_suggest, eval_suggest = optimizer.suggest(acquisition=['NEHVI'])
 
+# Custom ref_point, assuming there are two outputs
+X_suggest, eval_suggest = optimizer.suggest(acquisition = [{'EHVI':{'ref_point':[5, 40]}}])
+X_suggest, eval_suggest = optimizer.suggest(acquisition = [{'NEHVI':{'ref_point':[-2, -30]}}])
+```
 
+### Weighted Response
 
-### 4.3 Random augmented chebyshev scalarization with Noisy Expected Improvement (NParEGO)
+* Random augmented chebyshev scalarization with Noisy Expected Improvement (NParEGO)
 
-
-
+* Additional scalarization options for multi-objective problems
 
 ## 5. Advanced Usage
 
-### 5.1 Additional Options for Multi-Objective Optimization 
-
-For multi-objective optimization problems, you can use specialized acquisition functions:
-
-```python
-X_suggest, eval_suggest = optimizer.suggest(acquisition=['NEHVI'])
-```
-
-### 5.2 Custom Acquisition Functions
+### Custom Acquisition Functions
 
 If you need to implement a custom acquisition function, you can extend the `MCAcquisitionFunction` class from BoTorch:
 
@@ -224,6 +236,7 @@ Different acquisition functions have different strengths:
 - NEI and NEHVI are robust to noisy observations.
 - qMean is purely exploitative and can be useful in the final stages of optimization.
 - qSpaceFill is purely explorative and can be useful for initial space exploration.
+- EHVI is advantageous in noise-free or low-noise settings due to its computational efficiency, while NEHVI is better suited for scenarios with significant noise, offering improved robustness at the cost of potentially higher computational demands.
 
 ## 7. Best Practices
 
