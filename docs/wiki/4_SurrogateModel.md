@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-The `obsidian.surrogates` submodule is a key component of the Obsidian APO library. It provides a collection of surrogate models used to approximate the objective function in the optimization process. These surrogate models are essential for efficient exploration of the parameter space and for making informed decisions about which points to evaluate next.
+The [`obsidian.surrogates`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/surrogates) submodule is a key component of the Obsidian APO library. It provides a collection of surrogate models used to approximate the objective function in the optimization process. These surrogate models are essential for efficient exploration of the parameter space and for making informed decisions about which points to evaluate next.
 
 ## 2. Basic Syntax
 

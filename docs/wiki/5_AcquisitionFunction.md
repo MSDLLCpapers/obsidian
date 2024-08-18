@@ -73,18 +73,39 @@ The `acquisition` parameter should be always a list, containing either string or
 EI calculates the expected amount by which we will improve upon the current best observed value.
 
 Mathematical formulation:
-```
-EI(x) = E[max(f(x) - f(x+), 0)]
-```
-where f(x+) is the current best observed value.
+\begin{equation*}
+EI(x) = E[max(\hat{f}(x) - y_{best}, 0)]
+\end{equation*}
 
-Example usage:
-```python
-from obsidian.optimizer import BayesianOptimizer
+where $y_{best}$ is the current best observed value. 
+The expression $max(\hat{f}(x) - y_{best}$ captures the potential improvement over the current best observed value, and the expectation E[ ] calculates the average improvement over the posterior distribution of the surrogate model predictions.
 
-optimizer = BayesianOptimizer(X_space=param_space)
-X_suggest, eval_suggest = optimizer.suggest(acquisition=['EI'])
-```
+_Optional hyperparameters:_
+
+* inflate: Increase the current best value $y_{best}$ to $(1+inflate)*y_{best}$, enabling a more flexible exploration-exploitation trade-off. 
+
+    \begin{equation*}
+    EI(x) = E[max(\hat{f}(x) - (1+inflate)*y_{best}, 0)]
+    \end{equation*}
+
+    The default value is 0 (no inflation).
+
+**Example usage:**
+
+* Default:
+
+    ```python
+    from obsidian.optimizer import BayesianOptimizer
+    
+    optimizer = BayesianOptimizer(X_space=param_space)
+    X_suggest, eval_suggest = optimizer.suggest(acquisition=['EI'])
+    ```
+    
+* With all available hyperparameters:
+      
+    ```python
+    X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'EI': {'inflate': 0.05}}])
+    ```
 
 ### 3.2 Upper Confidence Bound (UCB)
 
@@ -120,17 +141,7 @@ For multi-objective optimization problems, you can use specialized acquisition f
 X_suggest, eval_suggest = optimizer.suggest(acquisition=['NEHVI'])
 ```
 
-### 4.2 Customizing Acquisition Functions
-
-Some acquisition functions accept parameters to customize their behavior. These can be specified in the `suggest` method:
-
-```python
-X_suggest, eval_suggest = optimizer.suggest(
-    acquisition=[{'EI': {'inflate': 0.01}}]
-)
-```
-
-### 4.3 Custom Acquisition Functions
+### 4.2 Custom Acquisition Functions
 
 If you need to implement a custom acquisition function, you can extend the `MCAcquisitionFunction` class from BoTorch:
 
