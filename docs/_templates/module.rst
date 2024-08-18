@@ -60,7 +60,7 @@
    :template: module.rst
    :recursive:
 {% for item in modules %}
-{% if not item in ("obsidian.acquisition.aq_config", "obsidian.surrogates.surrogate_config", "obsidian.analysis") %}
+{% if not item in ("config") %}
    {{ item }}
 {%- endif %}
 {%- endfor %}

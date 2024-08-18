@@ -19,7 +19,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
-    'sphinx.ext.autosectionlabel',
     'myst_parser',
 ]
 
@@ -59,14 +58,11 @@ autodoc_default_options = {
     "member-order": "groupwise",
 }
 
-toc_object_entries_show_parents = 'hide'
-add_module_names = False
-
 autodoc_default_options = {'members': None,  # shows all members
                            'show-inheritance': True}
 
 autodoc_typehints = "signature"
-autoclass_content = "class"
+autoclass_content = "class"  # Use class docstring instead of __init__
 
 # Autosummary Options
 autosummary_imported_members = False
@@ -85,7 +81,27 @@ html_theme = "pydata_sphinx_theme"
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-  "collapse_navigation": True
+  "collapse_navigation": True,
+  "logo": {
+      "alt_text": "obsidian - Home",
+      "text": "obsidian APO",
+      "image_light": "_static/obsidian_logo.svg",
+      "image_dark": "_static/obsidian_logo_dark.svg",
+  },
+  "icon_links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/MSDLLCpapers/obsidian/",
+        "icon": "fa-brands fa-github",
+        "type": "fontawesome",
+      },
+      {
+         "name": "PyPI",
+         "url": "https://pypi.org/project/obsidian-apo/",
+         "icon": "fa-brands fa-python",
+         "type": "fontawesome",
+      },
+  ]
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -93,6 +109,7 @@ html_theme_options = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
 html_css_files = ["mycss.css"]
+html_favicon = "_static/obsidian_logo.svg"
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

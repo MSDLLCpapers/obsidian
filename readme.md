@@ -3,20 +3,22 @@ obsidian
 ReadMe
 -->
 
-<p align="center">
-  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.png?raw=true" width="100" alt = "obsidian logo">
-</p>
+<link rel="preload" href="_static/obsidian_logo_dark.svg" as="image">
+<div align = "center">
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" class="mainlogo dark-light" width="100" alt = "obsidian logo">
+</div>
 
 
 <div align="center">
 
-# obsidian
+<h1> obsidian</h1>
 
 ![Supports Python](https://img.shields.io/badge/Python-3.10-teal)
 [![License](https://img.shields.io/badge/license-GPLv3-teal.svg)](https://github.com/MSDLLCpapers/obsidian/blob/main/LICENSE)
 [![Issues](https://img.shields.io/github/issues/msdllcpapers/obsidian?color=teal)](https://github.com/MSDLLCpapers/obsidian/issues)
 [![PyPI](https://img.shields.io/pypi/v/obsidian-apo.svg?color=teal)](https://pypi.org/project/obsidian-apo/)
-[![Docs](https://img.shields.io/badge/read-docs-teal)](https://obsidian-apo.readthedocs.io/en/latest/index.html)
+[![Docs](https://img.shields.io/badge/read-docs-teal)](https://msdllcpapers.github.io/obsidian/)
+[![Codecov](https://img.shields.io/codecov/c/github/kstone40/obsidian?color=teal)](https://codecov.io/github/kstone40/obsidian)
 
 __obsidian__ is a library for algorithmic process design and black-box optimization using AI-guided experiment design
 
@@ -135,3 +137,13 @@ See [CONTRIBUTING](https://github.com/MSDLLCpapers/obsidian/blob/main/CONTRIBUTI
 
 ## License
 __obsidian__ is licensed by the [GPLv3 license](https://github.com/MSDLLCpapers/obsidian/blob/main/LICENSE).
+
+<details><summary>JavaScript for ReadMe dark mode</summary>
+        <script type="text/javascript" class="hidden">
+        var observer = new MutationObserver(function(mutations) {
+            const dark = document.documentElement.dataset.theme == 'dark';
+            document.getElementsByClassName('mainlogo')[0].src = dark ? 'https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo_dark.svg?raw=true' : "https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true";
+        })
+        observer.observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+        </script>
+</details>

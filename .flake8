@@ -1,21 +1,24 @@
 [flake8]
+
 # VScode adds blank whitespaces
 extend-ignore = W293
+# More manageable for desktop editing
 max-line-length = 140
-per-file-ignores =
 
+per-file-ignores =
     # Imported but unused / Unable to detect names
     __init__.py: F401, F403
     obsidian/dash/*: F401, F403
 
-    # Often creating variables but not accessing them in testing
-    obsidian/tests/*: F841
+    # Often importing and creating unaccessed objects during testing
+    obsidian/tests/*: F401, F841
+
+    # No good way around comparing types for recursive state-dict comparison
+    obsidian/tests/utils.py: E721
 
 exclude =
     projects/
     demo/
     logs/
     dev/
-    source/
     docs/
-    build/

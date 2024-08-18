@@ -1,15 +1,14 @@
 """Campaign class definition"""
 
-import pandas as pd
-import torch
-
 from obsidian.parameters import ParamSpace, Target
 from obsidian.optimizer import Optimizer, BayesianOptimizer
 from obsidian.experiment import ExpDesigner
-from obsidian.objectives import Objective, Objective_Sequence
-from obsidian.objectives.obj_config import class_dict
+from obsidian.objectives import Objective, Objective_Sequence, obj_class_dict
+from obsidian.exceptions import IncompatibleObjectiveError
 import obsidian
 
+import pandas as pd
+import torch
 import warnings
 
 
@@ -29,7 +28,10 @@ class Campaign():
     Properties:
         m_exp (int): The number of observations in campaign.data
         y (pd.Series): The response data in campaign.data
+        y_names (list): The names of the response data columns
         f (pd.Series): The transformed response data
+        o (pd.Series): The objective function evaluated on f
+        o_names (list): The names of the objective function columns
         X (pd.DataFrame): The input features of campaign.data
         response_max (float | pd.Series): The maximum for each response
         target (Target | list[Target]): The target(s) for optimization.
@@ -54,8 +56,8 @@ class Campaign():
         designer = ExpDesigner(X_space, seed=seed) if designer is None else designer
         self.set_designer(designer)
         
-        self.set_objective(objective)
         self.set_target(target)
+        self.set_objective(objective)
         
         # Non-object attributes
         self.iter = 0
@@ -89,39 +91,69 @@ class Campaign():
         self.iter += 1
         self.data = pd.concat([self.data, new_data], axis=0, ignore_index=True)
         self.data.index.name = 'Observation ID'
+        self.data.index = self.data.index.astype('int')
+        
+        if self.optimizer.is_fit:
+            self._analyze()
 
     def clear_data(self):
-        self.data = None
+        """Clears campaign data"""
+        self.data = pd.DataFrame()
 
     @property
     def optimizer(self) -> Optimizer:
+        """Campaign Optimizer"""
         return self._optimizer
     
     def set_optimizer(self, optimizer: Optimizer):
+        """Sets the campaign optimizer"""
         self._optimizer = optimizer
         
     @property
     def designer(self) -> ExpDesigner:
+        """Campaign Experimental Designer"""
         return self._designer
     
     def set_designer(self, designer: ExpDesigner):
+        """Sets the campaign experiment designer"""
         self._designer = designer
 
     @property
     def objective(self) -> Objective | None:
+        """Campaign Objective function"""
         return self._objective
     
+    def _eval_objective(self):
+        """Evaluates objective and appends it to campaign data"""
+        df_o = self.o
+        for col in df_o.columns:
+            self.data[col] = df_o[col].values
+            self.o_names = [col for col in self.data.columns if 'Objective' in col]
+    
     def set_objective(self, objective: Objective | None):
+        """(Re)sets the campaign objective function"""
         self._objective = objective
-
+        if not self.data.empty:
+            # Remove previous objective evaluations
+            self.data = self.data.drop(
+                columns=[col for col in self.data.columns if 'Objective' in col]
+                )
+            if self.optimizer.is_fit:
+                self._analyze()
+                
+    def clear_objective(self):
+        """Clears the campaign objective function"""
+        self._objective = None
+                
     @property
     def target(self):
+        """Campaign experimental target(s)"""
         return self._target
 
     def set_target(self,
                    target: Target | list[Target]):
         """
-        Sets the target for the campaign.
+        Sets the experimental target context for the campaign.
 
         Args:
             target (Target | list[Target] | None): The target or list of targets to set.
@@ -150,22 +182,18 @@ class Campaign():
         """
         Number of observations in training data
         """
-        if self.data is not None:
-            return self.data.shape[0]
-        else:
-            return 0
+        return self.data.shape[0]
 
     @property
     def y(self) -> pd.Series | pd.DataFrame:
         """
         Experimental response data
 
-        Raises:
-            ValueError: If no target(s) are specified.
         """
-        if not self.target:
-            raise ValueError('No target(s) specified')
-        return self.data[self.y_names]
+        if not self.data.empty:
+            return self.data[self.y_names]
+        else:
+            return None
 
     @property
     def response_max(self) -> float | pd.Series:
@@ -183,11 +211,40 @@ class Campaign():
         return f
 
     @property
+    def o(self) -> pd.Series | pd.DataFrame:
+        """
+        Objective function evaluated on f
+        """
+        if self.objective:
+            try:
+                x = self.X_space.encode(self.X).values
+                o = self.objective(torch.tensor(self.f.values).unsqueeze(0),
+                                   X=torch.tensor(x)).squeeze(0)
+                if o.ndim < 2:
+                    o = o.unsqueeze(1)  # Rearrange into m x o
+                return pd.DataFrame(o.detach().cpu().numpy(),
+                                    columns=[f'Objective {o_i+1}' for o_i in range(o.shape[1])])
+            except Exception:
+                raise IncompatibleObjectiveError('Objective(s) did not successfully execute on sample')
+        else:
+            return None
+    
+    @property
+    def out(self) -> pd.Series | pd.DataFrame:
+        """
+        Returns the objective function as appropriate, else the response data
+        """
+        if self.objective and self.optimizer.is_fit:
+            return self.o
+        else:
+            return self.y
+    
+    @property
     def X(self) -> pd.DataFrame:
         """
         Feature columns of the training data
         """
-        return self.data[self.X_space.X_names]
+        return self.data[list(self.X_space.X_names)]
             
     def save_state(self) -> dict:
         """
@@ -225,7 +282,7 @@ class Campaign():
             if obj_dict['objective']['name'] == 'Objective_Sequence':
                 new_objective = Objective_Sequence.load_state(obj_dict['objective'])
             else:
-                obj_class = class_dict[obj_dict['objective']['name']]
+                obj_class = obj_class_dict[obj_dict['objective']['name']]
                 new_objective = obj_class.load_state(obj_dict['objective'])
         else:
             new_objective = None
@@ -236,19 +293,17 @@ class Campaign():
                            objective=new_objective,
                            seed=obj_dict['seed'])
         new_campaign.data = pd.DataFrame(obj_dict['data'])
+        new_campaign.data.index = new_campaign.data.index.astype('int')
         
-        try:
-            new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
-        except KeyError:
-            new_campaign.iter = 0
+        new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
 
         return new_campaign
 
     def __repr__(self):
+        """String representation of object"""
         return f"obsidian Campaign for {getattr(self,'y_names', None)}; {getattr(self,'m_exp', 0)} observations"
 
-    def initialize(self,
-                   design_kwargs={}):
+    def initialize(self, **design_kwargs):
         """
         Maps ExpDesigner.initialize method
         """
@@ -266,10 +321,8 @@ class Campaign():
             raise ValueError('Must register data before fitting')
 
         self.optimizer.fit(self.data, target=self.target)
-        # self._analyze()
 
-    def suggest(self,
-                optim_kwargs={}):
+    def suggest(self, **optim_kwargs):
         """
         Maps Optimizer.suggest method
         """
@@ -285,6 +338,12 @@ class Campaign():
             X0 = self.initialize()
             return X0
 
+    def evaluate(self, X_suggest: pd.DataFrame):
+        """
+        Maps Optimizer.evaluate method
+        """
+        return self.optimizer.evaluate(X_suggest, objective=self.objective)
+
     def _profile_hv(self):
         """
         Calculate and assign the hypervolume values to each iteration in the data.
@@ -294,14 +353,16 @@ class Campaign():
         """
         iters = self.data['Iteration'].unique()
         hv = {}
+        
         for i in iters:
             iter_index = self.data.query(f'Iteration <= {i}').index
-            y_iter = self.y.loc[iter_index, :]
-            y_iter = torch.tensor(y_iter.values).to(self.optimizer.device)
-            hv[i] = self.optimizer.hypervolume(y_iter)
+            out_iter = self.out.loc[iter_index, :]
+            out_iter = torch.tensor(out_iter.values).to(self.optimizer.device)
+            hv[i] = self.optimizer.hypervolume(out_iter)
         
-        self.data['Hypervolume'] = self.data.apply(lambda x: hv[x['Iteration']], axis=1)
-
+        self.data['Hypervolume (iter)'] = self.data.apply(lambda x: hv[x['Iteration']], axis=1)
+        self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(self.out.values).to(self.optimizer.device))
+        
         return
 
     def _profile_max(self):
@@ -311,13 +372,16 @@ class Campaign():
         Returns:
             None
         """
-        y_max = self.data.groupby('Iteration', observed=True).max()[self.y_names].reset_index()
-        y_max = y_max.rename(columns={name: name+' (max)' for name in self.y_names})
-
-        # Reset aggregate columns if previously calculated
-        if any([name+' (max)' in self.data.columns for name in self.y_names]):
-            self.data = self.data.copy().drop(columns={name+' (max)' for name in self.y_names})
-        self.data = self.data.merge(y_max, on='Iteration')
+        
+        # Remove previous max-profiling
+        self.data = self.data.drop(
+            columns=[col for col in self.data.columns if '(max) (iter)' in col]
+        )
+        
+        for out in self.out.columns:
+            self.data[out+' (max) (iter)'] = self.data.apply(
+                lambda x: self.data.query(f'Iteration<={x["Iteration"]}')[out].max(), axis=1
+            )
 
         return
     
@@ -328,8 +392,16 @@ class Campaign():
         Returns:
             None
         """
+        if self.objective:
+            self._eval_objective()
         self._profile_max()
-        if self.n_response > 1:
+        if self._is_mo:
             self._profile_hv()
-            self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(self.y.values).to(self.optimizer.device))
+        else:
+            # Remove previous HV-profiling
+            self.data = self.data.drop(
+                columns=[col for col in self.data.columns
+                         if 'Hypervolume' in col or 'Pareto' in col]
+            )
+            
         return
