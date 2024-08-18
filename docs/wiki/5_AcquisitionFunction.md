@@ -65,7 +65,7 @@ The `acquisition` parameter should be always a list, containing either string or
 * If specifying custom hyperparameters for an acquisition function, use a dictionary element where the key is the acquisition function name and the value is a nested dictionary storing its hyperparameters (e.g., {'UCB': {'beta': 0.1}} for Upper Confidence Bound with a specified beta parameter).
 
 
-## 3. Understanding Acquisition Functions and Hyperparameters
+## 3. Single-Objective Optimization: Acquisition Functions and Hyperparameters
 
 
 ### 3.1 Expected Improvement (EI)
@@ -82,13 +82,13 @@ The expression $max(\hat{f}(x) - y_{best}$ captures the potential improvement ov
 
 _Optional hyperparameters:_
 
-* inflate: Increase the current best value $y_{best}$ to $(1+inflate)*y_{best}$, enabling a more flexible exploration-exploitation trade-off. 
+* inflate: Increase the current best value $y_{best}$ to $(1+inflate)*y_{best}$, enabling a more flexible exploration-exploitation trade-off: 
 
     \begin{equation*}
     EI(x) = E[max(\hat{f}(x) - (1+inflate)*y_{best}, 0)]
     \end{equation*}
 
-    The default value is 0 (no inflation).
+    The default value is 0 (no inflation). Recommended values: small numberic number 0~0.1
 
 **Example usage:**
 
@@ -107,33 +107,91 @@ _Optional hyperparameters:_
     X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'EI': {'inflate': 0.05}}])
     ```
 
-### 3.2 Upper Confidence Bound (UCB)
+### 3.2 Noisy Expected Improvement (NEI)
 
-UCB balances exploration and exploitation by selecting points with high predicted values or high uncertainty.
+NEI is a variant of EI that accounts for noise in the observations, making it more suitable for real-world problems with measurement uncertainty. It allows for more robust decision-making in selecting the next point for evaluation. 
 
-Mathematical formulation:
-```
-UCB(x) = μ(x) + β * σ(x)
-```
-where μ(x) is the predicted mean, σ(x) is the predicted standard deviation, and β is a parameter that controls the exploration-exploitation trade-off.
+Currently NEI doesn't accept additional hyperparameters.  
 
-Example usage:
-```python
-X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'UCB': {'beta': 2.0}}])
-```
+**Example usage:**
 
-### 3.3 Noisy Expected Improvement (NEI)
-
-NEI is a variant of EI that accounts for noise in the observations, making it more suitable for real-world problems with measurement uncertainty.
-
-Example usage:
 ```python
 X_suggest, eval_suggest = optimizer.suggest(acquisition=['NEI'])
 ```
 
-## 4. Advanced Usage
+### 3.3 Probability of Improvement (PI)
 
-### 4.1 Additional Options for Multi-Objective Optimization 
+PI is designed to aid in the efficient selection of candidate points by quantifying the probability of improving upon the current best observed value.
+Different from EI, which measures the expected amount of improvement by integrating over the posterior distribution, PI directly evaluates the probability of outperforming the best value, emphasizing the likelihood of improvement rather than the magnitude of improvement.
+
+Mathematical formulation:
+$$
+PI(x) = P(\hat{f}(x) > y_{best})
+$$
+where $y_{best}$ is the current best observed value and the $\hat{f}$ is the trained surrogate function. 
+
+_Optional hyperparameters:_
+* inflate: Increase the current best value $y_{best}$ to $(1+inflate)*y_{best}$, enabling a more flexible exploration-exploitation trade-off:
+
+    \begin{equation*}
+    PI(x) = P(\hat{f}(x) > (1+inflate)*y_{best})
+    \end{equation*}
+
+  The default value is 0 (no inflation). Recommended values: small numberic number 0~0.1
+
+**Example usage:**
+```python
+# Use the default inflate = 0
+X_suggest, eval_suggest = campaign.suggest(acquisition=['PI'])
+
+# Adjust the hyperparameter inflate
+X_suggest, eval_suggest = campaign.suggest(acquisition=[{'PI': {'inflate': 0.05}}])
+```
+
+### 3.4 Upper Confidence Bound (UCB)
+
+UCB balances exploration and exploitation by selecting points with high predicted values or high uncertainty.
+
+Mathematical formulation:
+$$
+UCB(x) = \mu(x) + \beta * \sigma(x) 
+$$
+
+where $\mu(x)$ is the predicted mean at the candidate point $x$, $\sigma(x)$ is the predicted standard deviation which is associated with uncertainty, and $\beta$ is a parameter that controls the exploration-exploitation trade-off. 
+
+_Optional hyperparameters:_
+* $\beta$: By default $\beta = 1$. Recommended value range: 1~3
+
+**Example usage:**
+
+```python
+# Use the default beta = 1
+X_suggest, eval_suggest = optimizer.suggest(acquisition=['UCB'])
+
+# Adjust the hyperparameter beta
+X_suggest, eval_suggest = optimizer.suggest(acquisition=[{'UCB': {'beta': 2.0}}])
+```
+
+## 4. Multi-Objective Optimization: Acquisition Functions and Hyperparameters
+
+
+
+### 4.1 Expected Hypervolume Improvement (EHVI)
+
+
+
+### 4.2 Expected Hypervolume Improvement (NEHVI)
+
+
+
+### 4.3 Random augmented chebyshev scalarization with Noisy Expected Improvement (NParEGO)
+
+
+
+
+## 5. Advanced Usage
+
+### 5.1 Additional Options for Multi-Objective Optimization 
 
 For multi-objective optimization problems, you can use specialized acquisition functions:
 
@@ -141,7 +199,7 @@ For multi-objective optimization problems, you can use specialized acquisition f
 X_suggest, eval_suggest = optimizer.suggest(acquisition=['NEHVI'])
 ```
 
-### 4.2 Custom Acquisition Functions
+### 5.2 Custom Acquisition Functions
 
 If you need to implement a custom acquisition function, you can extend the `MCAcquisitionFunction` class from BoTorch:
 
@@ -157,7 +215,7 @@ class CustomAcquisition(MCAcquisitionFunction):
         return (mean + 0.1 * std).sum(dim=-1)  # Example custom acquisition logic
 ```
 
-## 5. Comparing Acquisition Functions
+## 6. Comparing Acquisition Functions
 
 Different acquisition functions have different strengths:
 
@@ -167,7 +225,7 @@ Different acquisition functions have different strengths:
 - qMean is purely exploitative and can be useful in the final stages of optimization.
 - qSpaceFill is purely explorative and can be useful for initial space exploration.
 
-## 6. Best Practices
+## 7. Best Practices
 
 1. Choose appropriate acquisition functions based on your problem characteristics (e.g., noise level, number of objectives).
 2. For noisy problems, consider using noise-aware acquisition functions like NEI or NEHVI.
@@ -176,7 +234,7 @@ Different acquisition functions have different strengths:
 5. For multi-objective problems, EHVI and NEHVI are often good choices.
 6. Consider using a sequence of acquisition functions, starting with more exploratory ones and moving to more exploitative ones as the optimization progresses.
 
-## 7. Common Pitfalls
+## 8. Common Pitfalls
 
 1. Using EI or PI in noisy problems, which can lead to overexploitation of noisy observations.
 2. Setting UCB's beta parameter too high (over-exploration) or too low (over-exploitation).
