@@ -53,6 +53,7 @@ def setup_data(app, app_tabs, default_data):
     # Data store
     storage_X0 = dcc.Store(id='store-X0', data=default_data.to_dict())
     storage_X0_template = dcc.Store(id='store-X0_template', data=default_data.to_dict())
+    # storage_Xspace = dcc.Store(id='store-Xspace', data={})
     
     # Parameter space table
     xspace = html.Div([html.Div(id='div-xspace', children=[])])
@@ -143,11 +144,10 @@ def setup_data_callbacks(app):
     )
     def update_xspace_types(data, ycol):
         
-        df_xspace = pd.DataFrame(data)
-        xcols = [x for x in df_xspace.columns if x != ycol]
+        df_X0 = pd.DataFrame(data)
+        xcols = [x for x in df_X0.columns if x != ycol]
         
-        #param_types = ['Numeric', 'Categorical', 'Ordinal']
-        param_types = ['Numeric', 'Categorical'] # Note: the Ordinal var may cause fitting issues
+        param_types = ['Numeric', 'Categorical', 'Ordinal']
         
         cols = []
         for i, x in enumerate(xcols):
@@ -207,7 +207,7 @@ def setup_data_callbacks(app):
                        ]
         return choices
 
-    # ategory management for categorical variables
+    # Category management for categorical variables
     @app.callback(
         Output({'type': 'store-param_categories', 'index': MATCH}, 'data'),
         Output({'type': 'input-new_category', 'index': MATCH}, 'value'),

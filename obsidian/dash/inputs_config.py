@@ -164,8 +164,7 @@ def setup_config_callbacks(app):
         config['response_name'] = response_name
         config['optimizer_seed'] = int(optimizer_seed) if optimizer_seed is not None else None
         config['surrogate_params'] = {'f_transform': f_transform, 'surrogate': surrogate}
-        #config['aq_params'] = {'optim_sequential': optim_sequential, 'optim_restarts': optim_restarts,
-        #                       'm_batch': m_batch, 'acquisition': aq, 'alpha': alpha}
+        # TODO: Re-implement hyperparmeters based on selection in alpha
         config['aq_params'] = {'optim_sequential': optim_sequential, 'optim_restarts': optim_restarts,
                                'm_batch': m_batch, 'acquisition': aq}
         config['verbose'] = 0
