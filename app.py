@@ -35,7 +35,7 @@ params = [
     Param_Continuous('Concentration', 10, 150),
     Param_Continuous('Enzyme', 0.01, 0.30),
     Param_Categorical('Variant', ['MRK001', 'MRK002', 'MRK003']),
-    Param_Ordinal('Stir Rate', ['Low', 'Medium', 'High']),
+    Param_Ordinal('Stir Rate', ['0 - Low', '1 - Medium', '2 - High']),
 ]
 X_space = ParamSpace(params)
 designer = ExpDesigner(X_space, seed=0)

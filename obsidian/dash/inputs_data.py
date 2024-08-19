@@ -7,6 +7,7 @@ import base64
 import io
 from dash.exceptions import PreventUpdate
 from obsidian.parameters import ParamSpace, Param_Categorical, Param_Ordinal, Param_Continuous, Target, Parameter
+from pandas.api.types import is_numeric_dtype
 
 
 def setup_data(app, app_tabs, default_data, default_Xspace):
@@ -140,9 +141,12 @@ def setup_data_callbacks(app):
     @app.callback(
         Output('div-xspace', 'children'),
         Input('store-X0', 'data'),
-        Input('input-response_name', 'value')
+        Input('input-response_name', 'value'),
+        State('store-Xspace', 'data')
     )
-    def update_xspace_types(data, ycol):
+    def update_xspace_types(data, ycol, Xspace_save):
+        
+        X_space = ParamSpace.load_state(Xspace_save)
         
         df_X0 = pd.DataFrame(data)
         xcols = [x for x in df_X0.columns if x != ycol]
@@ -151,11 +155,26 @@ def setup_data_callbacks(app):
         
         cols = []
         for i, x in enumerate(xcols):
+            if x in X_space.X_names:
+                x_idx = X_space.X_names.index(x)
+                param = X_space.params[x_idx]
+                if isinstance(param, Param_Continuous):
+                    param_type = 'Numeric'
+                elif isinstance(param, Param_Categorical):
+                    param_type = 'Categorical'
+                elif isinstance(param, Param_Ordinal):
+                    param_type = 'Ordinal'
+            else:
+                if not is_numeric_dtype(df_X0[x]):
+                    param_type = 'Categorical'
+                else:
+                    param_type = 'Numeric'
+            
             cols.append(dbc.Col(children=dbc.Card([
                 dbc.CardHeader(f'{x}'),
                 dbc.CardBody([make_dropdown('Type', f'Select parameter type for {x}', param_types,
                                             id={'type': 'input-param_type', 'index': x},
-                                            kwargs={'value': param_types[0]}),
+                                            kwargs={'value': param_type}),
                               html.Div(id={'type': 'div-param_vals', 'index': x}, children=[]),
                               dcc.Store(id={'type': 'store-param_save', 'index': x}, data={})],)
                 ],

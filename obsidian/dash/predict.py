@@ -104,6 +104,7 @@ def setup_predict_callbacks(app):
         Output('div-xspace_df', 'style'),
         Input('button-config', 'n_clicks'),
         State('store-Xspace', 'data'),
+        prevent_initial_call=True
     )
     def config_tableView(clicked, Xspace_save):
         if not Xspace_save:
@@ -111,7 +112,12 @@ def setup_predict_callbacks(app):
         
         Xspace_list = []
         for param in Xspace_save.keys():
-            Xspace_list.append(Xspace_save[param]['state'])
+            state_dict = Xspace_save[param]['state']
+            row = {'Parameter': state_dict['name']}
+            row['Min'] = state_dict.get('min', None)
+            row['Max'] = state_dict.get('max', None)
+            row['Categories'] = str(state_dict.get('categories', None))
+            Xspace_list.append(row)
         
         df_xspace = pd.DataFrame(Xspace_list)
         tables = [center(make_table(df_xspace))]
