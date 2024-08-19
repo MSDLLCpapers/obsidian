@@ -223,7 +223,7 @@ _Optional hyperparameters:_
 ```python
 # Default, random weights
 X_suggest, eval_suggest = optimizer.suggest(acquisition = ['NParEGO'])
-# Fixed weights
+# Fixed weights, assuming there are two outputs
 X_suggest, eval_suggest = optimizer.suggest(acquisition = [{'NParEGO':{'scalarization_weights':[0.75, 0.25]}}])
 ```
 
@@ -274,4 +274,4 @@ Different acquisition functions have different strengths:
 3. Using single-objective acquisition functions for multi-objective problems.
 4. Not accounting for constraints when selecting acquisition functions.
 
-This concludes the user guide for the `obsidian.acquisition` submodule. For more detailed information, please refer to the source code and docstrings in the individual files.
+This concludes the user guide for the [`obsidian.acquisition`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/acquisition) submodule. For more detailed information, please refer to the source code and docstrings in the individual files.
