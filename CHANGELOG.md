@@ -1,4 +1,9 @@
 # Changelog
+
+## [0.8.2]
+### Added
+- Project metadata properly captured on PyPI based on changes in pyproject.toml
+
 ## [0.8.1]
 ### Modified
 - Fixed infobar on dash app
