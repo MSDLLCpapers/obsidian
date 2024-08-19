@@ -205,9 +205,29 @@ X_suggest, eval_suggest = optimizer.suggest(acquisition = [{'NEHVI':{'ref_point'
 
 ### Weighted Response
 
-* Random augmented chebyshev scalarization with Noisy Expected Improvement (NParEGO)
+Another widely used approach is aggregating multiple outcomes into a single objective function, which is usually a weighted sum of the individual outcomes plus some regularization or penalty terms. 
 
-* Additional scalarization options for multi-objective problems
+* **Random augmented chebyshev scalarization with Noisy Expected Improvement (NParEGO)**
+
+    The mathematical formulation of augmented Chebyshev scalarization [[ref](https://github.com/pytorch/botorch/blob/main/botorch/utils/multi_objective/scalarization.py)]:
+    \begin{equation*}
+    objective = \max_j (w_j * y^j)+ \alpha * \sum_j(w_j * y^j)
+    \end{equation*}
+    where the constant $\alpha=0.05$, and the weights $\{w_j\}_{1\leq j\leq J}$ are samples from the unit simplex by default. 
+
+_Optional hyperparameters:_
+* scalarization_weights: Default value is 'None', then random weights will be applied to search for global solution set on pareto front.
+
+**Example usage:**
+
+```python
+# Default, random weights
+X_suggest, eval_suggest = optimizer.suggest(acquisition = ['NParEGO'])
+# Fixed weights
+X_suggest, eval_suggest = optimizer.suggest(acquisition = [{'NParEGO':{'scalarization_weights':[0.75, 0.25]}}])
+```
+
+* Additional scalarization options for multi-objective optimization: Utilize various scalarization functions defined in [obsidian.objectives.scalarize](https://github.com/MSDLLCpapers/obsidian/blob/main/obsidian/objectives/scalarize.py) to combine multiple objectives into a single scalar value, then various single-objective optimization acquisition functions could be applied. 
 
 ## 5. Advanced Usage
 
