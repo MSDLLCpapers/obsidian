@@ -16,6 +16,8 @@
 
    stubs/tutorials
 
+   stubs/publications
+
    stubs/reference
 
 .. include:: ../readme.md
