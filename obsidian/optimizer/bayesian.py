@@ -774,7 +774,7 @@ class BayesianOptimizer(Optimizer):
             aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
             
             # Hypervolume aqs fail with X_t_pending when optim_sequential=True
-            if aq_i in ['NEHVI', 'EHVI']:
+            if aq_str in ['NEHVI', 'EHVI']:
                 optim_sequential = False
 
             # If it's random search, no need to do optimization; Otherwise, initialize the aq function and optimize
