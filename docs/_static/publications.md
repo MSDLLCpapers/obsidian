@@ -7,8 +7,11 @@ DOI: [10.1039/D3SC06884F](https://pubs.rsc.org/en/content/articlelanding/2024/sc
 
 # Presentations
 
-* The 2024 Joint Statistical Meetings (JSM), Portland, Aug. 5, 2024.
-  Poster at Biopharmaceutical Section: _Algorithmic Process Optimization in Pharmaceutical Development_
+* The ACS Fall 2024, Denver, CO, Aug. 19, 2024.
+  Oral Presentation: _Algorithmic process optimization (APO) for pharmaceutical development_ (Kevin Stone)
+
+* The 2024 Joint Statistical Meetings (JSM), Portland, OR, Aug. 5, 2024.
+  Poster Presentation at Biopharmaceutical Section: _Algorithmic Process Optimization in Pharmaceutical Development_ (Yuting Xu)
 
 
 
