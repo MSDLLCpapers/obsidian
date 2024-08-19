@@ -77,24 +77,15 @@ def setup_optimize_callbacks(app):
         Input('button-fit', 'n_clicks'),
         State('store-config', 'data'),
         State('store-X0', 'data'),
+        State('store-Xspace', 'data'),
         prevent_initial_call=True
     )
-    def fit_optimizer(fit_clicked, config, X0):
+    def fit_optimizer(fit_clicked, config, X0, Xspace_save):
         
-        if config['xspace'] == {}:
+        if not Xspace_save:
             return 0, None
         
-        param_list = []
-        for param_input in config['xspace']:
-            if param_input['Type'] == 'Numeric':
-                param = Param_Continuous(param_input['Name'], param_input['Low'], param_input['High'])
-            elif param_input['Type'] == 'Categorical':
-                param = Param_Categorical(param_input['Name'], param_input['Categories'])
-            elif param_input['Type'] == 'Ordinal':
-                param = Param_Ordinal(param_input['Name'], param_input['Categories'])
-            param_list.append(param)
-            
-        X_space = ParamSpace(param_list)
+        X_space = ParamSpace.load_state(Xspace_save)
         target = Target(config['response_name'], aim='max')
         campaign = Campaign(X_space, target)
         campaign.add_data(pd.DataFrame(X0))

@@ -103,13 +103,17 @@ def setup_predict_callbacks(app):
         Output('div-xspace_df', 'children'),
         Output('div-xspace_df', 'style'),
         Input('button-config', 'n_clicks'),
-        State('store-config', 'data'),
+        State('store-Xspace', 'data'),
     )
-    def config_tableView(clicked, config):
-        if config is None:
+    def config_tableView(clicked, Xspace_save):
+        if not Xspace_save:
             return 0, None, {'overflow-x': 'scroll'}
         
-        df_xspace = pd.DataFrame(config['xspace'])
+        Xspace_list = []
+        for param in Xspace_save.keys():
+            Xspace_list.append(Xspace_save[param]['state'])
+        
+        df_xspace = pd.DataFrame(Xspace_list)
         tables = [center(make_table(df_xspace))]
         return 0, tables, {'overflow-x': 'scroll'}
     

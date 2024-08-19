@@ -46,7 +46,7 @@ default_data = pd.concat([X0, y0], axis=1)
 
 # Set up each tab
 setup_infobar(app, app_infobar)
-setup_data(app, app_tabs, default_data)
+setup_data(app, app_tabs, default_data, X_space)
 setup_config(app, app_tabs)
 setup_optimize(app, app_tabs)
 setup_plots(app, app_tabs)

@@ -13,9 +13,13 @@ def center(element):
 
 
 def load_optimizer(config, opt_save):
-    # Note: it doesn't need config anymore?
     optimizer = BayesianOptimizer.load_state(opt_save)
     return optimizer
+
+
+def load_Xspace(config, Xspace_save):
+    X_space = ParamSpace.load_state(Xspace_save)
+    return X_space
 
 
 def add_tab(target, elements, id, label):
