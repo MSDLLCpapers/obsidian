@@ -95,6 +95,7 @@ class Param_Discrete(Parameter):
         super().__init__(name=name)
         if isinstance(categories, str):
             self.categories = categories.split(',')
+            self.categories = [c.rstrip().lstrip() for c in self.categories]
         else:
             self.categories = categories
         for c in self.categories:
