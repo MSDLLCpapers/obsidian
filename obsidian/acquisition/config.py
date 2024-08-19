@@ -44,5 +44,5 @@ aq_hp_defaults = {
     'NIPV': {},
     'EHVI': {'ref_point': {'val': None, 'optional': True}},
     'NEHVI': {'ref_point': {'val': None, 'optional': True}},
-    'NParEGO': {'scalarization_weights': {'val': [1], 'optional': True}},
+    'NParEGO': {'scalarization_weights': {'val': None, 'optional': True}},
 }
