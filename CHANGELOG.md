@@ -1,4 +1,10 @@
 # Changelog
+## [0.8.1]
+### Modified
+- Fixed infobar on dash app
+- Better handling of X_space on dash app
+- Bug fixes for optim_progress
+- Improved color and axes of parity_plot
 
 ## [0.8.0]
 ### Added
