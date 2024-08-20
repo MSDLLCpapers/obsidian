@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.2]
+### Added
+- Project metadata properly captured on PyPI based on changes in pyproject.toml
+
+## [0.8.1]
+### Modified
+- Fixed infobar on dash app
+- Better handling of X_space on dash app
+- Bug fixes for optim_progress
+- Improved color and axes of parity_plot
+
 ## [0.8.0]
 ### Added
 - Major improvements to testing and numerous small bug fixes to improve code robustness

@@ -5,7 +5,7 @@ from dash import dcc, html, Dash, dash_table, callback, Output, Input, State, AL
 import pandas as pd
 
 from obsidian.parameters import ParamSpace, Param_Categorical, Param_Ordinal, Param_Continuous
-#from obsidian.optimizer import BayesianOptimizer
+from obsidian.optimizer import BayesianOptimizer
 from obsidian.campaign import Campaign
 from obsidian.parameters import Target
 
@@ -54,10 +54,11 @@ def setup_optimize(app, app_tabs):
     store_candidates = dcc.Store(id='store-candidates', data={})
     
     # Suggested candidates download
-    candidates_downloader = html.Div(children=[dbc.Button('Download Suggested Candidates', id='button-download_candidates',
-                                                        className='me-2', color='primary'),
-                                             dcc.Download(id='downloader-candidates')],
-                                   style={'textAlign': 'center','margin-top': '15px'})
+    candidates_downloader = html.Div(children=[
+        dbc.Button('Download Suggested Candidates', id='button-download_candidates',
+                   className='me-2', color='primary'),
+        dcc.Download(id='downloader-candidates')],
+                                     style={'textAlign': 'center', 'margin-top': '15px'})
     
     # Add all of these elements to the app
     columns = dbc.Row([dbc.Col(fit_div, width=6), dbc.Col([predict_div, candidates_downloader], width=6)])
@@ -76,30 +77,25 @@ def setup_optimize_callbacks(app):
         Input('button-fit', 'n_clicks'),
         State('store-config', 'data'),
         State('store-X0', 'data'),
+        State('store-Xspace', 'data'),
         prevent_initial_call=True
     )
-    def fit_optimizer(fit_clicked, config, X0):
+    def fit_optimizer(fit_clicked, config, X0, Xspace_save):
         
-        if config['xspace'] == {}:
+        if not Xspace_save:
             return 0, None
         
-        xspace = []
-        for param_xspace in config['xspace']:
-            if param_xspace['Type']=='Numeric':
-                this_para = Param_Continuous(param_xspace['Name'], param_xspace['Low'], param_xspace['High'])
-            elif param_xspace['Type']=='Categorical':
-                this_para = Param_Categorical(param_xspace['Name'], param_xspace['Categories'])
-            else:
-                this_para = Param_Ordinal(param_xspace['Name'], param_xspace['Categories'])
-            xspace.append(this_para)
-        X_space = ParamSpace(xspace)       
-        my_campaign = Campaign(X_space)
-        my_campaign.add_data(pd.DataFrame(X0))
+        X_space = ParamSpace.load_state(Xspace_save)
         target = Target(config['response_name'], aim='max')
-        my_campaign.set_target(target)
-        my_campaign.fit()
+        campaign = Campaign(X_space, target)
+        campaign.add_data(pd.DataFrame(X0))
         
-        return 0, my_campaign.optimizer.save_state()
+        optimizer = BayesianOptimizer(X_space=campaign.X_space,
+                                      surrogate=config['surrogate_params']['surrogate'])
+        campaign.set_optimizer(optimizer)
+        campaign.fit()
+        
+        return 0, campaign.optimizer.save_state()
     
     @app.callback(
         Output('div-fit', 'children'),
@@ -117,8 +113,9 @@ def setup_optimize_callbacks(app):
             [
              dbc.ListGroupItem(['Model Type: ', f'{optimizer.surrogate_type}']),
              dbc.ListGroupItem(['Data Name: ', filename]),
-             dbc.ListGroupItem(['R', html.Sup('2'), ' Score: ', f'{optimizer.surrogate[0].r2_score: .4g}']), # for SOO only
-             dbc.ListGroupItem(['Marginal Log Likelihood: ', f'{optimizer.surrogate[0].loss: .4g}']), # for SOO only
+             # TODO: Implement score for each surrogate, to support MOO
+             dbc.ListGroupItem(['R', html.Sup('2'), ' Score: ', f'{optimizer.surrogate[0].r2_score: .4g}']),
+             dbc.ListGroupItem(['Marginal Log Likelihood: ', f'{optimizer.surrogate[0].loss: .4g}']),
             ], flush=True
         )
         
