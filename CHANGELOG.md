@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.3]
+### Added
+- Default values for NParEGO scalarization_weights
+- SHAP PDP ICE plots now work with categorical values
+
+### Modified
+- SHAP PDP ICE plots must now have color and x-axis indices that are distinct
+
 ## [0.8.2]
 ### Added
 - Project metadata properly captured on PyPI based on changes in pyproject.toml

@@ -1,6 +1,7 @@
 """Custom plots for SHAP analysis visualization"""
 
 from .branding import obsidian_cm, obsidian_colors
+from obsidian.exceptions import UnsupportedError
 
 from shap.plots._partial_dependence import compute_bounds
 from shap.utils import convert_name
@@ -79,7 +80,7 @@ def one_shap_value(shap_value_new: np.ndarray,
 def partial_dependence(ind: int | tuple[int],
                        model: Callable,
                        data: pd.DataFrame,
-                       ice_color_var: int | str | None = 0,
+                       ice_color_var: int | str | None = None,
                        xmin: str | tuple[float] | float = "percentile(0)",
                        xmax: str | tuple[float] | float = "percentile(100)",
                        npoints: int | None = None,
@@ -149,10 +150,20 @@ def partial_dependence(ind: int | tuple[int],
     if type(ind) is not tuple:
         ind = convert_name(ind, None, feature_names)
         xv = features[:, ind]
-        xmin, xmax = compute_bounds(xmin, xmax, xv)
-        npoints = 100 if npoints is None else npoints
-        xs = np.linspace(xmin, xmax, npoints)
-
+        try:
+            xv = xv.astype(float)
+        except ValueError:
+            pass
+        if xv.dtype == np.dtype('O'):
+            xs = np.array(sorted(set(xv)))
+            npoints = len(xs)
+            xmin = xs[0]
+            xmax = xs[-1]
+        else:
+            xmin, xmax = compute_bounds(xmin, xmax, xv)
+            npoints = 100 if npoints is None else npoints
+            xs = np.linspace(xmin, xmax, npoints)
+            
         if ice:
             features_tmp = features.copy()
             ice_vals = np.zeros((npoints, features.shape[0]))
@@ -197,11 +208,25 @@ def partial_dependence(ind: int | tuple[int],
             else:
                 if not isinstance(ice_color_var, int):
                     ice_color_var = convert_name(ice_color_var, None, feature_names)
+                if ice_color_var == ind:
+                    raise UnsupportedError("Coloring by the feature(s) used in the PDP is not supported.")
                 colormap = obsidian_cm.obsidian_viridis
-                color_vals = features[:, ice_color_var]
-                colorbar_min = color_vals.min()
-                colorbar_max = color_vals.max()
-                color_vals = (color_vals - colorbar_min)/(colorbar_max-colorbar_min)
+                xc = features[:, ice_color_var]
+                # Try to convert to float for color mapping
+                try:
+                    xc = xc.astype(float)
+                except ValueError:
+                    pass
+                if xc.dtype == np.dtype('O'):
+                    xc_cat_vals = sorted(set(xc))
+                    colorbar_min = 0
+                    colorbar_max = len(xc_cat_vals) - 1
+                    color_vals = [xc_cat_vals.index(c)/colorbar_max for c in xc]
+                else:
+                    color_vals = xc
+                    colorbar_min = color_vals.min()
+                    colorbar_max = color_vals.max()
+                    color_vals = (color_vals - colorbar_min)/(colorbar_max-colorbar_min)
                 for i in range(ice_vals.shape[1]):
                     ax1.plot(xs, ice_vals[:, i], color=colormap(color_vals[i]),
                              linewidth=ace_linewidth, alpha=ace_opacity)
@@ -209,6 +234,9 @@ def partial_dependence(ind: int | tuple[int],
                                                           norm=plt.Normalize(
                                                               vmin=colorbar_min, vmax=colorbar_max)),
                                     ax=ax1)
+                if xc.dtype == np.dtype('O'):
+                    cbar.set_ticks(np.linspace(0, colorbar_max, len(xc_cat_vals)))
+                    cbar.set_ticklabels(xc_cat_vals)
                 cbar.set_label('Color by ' + feature_names[ice_color_var])
 
         # the line plot
@@ -222,6 +250,7 @@ def partial_dependence(ind: int | tuple[int],
                 ylabel = "E[f(x) | " + str(feature_names[ind]) + "]"
             else:
                 ylabel = "f(x) | " + str(feature_names[ind])
+
         ax1.set_ylabel(ylabel, fontsize=13)
         ax1.xaxis.set_ticks_position('bottom')
         ax1.yaxis.set_ticks_position('left')
@@ -246,39 +275,66 @@ def partial_dependence(ind: int | tuple[int],
     else:
         ind0 = convert_name(ind[0], None, feature_names)
         ind1 = convert_name(ind[1], None, feature_names)
+        if ind0 == ind1:
+            raise UnsupportedError("The two features must be different for 2D PDP.")
         xv0 = features[:, ind0]
+        try:
+            xv0 = xv0.astype(float)
+        except ValueError:
+            pass
+        
         xv1 = features[:, ind1]
+        try:
+            xv1 = xv1.astype(float)
+        except ValueError:
+            pass
 
-        xmin0 = xmin[0] if type(xmin) is tuple else xmin
-        xmin1 = xmin[1] if type(xmin) is tuple else xmin
-        xmax0 = xmax[0] if type(xmax) is tuple else xmax
-        xmax1 = xmax[1] if type(xmax) is tuple else xmax
+        xmin = list(xmin) if isinstance(xmin, tuple) else list([xmin, xmin])
+        xmax = list(xmax) if isinstance(xmax, tuple) else list([xmax, xmax])
+        xs = []
+        x = []
+        cat_list = []
+        npoints = [20, 20] if npoints is None else [npoints, npoints]
 
-        xmin0, xmax0 = compute_bounds(xmin0, xmax0, xv0)
-        xmin1, xmax1 = compute_bounds(xmin1, xmax1, xv1)
-        npoints = 20 if npoints is None else npoints
-        xs0 = np.linspace(xmin0, xmax0, npoints)
-        xs1 = np.linspace(xmin1, xmax1, npoints)
+        for i, xv in enumerate([xv0, xv1]):
+            if xv.dtype == np.dtype('O'):
+                cat_list.append(sorted(set(xv)))
+                xmin[i] = 0
+                xmax[i] = len(cat_list[i])
+                xs.append(np.linspace(xmin[i], xmax[i]-1e-6, npoints[i]))
+                x.append([cat_list[i][int(xi)] for xi in xs[i]])
+                npoints[i] = len(xs[i])
 
-        features_tmp = features.copy()
-        x0 = np.zeros((npoints, npoints))
-        x1 = np.zeros((npoints, npoints))
-        vals = np.zeros((npoints, npoints))
-        for i in range(npoints):
-            for j in range(npoints):
-                features_tmp[:, ind0] = xs0[i]
-                features_tmp[:, ind1] = xs1[j]
-                x0[i, j] = xs0[i]
-                x1[i, j] = xs1[j]
+            else:
+                xmin[i], xmax[i] = compute_bounds(xmin[i], xmax[i], xv)
+                xs.append(np.linspace(xmin[i], xmax[i], npoints[i]))
+                x.append(np.linspace(xmin[i], xmax[i], npoints[i]))
+                cat_list.append(None)
+
+        features_tmp = pd.DataFrame(features, columns=feature_names)
+        vals = np.zeros((npoints[0], npoints[1]))
+        for i in range(npoints[0]):
+            for j in range(npoints[1]):
+                features_tmp.iloc[:, ind0] = x[0][i]
+                features_tmp.iloc[:, ind1] = x[1][j]
                 vals[i, j] = model(features_tmp).mean()
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
 
+        x0, x1 = np.meshgrid(xs[0], xs[1], indexing='ij')
         ax.plot_surface(x0, x1, vals, cmap=obsidian_cm.obsidian_viridis)
 
         ax.set_xlabel(feature_names[ind0], fontsize=13)
+        if xv0.dtype == np.dtype('O'):
+            ax.set_xticks(np.arange(len(cat_list[0])))
+            ax.set_xticklabels(cat_list[0])
+        
         ax.set_ylabel(feature_names[ind1], fontsize=13)
+        if xv1.dtype == np.dtype('O'):
+            ax.set_yticks(np.arange(len(cat_list[1])))
+            ax.set_yticklabels(cat_list[1])
+            
         ax.set_zlabel("E[f(x) | " + str(feature_names[ind0]) + ", " + str(feature_names[ind1]) + "]", fontsize=13)
 
         if show:
