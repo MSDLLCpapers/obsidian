@@ -101,22 +101,6 @@ def setup_config_callbacks(app):
             return not is_open
         return is_open
     
-    @app.callback(
-        Output({'type': 'store-param_xspace', 'index': MATCH}, 'data'),
-        Input({'type': 'store-param_xspace', 'index': MATCH}, 'id'),
-        Input({'type': 'input-param_type', 'index': MATCH}, 'value'),
-        Input({'type': 'input-param_min', 'index': MATCH}, 'value'),
-        Input({'type': 'input-param_max', 'index': MATCH}, 'value'),
-        Input({'type': 'store-param_categories', 'index': MATCH}, 'data'),
-        prevent_initial_call=True  # It takes a second for these input matches to show up
-    )
-    def update_param_xspace(param_id, param_type, param_min, param_max, param_cat):
-        
-        param_xspace = {'Name': param_id['index'], 'Type': param_type,
-                        'Low': param_min, 'High': param_max, 'Categories': param_cat}
-        
-        return param_xspace
-    
     # Add acquisition function
     @app.callback(
         Output('div-acquisition_all', 'children'),
@@ -144,7 +128,6 @@ def setup_config_callbacks(app):
     # Store all of the input and settings into config
     @app.callback(
         Output('store-config', 'data'),
-        Input({'type': 'store-param_xspace', 'index': ALL}, 'data'),
         Input('input-response_name', 'value'),
         Input('input-optimizer_seed', 'value'),
         Input('input-f_transform', 'value'),
@@ -156,7 +139,7 @@ def setup_config_callbacks(app):
         Input({'type': 'input-alpha', 'index': ALL}, 'value'),
         prevent_initial_call=True
     )
-    def compile_config(param_xspaces, response_name, optimizer_seed, f_transform, surrogate,
+    def compile_config(response_name, optimizer_seed, f_transform, surrogate,
                        m_batch, optim_sequential, optim_restarts, aq, alpha):
         
         config = {}
@@ -164,12 +147,10 @@ def setup_config_callbacks(app):
         config['response_name'] = response_name
         config['optimizer_seed'] = int(optimizer_seed) if optimizer_seed is not None else None
         config['surrogate_params'] = {'f_transform': f_transform, 'surrogate': surrogate}
-        #config['aq_params'] = {'optim_sequential': optim_sequential, 'optim_restarts': optim_restarts,
-        #                       'm_batch': m_batch, 'acquisition': aq, 'alpha': alpha}
+        # TODO: Re-implement hyperparmeters based on selection in alpha
         config['aq_params'] = {'optim_sequential': optim_sequential, 'optim_restarts': optim_restarts,
                                'm_batch': m_batch, 'acquisition': aq}
         config['verbose'] = 0
-        config['xspace'] = param_xspaces
         
         return config
     

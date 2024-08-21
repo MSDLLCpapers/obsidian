@@ -4,18 +4,22 @@ from dash.dash_table.Format import Format, Scheme
 import dash_daq as daq
 import pandas as pd
 
-#from obsidian.experiment import ParamSpace
 from obsidian.parameters import ParamSpace, Param_Categorical, Param_Ordinal, Param_Continuous
 from obsidian.optimizer import BayesianOptimizer
+
 
 def center(element):
     return html.Div(html.Div(element, style={'display': 'inline-block'}), style={'textAlign': 'center'})
 
 
 def load_optimizer(config, opt_save):
-    # Note: it doesn't need config anymore?
     optimizer = BayesianOptimizer.load_state(opt_save)
     return optimizer
+
+
+def load_Xspace(config, Xspace_save):
+    X_space = ParamSpace.load_state(Xspace_save)
+    return X_space
 
 
 def add_tab(target, elements, id, label):

@@ -1,17 +1,18 @@
 """Design initial experiments"""
 
-from scipy.stats import qmc
-import pandas as pd
-import warnings
 from .utils import factorial_DOE
-import torch
-from botorch.utils.sampling import draw_sobol_samples
-
-from numpy.typing import ArrayLike
-from torch import Tensor
 
 from obsidian.parameters import ParamSpace
 from obsidian.exceptions import UnsupportedError
+
+from botorch.utils.sampling import draw_sobol_samples
+from numpy.typing import ArrayLike
+from scipy.stats import qmc
+
+import torch
+from torch import Tensor
+import pandas as pd
+import warnings
 
 
 class ExpDesigner:
@@ -36,6 +37,7 @@ class ExpDesigner:
         self.seed = seed
 
     def __repr__(self):
+        """String representation of object"""
         return f"obsidian ExpDesigner(X_space={self.X_space})"
 
     def initialize(self,
@@ -47,9 +49,9 @@ class ExpDesigner:
 
         Args:
             m_initial (int): The number of experiments to initialize.
-            method (str, optional): The method to use for initialization. Defaults to 'LHS'.
-            seed (int | None, optional): The randomization seed. Defaults to None.
-            sample_custom (Tensor | ArrayLike | None, optional): Custom samples for initialization. Defaults to None.
+            method (str, optional): The method to use for initialization. Defaults to ``'LHS'``.
+            seed (int | None, optional): The randomization seed. Defaults to ``None``.
+            sample_custom (Tensor | ArrayLike | None, optional): Custom samples for initialization. Defaults to ``None``.
 
         Returns:
             pd.DataFrame: The initialized experiment design.

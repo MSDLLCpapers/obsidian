@@ -37,6 +37,7 @@ class Target():
         self.f_transform = f_transform
 
     def __repr__(self):
+        """String representation of object"""
         return f"{self.__class__.__name__}({self.name}, aim={self.aim})"
 
     def transform_f(self,
@@ -49,8 +50,8 @@ class Target():
 
         Args:
             f (array-like): The column(s) containing the response values (y)
-            inverse (bool, optional): An indicator to perform the inverse transform. Defaults to False.
-            fit (bool, optional): An indicator to fit the properties of the transform function. Defaults to False.
+            inverse (bool, optional): An indicator to perform the inverse transform. Defaults to ``False``.
+            fit (bool, optional): An indicator to fit the properties of the transform function. Defaults to ``False``.
 
         Returns:
             pd.Series: An array of transformed f values matching the responses in Z
@@ -63,26 +64,31 @@ class Target():
         if not (isinstance(f, (pd.Series, pd.DataFrame, np.ndarray, list, float, int))
                 or torch.is_tensor(f)):
             raise TypeError('f being transformed must be numeric or array-like')
+        
+        # Convert everything to numpy except Tensors
+        if isinstance(f, (float, int)):
+            f = np.array([f])
+        if isinstance(f, (list)):
+            f = np.array(f)
+        if isinstance(f, (pd.Series, pd.DataFrame)):
+            f = f.values
+
+        if not torch.is_tensor(f):
+            # Check that types are valid, then convert to Tensor
+            if not all(np.issubdtype(f_i.dtype, np.number) for f_i in f.flatten()):
+                raise TypeError('Each element of f being transformed must be numeric')
+            f = torch.tensor(f)
 
         if not fit:
             if not hasattr(self, 'f_transform_func'):
                 raise UnfitError('Transform function is being called without being fit first.')
 
-        if isinstance(f, (float, int)):
-            f = [f]
-
-        if isinstance(f, (pd.Series, pd.DataFrame)):
-            f = f.values
-
-        if not torch.is_tensor(f):
-            f = torch.tensor(f)
-
         if f.ndim == 1:
             f = f.reshape(-1, 1)
 
         if inverse:
-            f_obj = self.f_transform_func.inverse(f)
-            return pd.Series(f_obj.flatten(), name=self.name) * self.multiplier
+            f_obj = self.f_transform_func.inverse(f * self.multiplier)
+            return pd.Series(f_obj.flatten(), name=self.name)
         else:
             if fit:
                 self.f_transform_func = f_transform_dict[self.f_transform]()

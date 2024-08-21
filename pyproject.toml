@@ -1,11 +1,35 @@
 [tool.poetry]
 name = "obsidian-apo"
-version = "0.7.10"
+version = "0.8.2"
 description = "Automated experiment design and black-box optimization"
-authors = ["Kevin Stone <kevin.stone@merck.com>", "Yuting Xu <yuting.xu@merck.com"]
+authors = [
+    "Kevin Stone <kevin.stone38@gmail.com>",
+    "Yuting Xu <yuting.xu@merck.com>"
+]
+readme = "readme.md"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent"
+]
+keywords = [
+    "optimization",
+    "experiment design",
+    "Bayesian optimization",
+    "process development",
+    "APO",
+    "DOE"
+]
+homepage = "https://msdllcpapers.github.io/obsidian/"
+repository = "https://github.com/MSDLLCpapers/obsidian/"
 packages = [
     { include = "obsidian" },
 ]
+
+[tool.poetry.urls]
+Documentation = "https://msdllcpapers.github.io/obsidian/stubs/api_docs.html"
+Changelog = "https://msdllcpapers.github.io/obsidian/stubs/changelog.html"
 
 [tool.poetry.dependencies]
 python = "^3.10"
