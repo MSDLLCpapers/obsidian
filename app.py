@@ -1,6 +1,6 @@
 from dash import html, Dash
 import dash_bootstrap_components as dbc
-from obsidian.dash import setup_data, setup_config, setup_optimize, setup_plots, setup_predict, setup_help
+from obsidian.dash import setup_data, setup_config, setup_optimize, setup_plots, setup_predict, setup_infobar
 import pandas as pd
 from PIL import Image
 
@@ -15,7 +15,7 @@ app = Dash(__name__, suppress_callback_exceptions=True)
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"  # For data tables
 app.config.external_stylesheets = [dbc.themes.SANDSTONE, dbc_css, dbc.icons.BOOTSTRAP]
 
-logo = Image.open('docs/figures/obsidian_logo.png')
+logo = Image.open('docs/_static/obsidian_logo.png')
 
 app_image = html.Div(html.Img(src=logo, style={'width': '5%', 'height': '5%'}), style={'textAlign': 'center'})
 app_title = html.Div([html.H1(children='obsidian'),
@@ -35,7 +35,7 @@ params = [
     Param_Continuous('Concentration', 10, 150),
     Param_Continuous('Enzyme', 0.01, 0.30),
     Param_Categorical('Variant', ['MRK001', 'MRK002', 'MRK003']),
-    Param_Ordinal('Stir Rate', ['Low', 'Medium', 'High']),
+    Param_Ordinal('Stir Rate', ['0 - Low', '1 - Medium', '2 - High']),
 ]
 X_space = ParamSpace(params)
 designer = ExpDesigner(X_space, seed=0)
@@ -45,8 +45,8 @@ y0 = simulator.simulate(X0)
 default_data = pd.concat([X0, y0], axis=1)
 
 # Set up each tab
-setup_help(app, app_infobar)
-setup_data(app, app_tabs, default_data)
+setup_infobar(app, app_infobar)
+setup_data(app, app_tabs, default_data, X_space)
 setup_config(app, app_tabs)
 setup_optimize(app, app_tabs)
 setup_plots(app, app_tabs)

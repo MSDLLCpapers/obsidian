@@ -2,9 +2,9 @@
 
 ## 1. Introduction
 
-The `obsidian.surrogates` submodule is a key component of the Obsidian Bayesian optimization library. It provides a collection of surrogate models used to approximate the objective function in the optimization process. These surrogate models are essential for efficient exploration of the parameter space and for making informed decisions about which points to evaluate next.
+The [`obsidian.surrogates`](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/surrogates) submodule is a key component of the Obsidian APO library. It provides a collection of surrogate models used to approximate the objective function in the optimization process. These surrogate models are essential for efficient exploration of the parameter space and for making informed decisions about which points to evaluate next.
 
-## 2. How to Use Surrogate Models - Basic Syntax
+## 2. Basic Syntax
 
 To use a surrogate model in your optimization process, you typically don't need to interact with it directly. The `obsidian.optimizer` submodule will handle the creation and management of the surrogate model. However, if you need to create a surrogate model manually, you can do so using the `SurrogateBoTorch` class. 
 

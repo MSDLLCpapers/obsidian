@@ -3,9 +3,8 @@ obsidian
 ReadMe
 -->
 
-<link rel="preload" href="_static/obsidian_logo_dark.svg" as="image">
 <div align = "center">
-  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" class="mainlogo dark-light" width="100" alt = "obsidian logo">
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" class="only-light" width="100" alt = "obsidian logo">
 </div>
 
 
@@ -137,13 +136,3 @@ See [CONTRIBUTING](https://github.com/MSDLLCpapers/obsidian/blob/main/CONTRIBUTI
 
 ## License
 __obsidian__ is licensed by the [GPLv3 license](https://github.com/MSDLLCpapers/obsidian/blob/main/LICENSE).
-
-<details><summary>JavaScript for ReadMe dark mode</summary>
-        <script type="text/javascript" class="hidden">
-        var observer = new MutationObserver(function(mutations) {
-            const dark = document.documentElement.dataset.theme == 'dark';
-            document.getElementsByClassName('mainlogo')[0].src = dark ? 'https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo_dark.svg?raw=true' : "https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true";
-        })
-        observer.observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
-        </script>
-</details>

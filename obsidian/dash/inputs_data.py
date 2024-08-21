@@ -6,9 +6,11 @@ import pandas as pd
 import base64
 import io
 from dash.exceptions import PreventUpdate
+from obsidian.parameters import ParamSpace, Param_Categorical, Param_Ordinal, Param_Continuous, Target, Parameter
+from pandas.api.types import is_numeric_dtype
 
 
-def setup_data(app, app_tabs, default_data):
+def setup_data(app, app_tabs, default_data, default_Xspace):
     
     # Data upload
     uploader = dcc.Upload(id='uploader-X0',
@@ -53,6 +55,7 @@ def setup_data(app, app_tabs, default_data):
     # Data store
     storage_X0 = dcc.Store(id='store-X0', data=default_data.to_dict())
     storage_X0_template = dcc.Store(id='store-X0_template', data=default_data.to_dict())
+    storage_Xspace = dcc.Store(id='store-Xspace', data=default_Xspace.save_state())
     
     # Parameter space table
     xspace = html.Div([html.Div(id='div-xspace', children=[])])
@@ -80,7 +83,7 @@ def setup_data(app, app_tabs, default_data):
     
     # Add all of these elements to the app
     elements = [html.Br(), preview_uploader, html.Hr(), ycol, xspace, storage_X0,
-                storage_X0_template, html.Hr(), troubleshoot]
+                storage_X0_template, storage_Xspace, html.Hr(), troubleshoot]
     add_tab(app_tabs, elements, 'tab-data', 'Data')
     setup_data_callbacks(app)
     
@@ -111,7 +114,6 @@ def setup_data_callbacks(app):
     )
     def preview_X0(data, filename):
         df = pd.DataFrame(data)
-
         return make_table(df, fill_width=True), filename
     
     # Download template data
@@ -139,25 +141,42 @@ def setup_data_callbacks(app):
     @app.callback(
         Output('div-xspace', 'children'),
         Input('store-X0', 'data'),
-        Input('input-response_name', 'value')
+        Input('input-response_name', 'value'),
+        State('store-Xspace', 'data')
     )
-    def update_xspace_types(data, ycol):
+    def update_xspace_types(data, ycol, Xspace_save):
         
-        df_xspace = pd.DataFrame(data)
-        xcols = [x for x in df_xspace.columns if x != ycol]
+        X_space = ParamSpace.load_state(Xspace_save)
         
-        #param_types = ['Numeric', 'Categorical', 'Ordinal']
-        param_types = ['Numeric', 'Categorical'] # Note: the Ordinal var may cause fitting issues
+        df_X0 = pd.DataFrame(data)
+        xcols = [x for x in df_X0.columns if x != ycol]
+        
+        param_types = ['Numeric', 'Categorical', 'Ordinal']
         
         cols = []
         for i, x in enumerate(xcols):
+            if x in X_space.X_names:
+                x_idx = X_space.X_names.index(x)
+                param = X_space.params[x_idx]
+                if isinstance(param, Param_Continuous):
+                    param_type = 'Numeric'
+                elif isinstance(param, Param_Categorical):
+                    param_type = 'Categorical'
+                elif isinstance(param, Param_Ordinal):
+                    param_type = 'Ordinal'
+            else:
+                if not is_numeric_dtype(df_X0[x]):
+                    param_type = 'Categorical'
+                else:
+                    param_type = 'Numeric'
+            
             cols.append(dbc.Col(children=dbc.Card([
                 dbc.CardHeader(f'{x}'),
                 dbc.CardBody([make_dropdown('Type', f'Select parameter type for {x}', param_types,
                                             id={'type': 'input-param_type', 'index': x},
-                                            kwargs={'value': param_types[0]}),
+                                            kwargs={'value': param_type}),
                               html.Div(id={'type': 'div-param_vals', 'index': x}, children=[]),
-                              dcc.Store(id={'type': 'store-param_xspace', 'index': x}, data={})],)
+                              dcc.Store(id={'type': 'store-param_save', 'index': x}, data={})],)
                 ],
                 color='primary', outline=True), width=2))
  
@@ -207,7 +226,34 @@ def setup_data_callbacks(app):
                        ]
         return choices
 
-    # ategory management for categorical variables
+    @app.callback(
+        Output({'type': 'store-param_save', 'index': MATCH}, 'data'),
+        Input({'type': 'store-param_save', 'index': MATCH}, 'id'),
+        Input({'type': 'input-param_type', 'index': MATCH}, 'value'),
+        Input({'type': 'input-param_min', 'index': MATCH}, 'value'),
+        Input({'type': 'input-param_max', 'index': MATCH}, 'value'),
+        Input({'type': 'store-param_categories', 'index': MATCH}, 'data'),
+        prevent_initial_call=True  # It takes a second for these input matches to show up
+    )
+    def update_param_save(param_id, param_type, param_min, param_max, param_cat):
+        
+        name = param_id['index']
+        
+        try:
+            if param_type == 'Numeric':
+                param = Param_Continuous(name, param_min, param_max)
+            elif param_type == 'Categorical':
+                param = Param_Categorical(name, param_cat)
+            elif param_type == 'Ordinal':
+                param = Param_Ordinal(name, param_cat)
+        
+            single_param = ParamSpace([param])
+            return single_param.save_state()
+        
+        except TypeError:
+            return None
+    
+    # Category management for categorical variables
     @app.callback(
         Output({'type': 'store-param_categories', 'index': MATCH}, 'data'),
         Output({'type': 'input-new_category', 'index': MATCH}, 'value'),
@@ -261,5 +307,22 @@ def setup_data_callbacks(app):
     )
     def troubleshoot_config(data):
         return
+    
+    @app.callback(
+        Output('store-Xspace', 'data'),
+        Input({'type': 'store-param_save', 'index': ALL}, 'data'),
+        prevent_initial_call=True
+    )
+    def save_Xspace(param_saves):
+        
+        param_list = []
+        for param_input in param_saves:
+            if param_input:
+                param_i = ParamSpace.load_state(param_input)
+                param_list += list(param_i.params)
+                
+        X_space = ParamSpace(param_list)
+        
+        return X_space.save_state()
     
     return

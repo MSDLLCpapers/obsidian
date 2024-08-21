@@ -459,7 +459,7 @@ class BayesianOptimizer(Optimizer):
             if hps.get(key) is None:
                 if not defaults['optional']:
                     raise ValueError(f'Must specify hyperpameter value {key} for {aq_str}')
-                if key in ['scalarization_weights', 'weights']:
+                if key in ['weights']: #['scalarization_weights', 'weights']:
                     aq_hps[key] = defaults['val'] * o_dim
                 else:
                     aq_hps[key] = defaults['val']
@@ -550,6 +550,13 @@ class BayesianOptimizer(Optimizer):
             X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T.to(self.device)
             qmc_samples = draw_sobol_samples(bounds=X_bounds, n=128, q=m_batch)
             aq_kwargs['mc_points'] = qmc_samples.squeeze(-2)
+
+        if aq == 'NParEGO':
+            w = hps['scalarization_weights']
+            if isinstance(w,list):
+                w = torch.tensor(w)
+                w = w/torch.sum(torch.abs(w))
+            aq_kwargs['scalarization_weights'] = w
 
         return aq_kwargs
 
@@ -767,7 +774,7 @@ class BayesianOptimizer(Optimizer):
             aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
             
             # Hypervolume aqs fail with X_t_pending when optim_sequential=True
-            if aq_i in ['NEHVI', 'EHVI']:
+            if aq_str in ['NEHVI', 'EHVI']:
                 optim_sequential = False
 
             # If it's random search, no need to do optimization; Otherwise, initialize the aq function and optimize
