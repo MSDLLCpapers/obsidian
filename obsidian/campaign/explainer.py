@@ -141,7 +141,7 @@ class Explainer():
 
     def shap_pdp_ice(self,
                      ind: int | tuple[int] = 0,
-                     ice_color_var: int = 0,
+                     ice_color_var: int | None = None,
                      ace_opacity: float = 0.5,
                      npoints: int | None = None,
                      ) -> Figure:
