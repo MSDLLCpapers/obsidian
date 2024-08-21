@@ -459,8 +459,8 @@ class BayesianOptimizer(Optimizer):
             if hps.get(key) is None:
                 if not defaults['optional']:
                     raise ValueError(f'Must specify hyperpameter value {key} for {aq_str}')
-                if key in ['weights']: #['scalarization_weights', 'weights']:
-                    aq_hps[key] = defaults['val'] * o_dim
+                if key in ['weights', 'scalarization_weights']:
+                    aq_hps[key] = [1] * o_dim
                 else:
                     aq_hps[key] = defaults['val']
 
@@ -553,7 +553,7 @@ class BayesianOptimizer(Optimizer):
 
         if aq == 'NParEGO':
             w = hps['scalarization_weights']
-            if isinstance(w,list):
+            if isinstance(w, list):
                 w = torch.tensor(w)
                 w = w/torch.sum(torch.abs(w))
             aq_kwargs['scalarization_weights'] = w
