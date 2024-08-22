@@ -130,15 +130,6 @@ def partial_dependence(ind: int | tuple[int],
         tuple: A tuple containing the matplotlib figure and axis objects if `show` is False, otherwise None.
     """
 
-    def cast_to_float(x: np.ndarray) -> np.ndarray:
-        """
-        Attempts to cast array to float type
-        """
-        try:
-            return x.astype(float)
-        except ValueError:
-            return x
-
     # Extract vals, names from data
     df_features = data
     feature_names = df_features.columns
