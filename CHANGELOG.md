@@ -4,6 +4,8 @@
 ### Added
 - Default values for NParEGO scalarization_weights
 - SHAP PDP ICE plots now work with categorical values
+- Added scikit-learn to dependencies, for MDS
+- Added MDS plot
 
 ### Modified
 - SHAP PDP ICE plots must now have color and x-axis indices that are distinct
