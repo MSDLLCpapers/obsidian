@@ -10,7 +10,9 @@ from obsidian.objectives import (
     Objective_Sequence,
     Utopian_Distance,
     Index_Objective,
-    Bounded_Target
+    Bounded_Target,
+    Product_Objective,
+    Divide_Objective
 )
 
 from obsidian.tests.utils import DEFAULT_MOO_PATH, equal_state_dicts
@@ -32,9 +34,13 @@ test_config = {'optim_samples': 2, 'optim_restarts': 2}
 
 test_objs = [Identity_Objective(mo=len(target) > 1),
              Scalar_WeightedNorm(weights=[1, 1]),
-             Feature_Objective(X_space, ind=(0,), coeff=(1,)),
+             Feature_Objective(X_space, ind=(0,), coeff=[1]),
              Objective_Sequence([Utopian_Distance([1], target[0]), Index_Objective()]),
              Bounded_Target(bounds=[(0, 1)]*len(target), targets=target),
+             Objective_Sequence([Product_Objective(ind=(0,), weights=None, const=1, new_dim=True),
+                                 Divide_Objective(0, 1, new_dim=True),
+                                 Divide_Objective(0, 1, new_dim=False)]),
+             Product_Objective(ind=(0,), weights=[1], const=1, new_dim=False),
              None]
 
 utopian = Utopian_Distance(utopian=[10, 10], targets=target)

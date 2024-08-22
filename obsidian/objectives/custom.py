@@ -33,7 +33,8 @@ class Product_Objective(Objective):
     
     Args:
         ind (tuple[int]): The indices of objectives to be used in a product
-        weights (tuple[float]): The weights corresponding to indexed objectives
+        weights (list[float | int], optional): The weights corresponding to
+            indexed objectives. Defaults to ``(1,)*len(ind)``.
         const (float | int): A constant value that can be added to the product
         new_dim (bool, optional): Whether to create a new objective dimension
             from this product. Default is ``False``. Setting to ``True`` will
@@ -42,18 +43,25 @@ class Product_Objective(Objective):
     """
     def __init__(self,
                  ind: tuple[int],
-                 weights: tuple[float],
+                 weights: list[float | int] | None = None,
                  const: float | int = 0,
                  new_dim: bool = True) -> None:
         super().__init__(new_dim)
         # Always MOO if dim is being added, always SOO otherwise
+        if weights is None:
+            weights = [1]*len(ind)
         if len(weights) != len(ind):
             raise ValueError('The length of weights and indices must be the same')
         self.register_buffer('ind', torch.tensor(ind, dtype=torch.int))
         self.register_buffer('weights', torch.tensor(weights, dtype=TORCH_DTYPE))
         self.register_buffer('const', torch.tensor(const, dtype=TORCH_DTYPE))
         self.register_buffer('new_dim', torch.tensor(new_dim, dtype=torch.bool))
-        
+    
+    def __repr__(self):
+        """String representation of object"""
+        return f'{self.__class__.__name__} (ind={self.ind.tolist()}, \
+            weights={self.weights.tolist()}, const={self.const})'
+    
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
@@ -75,10 +83,10 @@ class Divide_Objective(Objective):
     
     Args:
         ind_num (int): The index of the objective to be used in the numerator
-        w_num (float | int, optional): The weights corresponding to numerator
+        w_num (float | int, optional): The weight corresponding to numerator
             objective. Defaults to ``1``.
         ind_denom (int): The index of the objective to be used in the denominator
-        w_denom (float | int, optional): The weights corresponding to denominator
+        w_denom (float | int, optional): The weight corresponding to denominator
             objective. Defaults to ``1``.
         const (float | int): A constant value that can be added to the quotient
         new_dim (bool, optional): Whether to create a new objective dimension
@@ -103,6 +111,11 @@ class Divide_Objective(Objective):
         self.register_buffer('const', torch.tensor(const, dtype=TORCH_DTYPE))
         self.register_buffer('new_dim', torch.tensor(new_dim, dtype=torch.bool))
         
+    def __repr__(self):
+        """String representation of object"""
+        return f'{self.__class__.__name__} (num={self.w_num} * {self.ind_num}, \
+            denom={self.w_denom} * {self.ind_denom}, const={self.const})'
+            
     def forward(self,
                 samples: Tensor,
                 X: Tensor | None = None) -> Tensor:
@@ -129,7 +142,7 @@ class Feature_Objective(Objective):
         X_space (ParamSpace): The parameter space.
         ind (tuple[int]): The indices of the parameters in the real space
             to be used as features.
-        coeff (tuple[float | int], optional): The coefficients corresponding to each feature.
+        coeff (list[float | int], optional): The coefficients corresponding to each feature.
             Defaults to ``[0]``.
 
     Raises:
@@ -140,7 +153,7 @@ class Feature_Objective(Objective):
     def __init__(self,
                  X_space: ParamSpace,
                  ind: tuple[int],
-                 coeff: tuple[float | int]) -> None:
+                 coeff: list[float | int]) -> None:
         
         super().__init__(mo=True)
         
