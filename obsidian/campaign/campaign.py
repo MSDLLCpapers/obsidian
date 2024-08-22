@@ -99,6 +99,7 @@ class Campaign():
     def clear_data(self):
         """Clears campaign data"""
         self.data = pd.DataFrame()
+        self.iter = 0
 
     @property
     def optimizer(self) -> Optimizer:
@@ -238,6 +239,19 @@ class Campaign():
             return self.o
         else:
             return self.y
+    
+    @property
+    def X_best(self) -> pd.DataFrame:
+        """
+        Best performing X values
+        """
+        best_idx = self.out.idxmax().values
+        
+        X_best = self.X.iloc[best_idx, :]
+        if isinstance(X_best, pd.Series):
+            X_best = X_best .to_frame().T
+        
+        return X_best
     
     @property
     def X(self) -> pd.DataFrame:

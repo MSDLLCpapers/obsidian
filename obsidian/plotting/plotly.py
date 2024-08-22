@@ -5,12 +5,134 @@ from obsidian.optimizer import Optimizer
 from obsidian.exceptions import UnfitError, UnsupportedError
 from obsidian.parameters import Param_Continuous
 from .branding import obsidian_colors
+from obsidian.plotting.branding import obsidian_color_list as colors
 
 import plotly.graph_objects as go
 from plotly.graph_objects import Figure
+from plotly.subplots import make_subplots
+from sklearn.manifold import MDS
 
 import pandas as pd
 import numpy as np
+import math
+
+
+def visualize_inputs(campaign: Campaign) -> Figure:
+    """
+    Visualizes the input variables of a campaign.
+
+    Args:
+        campaign (Campaign): The campaign object containing the input data.
+
+    Returns:
+        Figure: The plotly Figure object containing the visualization.
+    """
+    n_dim = campaign.X_space.n_dim
+    X = campaign.X
+    
+    # Enforce that there are 2 rows
+    # Determine the number of columns based on the number of dimensions
+    rows = 2
+    cols = math.ceil(n_dim / rows)
+    
+    height = 200 * rows
+    width = 300 * cols
+    fontsize = 8
+
+    color_list = colors * 10
+    
+    # Add an extra 2 cols for the correlation matrix
+    fig = make_subplots(
+        rows=rows, cols=cols + 2,
+        vertical_spacing=0.2,
+        horizontal_spacing=0.1,
+        specs=[[{}]*cols + [{"colspan": 2, "rowspan": 2}, None],
+               [{}]*cols + [None, None]],
+        subplot_titles=[X.columns[i] for i in range(cols)]
+        + ['Correlation Matrix']
+        + [X.columns[i] for i in range(cols, n_dim)]
+    )
+    
+    for i, param in enumerate(X.columns):
+        row_i = i // cols + 1
+        col_i = i % cols + 1
+        fig.add_trace(go.Scatter(x=X.index, y=X[param],
+                                 mode='markers', name=param,
+                                 marker=dict(color=color_list[i]),
+                                 showlegend=False),
+                      row=row_i, col=col_i)
+        fig.update_xaxes(tickvals=np.around(np.linspace(0, campaign.m_exp, 5)),
+                         row=row_i, col=col_i)
+    
+    # Calculate the correlation matrix
+    X_u = campaign.X_space.unit_map(X)
+    corr_matrix = X_u.corr()
+    fig.add_trace(go.Heatmap(z=corr_matrix.values,
+                             x=corr_matrix.columns,
+                             y=corr_matrix.columns,
+                             colorscale=[[0, obsidian_colors.rich_blue],
+                                         [0.5, obsidian_colors.teal],
+                                         [1, obsidian_colors.lemon]],
+                             name='Correlation'),
+                  row=1, col=cols+1)
+    
+    fig.update_yaxes(showticklabels=False, row=1, col=cols+1)
+    fig.update_xaxes(tickangle=-90, row=1, col=cols+1)
+    
+    fig.update_layout(width=width, height=height, template='ggplot2',
+                      font_size=fontsize, title_text='Campaign Data Visualization')
+    fig.update_annotations(font_size=fontsize)
+    
+    return fig
+
+
+def MDS_plot(campaign: Campaign) -> Figure:
+    """
+    Creates a Multi-Dimensional Scaling (MDS) plot of the campaign data,
+    colored by iteration.
+    
+    This plot is helpful to visualize the convergence of the optimizer on a 2D plane.
+    
+    Args:
+        campaign (Campaign): The campaign object containing the data.
+        
+    Returns:
+        fig (Figure): The MDS plot
+    """
+    mds = MDS(n_components=2)
+    X_mds = mds.fit_transform(campaign.X_space.encode(campaign.X))
+
+    iter_max = campaign.data['Iteration'].max()
+    iter_vals = campaign.data['Iteration'].values
+    
+    if campaign.data['Iteration'].nunique() == 1:
+        iter_vals = np.zeros_like(iter_vals)
+        iter_max = 0
+        cbar = None
+    else:
+        cbar = dict(title=dict(text='Iteration', font=dict(size=10)))
+    
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(x=X_mds[:, 0], y=X_mds[:, 1],
+                             mode='markers',
+                             name='Observations',
+                             marker={'color': iter_vals, 'size': 10,
+                                     'cmax': iter_max, 'cmin': 0,
+                                     'colorscale': [[0, obsidian_colors.rich_blue],
+                                                    [0.5, obsidian_colors.teal],
+                                                    [1, obsidian_colors.lemon]],
+                                     'colorbar': cbar
+                                     },
+                             showlegend=False
+                             ))
+    
+    fig.update_xaxes(title_text='Component 1')
+    fig.update_yaxes(title_text='Component 2')
+    fig.update_layout(template='ggplot2', title='Multi-Dimensional Scaling (MDS) Plot',
+                      autosize=False, height=400, width=500)
+    
+    return fig
 
 
 def parity_plot(optimizer: Optimizer,
@@ -146,7 +268,7 @@ def factor_plot(optimizer: Optimizer,
     # Create a dataframe of test samples for plotting
     n_samples = 100
     if X_ref is None:
-        df_mean = optimizer.X_space.mean()
+        df_mean = optimizer.X_best_f
         X_test = pd.concat([df_mean]*n_samples, axis=0).reset_index(drop=True)
     else:
         if not isinstance(X_ref, pd.DataFrame):
@@ -248,7 +370,7 @@ def surface_plot(optimizer: Optimizer,
 
     # Create a dataframe of test samples for plotting
     n_grid = 100
-    df_mean = optimizer.X_space.mean()
+    df_mean = optimizer.X_best_f
     X_test = pd.concat([df_mean]*(n_grid**2), axis=0).reset_index(drop=True)
     
     # Create a mesh grid which is necessary for the 3D plot
