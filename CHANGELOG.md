@@ -6,6 +6,7 @@
 - Optimizer X_best_f attribute(s)
 - Sequence of colors "color_list" to branding
 - Informative hoverdata for MDS plot
+- Created Product_Objective and Divide_Objective
 
 ### Modified
 - Switched all usages of X_ref = X_space.mean() to optimizer.X_best_f
