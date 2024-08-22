@@ -27,6 +27,46 @@ class Identity_Objective(Objective):
         return self.output_shape(samples)
 
 
+class Product_Objective(Objective):
+    """
+    Objective function that computes the weighted products of other objectives
+    
+    Args:
+        ind (tuple[int]): The indices of objectives to be used in a product
+        weights (tuple[float]): The weights corresponding to indexed objectives
+        const (float): A constant value that can be added to the product
+        new_dim (bool, optional): Whether to create a new objective dimension
+            from this product. Default is ``False``. Setting to ``True`` will
+            make this the only output objective.
+        
+    """
+    def __init__(self,
+                 ind: tuple[int],
+                 weights: tuple[float],
+                 const: float | int = 0,
+                 new_dim: bool = True) -> None:
+        super().__init__(new_dim)
+        # Always MOO if dim is being added, always SOO otherwise
+        if len(weights) != len(ind):
+            raise ValueError('The length of weights and indices must be the same')
+        self.register_buffer('ind', torch.tensor(ind, dtype=torch.int))
+        self.register_buffer('weights', torch.tensor(weights, dtype=TORCH_DTYPE))
+        self.register_buffer('const', torch.tensor(const, dtype=TORCH_DTYPE))
+        self.register_buffer('new_dim', torch.tensor(new_dim, dtype=torch.bool))
+        
+    def forward(self,
+                samples: Tensor,
+                X: Tensor | None = None) -> Tensor:
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
+        obj = (self.weights*samples[..., self.ind]).prod(dim=-1, keepdim=True) + self.const
+        if self.new_dim:
+            return torch.concat((samples, obj), dim=-1)
+        else:
+            return self.output_shape(obj)
+
+
 class Feature_Objective(Objective):
     """
     Creates an objective function which creates a new outcome as a linear combination of input features.
@@ -47,8 +87,8 @@ class Feature_Objective(Objective):
     
     def __init__(self,
                  X_space: ParamSpace,
-                 indices: list[float | int],
-                 coeff: list[float | int | list]) -> None:
+                 indices: list[int],
+                 coeff: list[float | int]) -> None:
         
         super().__init__(mo=True)
         
@@ -278,14 +318,14 @@ class Index_Objective(Objective):
     Creates an objective function that returns the single-objective output
     from a multi-output model, at the specified index.
     
-    Always a single-output objective.
+    Single-objective when index is int; multi-objective if tuple.
 
     Args:
         index (int): The index of the value to be returned.
     """
     def __init__(self,
-                 index: int = 0) -> None:
-        super().__init__(mo=False)
+                 index: int | tuple[int] = 0) -> None:
+        super().__init__(mo=not isinstance(index, int))
         self.register_buffer('index', torch.tensor(index))
         
     def __repr__(self):
