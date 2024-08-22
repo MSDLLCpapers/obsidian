@@ -166,7 +166,7 @@ def test_explainer_validation():
     
     # Unfit SHAP
     with pytest.raises(UnfitError):
-        exp.shap_single_point(X_new=campaign.X_space.mean())
+        exp.shap_single_point(X_new=campaign.optimizer.X_best_f)
     
     random_data = pd.DataFrame(data={'A': [1], 'B': [4]})
     long_data = pd.DataFrame(data={'Parameter 1': [1, 2], 'Parameter 2': [1, 2]})
@@ -187,7 +187,7 @@ def test_explainer_validation():
     
     # Missing X names
     with pytest.raises(ValueError):
-        exp.shap_single_point(X_new=campaign.X_space.mean(), X_ref=random_data)
+        exp.shap_single_point(X_new=campaign.optimizer.X_best_f, X_ref=random_data)
 
     # Missing X names
     with pytest.raises(ValueError):

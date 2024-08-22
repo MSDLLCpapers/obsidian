@@ -196,7 +196,7 @@ def factor_plot(optimizer: Optimizer,
     # Create a dataframe of test samples for plotting
     n_samples = 100
     if X_ref is None:
-        df_mean = optimizer.X_space.mean()
+        df_mean = optimizer.X_best_f
         X_test = pd.concat([df_mean]*n_samples, axis=0).reset_index(drop=True)
     else:
         if not isinstance(X_ref, pd.DataFrame):
@@ -298,7 +298,7 @@ def surface_plot(optimizer: Optimizer,
 
     # Create a dataframe of test samples for plotting
     n_grid = 100
-    df_mean = optimizer.X_space.mean()
+    df_mean = optimizer.X_best_f
     X_test = pd.concat([df_mean]*(n_grid**2), axis=0).reset_index(drop=True)
     
     # Create a mesh grid which is necessary for the 3D plot

@@ -81,7 +81,7 @@ class Explainer():
         self.shap['responseid'] = responseid
         
         if X_ref is None:
-            X_ref = self.X_space.mean()
+            X_ref = self.optimizer.X_best_f
         else:
             if not all(x in X_ref.columns for x in self.X_space.X_names):
                 raise ValueError('X_ref must contain all parameters in X_space')
@@ -188,7 +188,7 @@ class Explainer():
         Args:
             X_new (pd.DataFrame | pd.Series): New data point to explain
             X_ref (pd.DataFrame | pd.Series, optional): Reference data point
-                for shap values. Default uses ``X_space.mean()``
+                for shap values. Default uses ``optimizer.X_best_f``
         
         Returns:
             pd.DataFrame: DataFrame containing SHAP values for the new data point
@@ -256,7 +256,7 @@ class Explainer():
             X_ref = X_ref.copy().to_frame().T
         
         if X_ref is None:
-            X_ref = self.optimizer.X_space.mean()
+            X_ref = self.optimizer.X_best_f
         else:
             if not all(x in X_ref.columns for x in self.optimizer.X_space.X_names):
                 raise ValueError('X_ref must contain all parameters in X_space')
