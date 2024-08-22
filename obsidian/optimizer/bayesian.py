@@ -221,6 +221,10 @@ class BayesianOptimizer(Optimizer):
         self.y_train = pd.concat([Z_valid[t.name] for t in self.target], axis=1)
         self.f_train = pd.concat([t.transform_f(Z_valid[t.name], fit=True) for t in self.target], axis=1)
 
+        # Extract the X which achieves the best sum_f
+        self.X_best_f_idx = self.f_train.sum(axis=1).idxmax()
+        self.X_best_f = self.X_train.iloc[self.X_best_f_idx, :].to_frame().T
+
         # Instantiate and fit the model(s)
         self.surrogate = []
         for i in range(self.n_response):
@@ -270,7 +274,7 @@ class BayesianOptimizer(Optimizer):
         # Select some optimizer attributes to save directly
         opt_attrs = ['X_train', 'y_train',
                      'y_names', 'n_response',
-                     'seed']
+                     'seed', 'X_best_f_idx', 'X_best_f']
         
         for attr in opt_attrs:
             if isinstance(getattr(self, attr), (pd.Series, pd.DataFrame)):
@@ -317,11 +321,12 @@ class BayesianOptimizer(Optimizer):
             setattr(new_opt, k, v)
   
         # Unpack and encode/transform the data objects if present
-        data_objects = ['X_train', 'y_train']
+        data_objects = ['X_train', 'y_train', 'X_best_f']
         if all(hasattr(new_opt, attr) for attr in data_objects):
             new_opt.X_train = pd.DataFrame(new_opt.X_train)
             new_opt.X_t_train = new_opt.X_space.encode(new_opt.X_train)
             new_opt.y_train = pd.DataFrame(new_opt.y_train, columns=new_opt.y_names)
+            new_opt.X_best_f = pd.DataFrame(new_opt.X_best_f)
             
             f_train = pd.DataFrame()
             for t, y in zip(new_opt.target, new_opt.y_train.columns):
@@ -459,8 +464,8 @@ class BayesianOptimizer(Optimizer):
             if hps.get(key) is None:
                 if not defaults['optional']:
                     raise ValueError(f'Must specify hyperpameter value {key} for {aq_str}')
-                if key in ['weights']: #['scalarization_weights', 'weights']:
-                    aq_hps[key] = defaults['val'] * o_dim
+                if key in ['weights', 'scalarization_weights']:
+                    aq_hps[key] = [1] * o_dim
                 else:
                     aq_hps[key] = defaults['val']
 
@@ -553,7 +558,7 @@ class BayesianOptimizer(Optimizer):
 
         if aq == 'NParEGO':
             w = hps['scalarization_weights']
-            if isinstance(w,list):
+            if isinstance(w, list):
                 w = torch.tensor(w)
                 w = w/torch.sum(torch.abs(w))
             aq_kwargs['scalarization_weights'] = w

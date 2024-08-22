@@ -40,6 +40,10 @@ accent.pastel_blue = '#69B8F7'
 accent.vista_blue = '#688CE8'
 accent.rich_blue = '#5450E4'
 
+# Create repeating list of colors for easy access
+obsidian_color_list = [primary.teal, secondary.blue, secondary.light_teal, accent.pastel_blue,
+                       accent.lime, accent.vista_blue, accent.lemon, accent.rich_blue]
+
 # Unused in palette, but used for color map
 magenta = '#d04495'
 

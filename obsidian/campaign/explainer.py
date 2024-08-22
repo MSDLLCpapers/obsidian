@@ -81,7 +81,7 @@ class Explainer():
         self.shap['responseid'] = responseid
         
         if X_ref is None:
-            X_ref = self.X_space.mean()
+            X_ref = self.optimizer.X_best_f
         else:
             if not all(x in X_ref.columns for x in self.X_space.X_names):
                 raise ValueError('X_ref must contain all parameters in X_space')
@@ -141,7 +141,8 @@ class Explainer():
 
     def shap_pdp_ice(self,
                      ind: int | tuple[int] = 0,
-                     ice_color_var: int = 0,
+                     ice_color_var: int | None = None,
+                     hist: bool = False,
                      ace_opacity: float = 0.5,
                      npoints: int | None = None,
                      ) -> Figure:
@@ -151,7 +152,9 @@ class Explainer():
         Args:
             ind (int): Index of the parameter to plot
             ice_color_var (int): Index of the parameter to color the ICE lines
-            ace_opacity (float): Opacity of the ACE line
+            hist (bool, optional): Show histogram of the feature values.
+                By default ``False``
+            ace_opacity (float, optional): Opacity of the ACE line. By default ``0.5``
             npoints (int, optional): Number of points for PDP x-axis. By default
                 will use ``100`` for 1D PDP and ``20`` for 2D PDP.
         
@@ -167,7 +170,7 @@ class Explainer():
                 model=self.shap['pred_func'],
                 data=self.shap['X_sample'],
                 ice_color_var=ice_color_var,
-                hist=False,
+                hist=hist,
                 ace_opacity=ace_opacity,
                 show=False,
                 npoints=npoints
@@ -185,7 +188,7 @@ class Explainer():
         Args:
             X_new (pd.DataFrame | pd.Series): New data point to explain
             X_ref (pd.DataFrame | pd.Series, optional): Reference data point
-                for shap values. Default uses ``X_space.mean()``
+                for shap values. Default uses ``optimizer.X_best_f``
         
         Returns:
             pd.DataFrame: DataFrame containing SHAP values for the new data point
@@ -253,7 +256,7 @@ class Explainer():
             X_ref = X_ref.copy().to_frame().T
         
         if X_ref is None:
-            X_ref = self.optimizer.X_space.mean()
+            X_ref = self.optimizer.X_best_f
         else:
             if not all(x in X_ref.columns for x in self.optimizer.X_space.X_names):
                 raise ValueError('X_ref must contain all parameters in X_space')
