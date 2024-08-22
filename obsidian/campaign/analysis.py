@@ -41,7 +41,7 @@ def calc_ofat_ranges(optimizer: Optimizer,
     response_name = optimizer.target[response_id].name
 
     if X_ref is None:
-        X_ref = optimizer.X_space.mean()
+        X_ref = optimizer.X_best_f
     if isinstance(X_ref, pd.Series):
         X_ref = X_ref.to_frame().T
 
