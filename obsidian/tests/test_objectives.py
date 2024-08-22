@@ -32,7 +32,7 @@ test_config = {'optim_samples': 2, 'optim_restarts': 2}
 
 test_objs = [Identity_Objective(mo=len(target) > 1),
              Scalar_WeightedNorm(weights=[1, 1]),
-             Feature_Objective(X_space, indices=[0], coeff=[1]),
+             Feature_Objective(X_space, ind=(0,), coeff=(1,)),
              Objective_Sequence([Utopian_Distance([1], target[0]), Index_Objective()]),
              Bounded_Target(bounds=[(0, 1)]*len(target), targets=target),
              None]
