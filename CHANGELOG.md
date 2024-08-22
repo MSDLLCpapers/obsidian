@@ -4,6 +4,7 @@
 ### Added
 - Campaign X_best method
 - Optimizer X_best_f attribute(s)
+- Sequence of colors "color_list" to branding
 
 ### Modified
 - Switched all usages of X_ref = X_space.mean() to optimizer.X_best_f
