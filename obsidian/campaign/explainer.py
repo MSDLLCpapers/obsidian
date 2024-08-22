@@ -142,6 +142,7 @@ class Explainer():
     def shap_pdp_ice(self,
                      ind: int | tuple[int] = 0,
                      ice_color_var: int | None = None,
+                     hist: bool = False,
                      ace_opacity: float = 0.5,
                      npoints: int | None = None,
                      ) -> Figure:
@@ -151,7 +152,9 @@ class Explainer():
         Args:
             ind (int): Index of the parameter to plot
             ice_color_var (int): Index of the parameter to color the ICE lines
-            ace_opacity (float): Opacity of the ACE line
+            hist (bool, optional): Show histogram of the feature values.
+                By default ``False``
+            ace_opacity (float, optional): Opacity of the ACE line. By default ``0.5``
             npoints (int, optional): Number of points for PDP x-axis. By default
                 will use ``100`` for 1D PDP and ``20`` for 2D PDP.
         
@@ -167,7 +170,7 @@ class Explainer():
                 model=self.shap['pred_func'],
                 data=self.shap['X_sample'],
                 ice_color_var=ice_color_var,
-                hist=False,
+                hist=hist,
                 ace_opacity=ace_opacity,
                 show=False,
                 npoints=npoints
