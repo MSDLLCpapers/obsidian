@@ -55,6 +55,7 @@ def test_campaign_basics(X_space, sim_fcn, target):
     campaign.y
     campaign.fit()
     campaign.response_max
+    campaign.X_best
 
     # Serialize, deserialize, re-serialize
     obj_dict = campaign.save_state()
