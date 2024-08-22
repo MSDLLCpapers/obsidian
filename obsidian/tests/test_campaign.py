@@ -9,7 +9,7 @@ from obsidian.plotting import plot_interactions, plot_ofat_ranges
 from obsidian.exceptions import IncompatibleObjectiveError, UnfitError
 
 from obsidian.tests.param_configs import X_sp_cont_ndims, X_sp_default
-from obsidian.tests.utils import DEFAULT_MOO_PATH, equal_state_dicts
+from obsidian.tests.utils import DEFAULT_MOO_PATH, DEFAULT_SOO_PATH, equal_state_dicts
 
 import pandas as pd
 import pytest
@@ -55,6 +55,7 @@ def test_campaign_basics(X_space, sim_fcn, target):
     campaign.y
     campaign.fit()
     campaign.response_max
+    campaign.X_best
 
     # Serialize, deserialize, re-serialize
     obj_dict = campaign.save_state()
@@ -72,6 +73,11 @@ target = campaign.target
 
 
 def test_explain():
+    # SOO includes discrete variables
+    with open(DEFAULT_SOO_PATH) as json_file:
+        obj_dict = json.load(json_file)
+    campaign = Campaign.load_state(obj_dict)
+    
     # Standard usage
     exp = Explainer(campaign.optimizer)
     exp.shap_explain(n=50)
@@ -81,10 +87,12 @@ def test_explain():
     exp.shap_summary()
     exp.shap_summary_bar()
     
-    # Test PDP-ICE, with options
-    exp.shap_pdp_ice(ind=0, ice_color_var=None, npoints=10)
-    exp.shap_pdp_ice(ind=0, npoints=10)
-    exp.shap_pdp_ice(ind=(0, 1), npoints=5)
+    # Test PDP-ICE, with options and  discrete variables
+    exp.shap_pdp_ice(ind=3, ice_color_var=None, npoints=10)
+    exp.shap_pdp_ice(ind=0, ice_color_var=3, npoints=None)
+    exp.shap_pdp_ice(ind=3, hist=True)
+    exp.shap_pdp_ice(ind=(0, 3), npoints=5)
+    exp.shap_pdp_ice(ind=(3, 0), npoints=None)
 
     # Test pairwise SHAP analysis, with options
     X_new = campaign.X.iloc[0, :]
@@ -158,7 +166,7 @@ def test_explainer_validation():
     
     # Unfit SHAP
     with pytest.raises(UnfitError):
-        exp.shap_single_point(X_new=campaign.X_space.mean())
+        exp.shap_single_point(X_new=campaign.optimizer.X_best_f)
     
     random_data = pd.DataFrame(data={'A': [1], 'B': [4]})
     long_data = pd.DataFrame(data={'Parameter 1': [1, 2], 'Parameter 2': [1, 2]})
@@ -179,7 +187,7 @@ def test_explainer_validation():
     
     # Missing X names
     with pytest.raises(ValueError):
-        exp.shap_single_point(X_new=campaign.X_space.mean(), X_ref=random_data)
+        exp.shap_single_point(X_new=campaign.optimizer.X_best_f, X_ref=random_data)
 
     # Missing X names
     with pytest.raises(ValueError):
