@@ -6,7 +6,8 @@ from obsidian.plotting import (
     factor_plot,
     surface_plot,
     visualize_inputs,
-    optim_progress
+    optim_progress,
+    MDS_plot
 )
 
 from obsidian.objectives import Scalar_WeightedSum
@@ -75,6 +76,19 @@ def test_optim_progress_plot():
     obj = Scalar_WeightedSum(weights=[1, 1])
     campaign.set_objective(obj)
     fig = optim_progress(campaign, X_suggest=X_suggest)
+    
+    
+@pytest.mark.fast
+def test_MDS_plot():
+    # Test with default data
+    fig = MDS_plot(campaign)
+    
+    # Test with no iteration data
+    data = campaign.data
+    data = data.drop(columns='Iteration')
+    campaign.clear_data()
+    campaign.add_data(data)
+    fig = MDS_plot(campaign)
 
 
 if __name__ == '__main__':

@@ -99,6 +99,7 @@ class Campaign():
     def clear_data(self):
         """Clears campaign data"""
         self.data = pd.DataFrame()
+        self.iter = 0
 
     @property
     def optimizer(self) -> Optimizer:

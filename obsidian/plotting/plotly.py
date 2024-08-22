@@ -8,9 +8,59 @@ from .branding import obsidian_colors
 
 import plotly.graph_objects as go
 from plotly.graph_objects import Figure
+from sklearn.manifold import MDS
 
 import pandas as pd
 import numpy as np
+
+
+def MDS_plot(campaign: Campaign) -> Figure:
+    """
+    Creates a Multi-Dimensional Scaling (MDS) plot of the campaign data,
+    colored by iteration.
+    
+    This plot is helpful to visualize the convergence of the optimizer on a 2D plane.
+    
+    Args:
+        campaign (Campaign): The campaign object containing the data.
+        
+    Returns:
+        fig (Figure): The MDS plot
+    """
+    mds = MDS(n_components=2)
+    X_mds = mds.fit_transform(campaign.X_space.encode(campaign.X))
+
+    iter_max = campaign.data['Iteration'].max()
+    iter_vals = campaign.data['Iteration'].values
+    
+    if campaign.data['Iteration'].nunique() == 1:
+        iter_vals = np.zeros_like(iter_vals)
+        iter_max = 0
+        cbar = None
+    else:
+        cbar = dict(title=dict(text='Iteration', font=dict(size=10)))
+    
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(x=X_mds[:, 0], y=X_mds[:, 1],
+                             mode='markers',
+                             name='Observations',
+                             marker={'color': iter_vals, 'size': 10,
+                                     'cmax': iter_max, 'cmin': 0,
+                                     'colorscale': [[0, obsidian_colors.rich_blue],
+                                                    [0.5, obsidian_colors.teal],
+                                                    [1, obsidian_colors.lemon]],
+                                     'colorbar': cbar
+                                     },
+                             showlegend=False
+                             ))
+    
+    fig.update_xaxes(title_text='Component 1')
+    fig.update_yaxes(title_text='Component 2')
+    fig.update_layout(template='ggplot2', title='Multi-Dimensional Scaling (MDS) Plot',
+                      autosize=False, height=400, width=500)
+    
+    return fig
 
 
 def parity_plot(optimizer: Optimizer,

@@ -58,6 +58,7 @@ sphinx = { version =  "^7.3.7", optional = true}
 myst-parser = { version =  "^3.0.1", optional = true}
 pydata-sphinx-theme = { version =  "^0.15.4", optional = true}
 linkify-it-py = { version =  "^2.0.3", optional = true}
+scikit-learn = "^1.5.1"
 
 
 [tool.poetry.extras]
