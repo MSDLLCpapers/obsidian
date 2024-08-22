@@ -5,10 +5,12 @@
 - Campaign X_best method
 - Optimizer X_best_f attribute(s)
 - Sequence of colors "color_list" to branding
+- Informative hoverdata for MDS plot
 
 ### Modified
 - Switched all usages of X_ref = X_space.mean() to optimizer.X_best_f
 - Refactored mpl "visualize_inputs" as plotly "visualize_inputs" for better interactivity
+- Text formatting for some plotly hoverdata
 
 ## [0.8.3]
 ### Added
