@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.4]
+### Added
+- Campaign X_best method
+- Optimizer X_best_f attribute(s)
+
+### Modified
+- Switched all usages of X_ref = X_space.mean() to optimizer.X_best_f
+
 ## [0.8.3]
 ### Added
 - Default values for NParEGO scalarization_weights
