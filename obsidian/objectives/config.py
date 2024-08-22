@@ -6,7 +6,8 @@ from .custom import (
     Utopian_Distance,
     Bounded_Target,
     Index_Objective,
-    Product_Objective
+    Product_Objective,
+    Divide_Objective
 )
 
 from .scalarize import (
@@ -23,4 +24,5 @@ obj_class_dict = {'Identity_Objective': Identity_Objective,
                   'Scalar_WeightedNorm': Scalar_WeightedNorm,
                   'Scalar_Chebyshev': Scalar_Chebyshev,
                   'Index_Objective': Index_Objective,
-                  'Product_Objective': Product_Objective}
+                  'Product_Objective': Product_Objective,
+                  'Divide_Objective': Divide_Objective}

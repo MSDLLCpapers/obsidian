@@ -67,6 +67,58 @@ class Product_Objective(Objective):
             return self.output_shape(obj)
 
 
+class Divide_Objective(Objective):
+    """
+    Objective function that computes the weighted quotient of other objectives
+    
+    (w_num * samples[..., ind_num])/(w_denom * samples[..., ind_denom]) + const
+    
+    Args:
+        ind_num (int): The index of the objective to be used in the numerator
+        w_num (float | int, optional): The weights corresponding to numerator
+            objective. Defaults to ``1``.
+        ind_denom (int): The index of the objective to be used in the denominator
+        w_denom (float | int, optional): The weights corresponding to denominator
+            objective. Defaults to ``1``.
+        const (float | int): A constant value that can be added to the quotient
+        new_dim (bool, optional): Whether to create a new objective dimension
+            from this quotient. Default is ``False``. Setting to ``True`` will
+            make this the only output objective.
+        
+    """
+    def __init__(self,
+                 ind_num: int,
+                 ind_denom: int,
+                 w_num: float | int = 1,
+                 w_denom: float | int = 1,
+                 const: float | int = 0,
+                 new_dim: bool = True) -> None:
+        super().__init__(new_dim)
+        # Always MOO if dim is being added, always SOO otherwise
+
+        self.register_buffer('ind_num', torch.tensor(ind_num, dtype=torch.int))
+        self.register_buffer('w_num', torch.tensor(w_num, dtype=TORCH_DTYPE))
+        self.register_buffer('ind_denom', torch.tensor(ind_denom, dtype=torch.int))
+        self.register_buffer('w_denom', torch.tensor(w_denom, dtype=TORCH_DTYPE))
+        self.register_buffer('const', torch.tensor(const, dtype=TORCH_DTYPE))
+        self.register_buffer('new_dim', torch.tensor(new_dim, dtype=torch.bool))
+        
+    def forward(self,
+                samples: Tensor,
+                X: Tensor | None = None) -> Tensor:
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
+        w_num = (self.w_num*samples[..., self.ind_num]).unsqueeze(-1)
+        w_denom = (self.w_denom*samples[..., self.ind_denom]).unsqueeze(-1)
+        obj = w_num/w_denom + self.const
+        
+        if self.new_dim:
+            return torch.concat((samples, obj), dim=-1)
+        else:
+            return self.output_shape(obj)
+
+
 class Feature_Objective(Objective):
     """
     Creates an objective function which creates a new outcome as a linear combination of input features.
