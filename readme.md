@@ -113,9 +113,18 @@ from obsidian.plotting import surface_plot, optim_progress
 surface_plot(campaign.optimizer, feature_ids=(0,2))
 ```
 
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_surface.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+
 ```python
 optim_progress(campaign)
 ```
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_optimprogress.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
 
 ```python
 from obsidian.campaign import Explainer
@@ -123,12 +132,19 @@ exp = Explainer(campaiagn)
 exp.shap_explain()
 exp.shap_summary()
 ```
-
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_shap.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
 
 ```python
 exp.shap_pdp_ice(ind = 2, ice_color_var = 3)
 ```
 
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_pdp_ice.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
 
 # Installation
 
@@ -156,6 +172,10 @@ With `obsidian-apo[app]` installed on an activate Python environment, navigate t
 ```
 python app.py
 ```
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_app.png?raw=true" width="600" alt = "obsidian app">
+</div>
+<br>
 
 # Contributing
 
