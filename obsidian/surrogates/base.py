@@ -48,8 +48,7 @@ class SurrogateModel(ABC):
         self.seed = seed
         if self.seed is not None:
             torch.manual_seed(self.seed)
-            if not torch.cuda.is_available():
-                torch.use_deterministic_algorithms(True)
+            torch.use_deterministic_algorithms(True)
             np.random.seed(self.seed)
             random.seed(self.seed)
 
