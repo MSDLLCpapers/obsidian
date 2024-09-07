@@ -1,5 +1,18 @@
 # Changelog
 
+## [Untracked Changes]
+### Added
+- More optional outputs for verbose settings
+- Parameters in ParamSpace can also be indexed by name
+- Parameters now have search_space property, to modify the optimizer search space from the full space
+- Continuous parameters have search_min/search_max; Discete parameteres have search_categories
+
+### Modified
+- Optimizer and Campaign X_space attributes are now assigned using setter
+
+### Remvoed
+- Torch device references and options (GPU compatibility may be re-added)
+
 ## [0.8.4]
 ### Added
 - Campaign X_best method
