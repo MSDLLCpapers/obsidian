@@ -516,7 +516,9 @@ class BayesianOptimizer(Optimizer):
 
         # If using an objective, want to calculate EI/PI from here
         o = f_t if not objective else objective(f_t.unsqueeze(0), X_baseline).squeeze(0)
-
+        if objective:
+            aq_kwargs['objective'] = objective
+        
         # Improvement aqs based on inflation or deflation of best point
         if aq in ['EI', 'PI']:
             o_max = o.max(dim=0).values * (1+hps['inflate'])
@@ -555,6 +557,9 @@ class BayesianOptimizer(Optimizer):
             X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T.to(self.device)
             qmc_samples = draw_sobol_samples(bounds=X_bounds, n=128, q=m_batch)
             aq_kwargs['mc_points'] = qmc_samples.squeeze(-2)
+            aq_kwargs['sampler'] = None
+            if objective:
+                raise UnsupportedError('NIPV does not support objectives')
 
         if aq == 'NParEGO':
             w = hps['scalarization_weights']
@@ -664,6 +669,8 @@ class BayesianOptimizer(Optimizer):
         # Use indexing to handle if suggestions are made for a subset of fit targets/surrogates
         target = self._validate_target(target)
         target_locs = [self.y_names.index(t.name) for t in target]
+        
+        # Select the model(s) to use for optimization
         model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) if i in target_locs]
         if all(isinstance(m, GPyTorchModel) for m in model_list):
             model = ModelListGP(*model_list)
@@ -685,7 +692,7 @@ class BayesianOptimizer(Optimizer):
 
         optim_type = 'single' if o_dim == 1 else 'multi'
 
-        # Default to noisy expected improvement if no aq method is provided
+        # Default if no aq method is provided
         if not acquisition:
             acquisition = [aq_defaults[optim_type]]
 
@@ -744,11 +751,8 @@ class BayesianOptimizer(Optimizer):
             # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
             aq_kwargs = {'model': model, 'sampler': sampler, 'X_pending': X_t_pending}
             
-            if aq_str != 'NIPV':
-                aq_kwargs['objective'] = objective
-            else:
-                aq_kwargs['sampler'] = None
-            
+            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
+                        
             # Type check for constraints
             for constraint_type in eq_constraints, ineq_constraints, nleq_constraints, out_constraints:
                 if constraint_type:
@@ -775,8 +779,6 @@ class BayesianOptimizer(Optimizer):
                 optim_kwargs['batch_initial_conditions'] = X_ic
                 if fixed_features_list:
                     raise UnsupportedError('Nonlinear constraints are not supported with discrete features.')
-            
-            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
             
             # Hypervolume aqs fail with X_t_pending when optim_sequential=True
             if aq_str in ['NEHVI', 'EHVI']:
@@ -857,7 +859,7 @@ class BayesianOptimizer(Optimizer):
         """
         
         if not self.is_fit:
-            raise UnfitError('Surrogate model must be fit before suggesting new experiments')
+            raise UnfitError('Surrogate model must be fit before evaluating new experiments')
                 
         # Use indexing to handle if suggestions are made for a subset of fit targets/surrogates
         target = self._validate_target(target)
@@ -924,27 +926,25 @@ class BayesianOptimizer(Optimizer):
         optim_type = 'single' if o_dim == 1 else 'multi'
         
         if eval_aq:
-            # Default to noisy expected improvement if no aq method is provided
+            # Default if no aq method is provided
             if not acquisition:
                 acquisition = [aq_defaults[optim_type]]
 
             if not isinstance(acquisition, (str, dict)):
                 raise TypeError('Acquisition must be either a string or a dictionary')
             
-            # Extract acq function names and custom hyperparameters from the 'acquisition' list in config
-            aq_str, aq_hps = self._validate_hypers(o_dim, acquisition)
-
             model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) if i in target_locs]
             if all(isinstance(m, GPyTorchModel) for m in model_list):
                 model = ModelListGP(*model_list)
             else:
                 model = ModelList(*model_list)
+            
+            # Extract acq function names and custom hyperparameters from the 'acquisition' list in config
+            aq_str, aq_hps = self._validate_hypers(o_dim, acquisition)
 
             # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
-            aq_kwargs = {'model': model, 'X_pending': X_t_pending}
-            if aq_str != 'NIPV':
-                aq_kwargs['objective'] = objective
-                
+            aq_kwargs = {'model': model, 'sampler': None, 'X_pending': X_t_pending}
+                       
             aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, X_suggest.shape[0], target_locs, X_t_pending, objective))
                 
             # If it's random search, no need to evaluate aq
