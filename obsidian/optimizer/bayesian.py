@@ -716,7 +716,7 @@ class BayesianOptimizer(Optimizer):
             sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
             
         # Calculate search bounds for optimization
-        X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T
+        X_bounds = torch.tensor(self.X_space.search_space.values, dtype=TORCH_DTYPE)
         
         # Set up master lists to hold the candidates from multi-acquisition results
         candidates_all = []

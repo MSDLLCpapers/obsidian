@@ -121,6 +121,16 @@ def test_optimizer_suggest(m_batch, fixed_var):
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
 
 
+def test_suggest_searchspace():
+    optimizer.X_space[0].set_search(2, 8)
+    optimizer.X_space[3].set_search(['A', 'C'])
+    
+    X_suggest, eval_suggest = optimizer.suggest(m_batch=2, **test_config)
+    df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+    
+    optimizer.X_space.open_search()
+
+
 test_aqs = ['NEI',
             'EI',
             {'EI': {'inflate': 0.05}},

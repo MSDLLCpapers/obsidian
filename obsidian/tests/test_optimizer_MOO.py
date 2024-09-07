@@ -94,6 +94,15 @@ def test_optimizer_suggest(m_batch, fixed_var):
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
 
 
+def test_suggest_searchspace():
+    optimizer.X_space[0].set_search(2, 8)
+    
+    X_suggest, eval_suggest = optimizer.suggest(m_batch=2, **test_config)
+    df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+    
+    optimizer.X_space.open_search()
+    
+
 test_aqs = ['NEHVI',
             {'NEHVI': {'ref_point': [0.1, 0.1]}},
             'EHVI',

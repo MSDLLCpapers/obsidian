@@ -342,6 +342,8 @@ class Campaign():
         """
         if self.optimizer.is_fit:
             try:
+                # In case X_space has changed, re-set the optimizer X_space
+                self.optimizer.set_X_space(self.X_space)
                 X, eval = self.optimizer.suggest(objective=self.objective, **optim_kwargs)
                 return (X, eval)
             except Exception:

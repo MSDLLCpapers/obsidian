@@ -112,7 +112,7 @@ class Optimizer(ABC):
         # First, get the cartesian product of all of the categorical/ordinal combos
         for x in self.X_space.X_discrete:
             if x.name not in fixed_var.keys():  # Fixed_var should take precedent and lock out other combinations
-                df_i = pd.DataFrame({x.name: x.categories})
+                df_i = pd.DataFrame({x.name: x.search_categories})
                 df_list.append(df_i)
         
         # Merge by cross

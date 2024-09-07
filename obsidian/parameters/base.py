@@ -23,6 +23,11 @@ class Parameter(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
+    def set_search(self):
+        """Set the search space for the parameter"""
+        pass  # pragma: no cover
+
+    @abstractmethod
     def encode(X):
         """Encode parameter to a format that can be used for training"""
         pass  # pragma: no cover
