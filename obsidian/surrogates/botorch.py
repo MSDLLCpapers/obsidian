@@ -51,7 +51,7 @@ class SurrogateBoTorch(SurrogateModel):
     def __init__(self,
                  model_type: str = 'GP',
                  seed: int | None = None,
-                 verbose: int | None = False,
+                 verbose: bool = False,
                  hps: dict = {}):
         
         super().__init__(model_type=model_type, seed=seed, verbose=verbose)
