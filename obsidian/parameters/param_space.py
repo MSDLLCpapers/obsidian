@@ -118,8 +118,10 @@ class ParamSpace(ABC):
         """String representation of object"""
         return f"{self.__class__.__name__}(params={[p.name for p in self]})"
 
-    def __getitem__(self, index: int) -> Parameter:
+    def __getitem__(self, index: int | str) -> Parameter:
         """Retrieve a parameter by index"""
+        if isinstance(index, str):
+            index = self.X_names.index(index)
         return self.params[index]
 
     def map_transform(self) -> dict:
