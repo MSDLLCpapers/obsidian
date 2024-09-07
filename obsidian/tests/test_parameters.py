@@ -142,6 +142,13 @@ string_list = ['A', 'B', 'C', 'D']
 
 
 @pytest.mark.fast
+def test_param_indexing():
+    X_space = ParamSpace(test_params)
+    p0 = X_space[0]
+    p0 = X_space['Parameter 1']
+
+
+@pytest.mark.fast
 def test_numeric_param_validation():
     # Strings for numeric
     with pytest.raises(TypeError):

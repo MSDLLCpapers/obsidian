@@ -52,7 +52,7 @@ class Optimizer(ABC):
         # Store the parameter space which contains useful reference properties
         if not isinstance(X_space, ParamSpace):
             raise TypeError('X_space must be an obsidian ParamSpace object')
-        self.X_space = X_space
+        self.set_X_space(X_space)
 
     @property
     def X_space(self):
