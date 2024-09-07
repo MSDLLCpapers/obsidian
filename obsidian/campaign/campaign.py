@@ -371,11 +371,11 @@ class Campaign():
         for i in iters:
             iter_index = self.data.query(f'Iteration <= {i}').index
             out_iter = self.out.loc[iter_index, :]
-            out_iter = torch.tensor(out_iter.values).to(self.optimizer.device)
+            out_iter = torch.tensor(out_iter.values)
             hv[i] = self.optimizer.hypervolume(out_iter)
         
         self.data['Hypervolume (iter)'] = self.data.apply(lambda x: hv[x['Iteration']], axis=1)
-        self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(self.out.values).to(self.optimizer.device))
+        self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(self.out.values))
         
         return
 

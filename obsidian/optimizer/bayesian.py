@@ -64,7 +64,6 @@ class BayesianOptimizer(Optimizer):
     Attributes:
         surrogate_type (list[str]): The shorthand name of each surrogate model.
         surrogate_hps (list[dict]): The hyperparameters for each surrogate model.
-        device (str): The device to use for computations ('cuda' if available, 'cpu' otherwise).
         is_fit (bool): Indicates whether the surrogate model has been fit to data.
 
     Raises:
@@ -121,8 +120,6 @@ class BayesianOptimizer(Optimizer):
         for surrogate_str in self.surrogate_type:
             if surrogate_str not in model_class_dict.keys():
                 raise KeyError(f'Surrogate model must be selected from one of: {model_class_dict.keys()}')
-
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         return
     
@@ -554,7 +551,7 @@ class BayesianOptimizer(Optimizer):
             aq_kwargs['partitioning'] = NondominatedPartitioning(aq_kwargs['ref_point'], Y=o)
 
         if aq == 'NIPV':
-            X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T.to(self.device)
+            X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T
             qmc_samples = draw_sobol_samples(bounds=X_bounds, n=128, q=m_batch)
             aq_kwargs['mc_points'] = qmc_samples.squeeze(-2)
             aq_kwargs['sampler'] = None
@@ -696,6 +693,7 @@ class BayesianOptimizer(Optimizer):
         if not acquisition:
             acquisition = [aq_defaults[optim_type]]
 
+        # Type check for acquisition
         if not isinstance(acquisition, list):
             raise TypeError('acquisition must be a list of strings or dictionaries')
         if not all(isinstance(item, (str, dict)) for item in acquisition):
@@ -709,14 +707,16 @@ class BayesianOptimizer(Optimizer):
             samplers = []
             for m in model.models:
                 if isinstance(m, DNN):
-                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed).to(self.device)
+                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
                 else:
-                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed).to(self.device)
+                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
                 samplers.append(sampler_i)
             sampler = ListSampler(*samplers)
         else:
-            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed).to(self.device)
-        X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T.to(self.device)
+            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
+            
+        # Calculate search bounds for optimization
+        X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T
         
         # Set up master lists to hold the candidates from multi-acquisition results
         candidates_all = []
@@ -867,8 +867,8 @@ class BayesianOptimizer(Optimizer):
 
         # Begin evaluation with y_predict with pred interval
         eval_suggest = self.predict(X_suggest)
-        X_t = torch.tensor(self.X_space.encode(X_suggest).values, dtype=TORCH_DTYPE).to(self.device)
-        X_t_train = torch.tensor(self.X_space.encode(self.X_train).values, dtype=TORCH_DTYPE).to(self.device)
+        X_t = torch.tensor(self.X_space.encode(X_suggest).values, dtype=TORCH_DTYPE)
+        X_t_train = torch.tensor(self.X_space.encode(self.X_train).values, dtype=TORCH_DTYPE)
 
         # Evaluate f_predict on new and pending points
         f_all = []

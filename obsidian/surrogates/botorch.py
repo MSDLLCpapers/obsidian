@@ -41,7 +41,6 @@ class SurrogateBoTorch(SurrogateModel):
             - ``'DNN'``: Dropout neural network. Uses MC sampling to mask neurons during training and
                 to estimate uncertainty.
               
-        device (str): The device on which the model is run.
         hps (dict): Optional surrogate function hyperparameters.
         mll (ExactMarginalLogLikelihood): The marginal log likelihood of the model.
         torch_model (torch.nn.Module): The torch model for the surrogate.
@@ -56,11 +55,6 @@ class SurrogateBoTorch(SurrogateModel):
         
         super().__init__(model_type=model_type, seed=seed, verbose=verbose)
         
-        if torch.cuda.is_available():
-            self.device = 'cuda'
-        else:
-            self.device = 'cpu'
-
         # Optional surrogate function hyperparameters
         self.hps = hps
                 
@@ -102,16 +96,16 @@ class SurrogateBoTorch(SurrogateModel):
 
         if issubclass(model_class_dict[self.model_type], GPyTorchModel):
             if self.model_type == 'GP' and cat_dims:  # If cat_dims is not an empty list, returns True
-                self.torch_model = model_class_dict['MixedGP'](train_X=X_p, train_Y=y_p, cat_dims=cat_dims).to(self.device)
+                self.torch_model = model_class_dict['MixedGP'](train_X=X_p, train_Y=y_p, cat_dims=cat_dims)
             else:
                 if self.model_type == 'MTGP':
                     self.torch_model = model_class_dict[self.model_type](
-                        train_X=X_p, train_Y=y_p, task_feature=task_feature, **self.hps).to(self.device)
+                        train_X=X_p, train_Y=y_p, task_feature=task_feature, **self.hps)
                 else:
                     # Note: Doesn't matter if input empty dictionary as self.hps for model without those additional args
-                    self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device)
+                    self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps)
         else:
-            self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device).to(TORCH_DTYPE)
+            self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(TORCH_DTYPE)
 
         return
 
