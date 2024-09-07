@@ -40,6 +40,26 @@ class Param_Continuous(Parameter):
         """The range of the parameter (max - min)"""
         return self.max-self.min
     
+    def set_search(self,
+                   search_min: int | float,
+                   search_max: int | float):
+        """
+        Set the search space for the parameter
+
+        Args:
+            search_min (int or float): The minimum value of the search space.
+            search_max (int or float): The maximum value of the search space.
+        """
+        for val in [search_min, search_max]:
+            self._validate_value(val)
+            
+        self.search_min = search_min
+        self.search_max = search_max
+    
+    def open_search(self):
+        """Set the search space to the parameter space"""
+        self.set_search(self.min, self.max)
+    
     def __repr__(self):
         """String representation of object"""
         return f"{self.__class__.__name__}(name={self.name}, min={self.min}, max={self.max})"
@@ -63,7 +83,9 @@ class Param_Continuous(Parameter):
     def __init__(self,
                  name: str,
                  min: int | float,
-                 max: int | float):
+                 max: int | float,
+                 search_min: int | float = None,
+                 search_max: int | float = None):
         super().__init__(name=name)
         if max < min:
             warnings.warn(f'Minimum value {min} is greater than maximum value {max}. Auto-swapping values.', UserWarning)
@@ -72,6 +94,13 @@ class Param_Continuous(Parameter):
         self.max = max
         for val in [min, max]:
             self._validate_value(val)
+        
+        # Set the search space to the parameter space by default
+        if not search_min:
+            search_min = self.min
+        if not search_max:
+            search_max = self.max
+        self.set_search(search_min, search_max)
 
 
 class Param_Observational(Param_Continuous):
@@ -89,6 +118,8 @@ class Param_Observational(Param_Continuous):
                  name: str,
                  min: int | float,
                  max: int | float,
+                 search_min: int | float = None,
+                 search_max: int | float = None,
                  design_point: int | float | None = None):
-        super().__init__(name=name, min=min, max=max)
+        super().__init__(name=name, min=min, max=max, search_min=search_min, search_max=search_max)
         self.design_point = design_point = design_point if design_point is not None else max

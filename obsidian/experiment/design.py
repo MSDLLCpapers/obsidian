@@ -90,8 +90,7 @@ class ExpDesigner:
 
         if seed is not None:
             torch.manual_seed(seed)
-            if not torch.cuda.is_available():
-                torch.use_deterministic_algorithms(True)
+            torch.use_deterministic_algorithms(True)
             
         if sample_custom is not None:
             if sample_custom.shape[1] != d:

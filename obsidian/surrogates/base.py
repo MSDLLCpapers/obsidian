@@ -48,8 +48,7 @@ class SurrogateModel(ABC):
         self.seed = seed
         if self.seed is not None:
             torch.manual_seed(self.seed)
-            if not torch.cuda.is_available():
-                torch.use_deterministic_algorithms(True)
+            torch.use_deterministic_algorithms(True)
             np.random.seed(self.seed)
             random.seed(self.seed)
 
@@ -93,9 +92,9 @@ class SurrogateModel(ABC):
             tuple: A tuple containing the converted input data (X_torch) and target data (Y_torch) as torch Tensors.
         """
         self._validate_data(X, y)
-        X_torch = torch.tensor(X.to_numpy(), dtype=TORCH_DTYPE).to(self.device)
+        X_torch = torch.tensor(X.to_numpy(), dtype=TORCH_DTYPE)
         if y is not None:
-            y_torch = torch.tensor(y.to_numpy(), dtype=TORCH_DTYPE).to(self.device).unsqueeze(-1)
+            y_torch = torch.tensor(y.to_numpy(), dtype=TORCH_DTYPE).unsqueeze(-1)
             return (X_torch, y_torch)
         else:
             return X_torch

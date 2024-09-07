@@ -40,6 +40,7 @@ class ParamSpace(ABC):
         X_t_discrete_idx (list[int]): A list of the indices of the transformed discrete parameters.
         X_t_cat_idx (list[int]): A list of the indices of the transformed categorical parameters.
         X_t_task_idx (int): The index of the transformed task parameter.
+        search_space (pd.DataFrame): The allowable search space for future optimization.
     
     Raises:
         ValueError: If the X_names are not unique.
@@ -118,8 +119,10 @@ class ParamSpace(ABC):
         """String representation of object"""
         return f"{self.__class__.__name__}(params={[p.name for p in self]})"
 
-    def __getitem__(self, index: int) -> Parameter:
+    def __getitem__(self, index: int | str) -> Parameter:
         """Retrieve a parameter by index"""
+        if isinstance(index, str):
+            index = self.X_names.index(index)
         return self.params[index]
 
     def map_transform(self) -> dict:
@@ -216,6 +219,38 @@ class ParamSpace(ABC):
     def decode(self, X):
         """Decode parameter from transformed space"""
         return self._transform(X, type='decode')
+
+    @property
+    def search_space(self) -> pd.DataFrame:
+        """
+        Returns the search space for the parameter space.
+
+        Returns:
+            pd.DataFrame: A dataframe containing the search space for the parameter space.
+        """
+        
+        # Establish the boundaries in real space
+        X_search_t = pd.DataFrame()
+        for param in self:
+            # For continuous, encode the continuous bounds
+            if isinstance(param, Param_Continuous):
+                cont_bounds = pd.DataFrame(param.encode([param.search_min, param.search_max]), columns=[param.name])
+                X_search_t = pd.concat([X_search_t, cont_bounds], axis=1)
+                
+            # For discrete, encode the available categories, then log the min-max of encoded columns
+            elif isinstance(param, Param_Discrete):
+                # Discrete parameter bounds aren't actually handled here; they are handled in optimizer._fixed_features())
+                cat_e = param.encode(param.search_categories)
+                disc_bounds = pd.DataFrame(np.vstack([[0]*cat_e.shape[-1], cat_e.max().values]),
+                                           columns=cat_e.columns)
+                X_search_t = pd.concat([X_search_t, disc_bounds], axis=1)
+        
+        return X_search_t
+
+    def open_search(self):
+        """Set the search space to the parameter space"""
+        for param in self:
+            param.open_search()
 
     def save_state(self) -> dict:
         """
