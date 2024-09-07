@@ -54,6 +54,17 @@ class Optimizer(ABC):
             raise TypeError('X_space must be an obsidian ParamSpace object')
         self.X_space = X_space
 
+    @property
+    def X_space(self):
+        """
+        ParamSpace: The parameter space defining the search space for the optimization.
+        """
+        return self._X_space
+    
+    def set_X_space(self, X_space: ParamSpace):
+        self._X_space = X_space
+        return
+
     def _fixed_features(self,
                         fixed_var: dict | None = None) -> list:
         """
