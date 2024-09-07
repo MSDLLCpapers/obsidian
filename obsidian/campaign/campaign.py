@@ -47,7 +47,7 @@ class Campaign():
                  objective: Objective | None = None,
                  seed: int | None = None):
         
-        self.X_space = X_space
+        self.set_X_space(X_space)
         self.data = pd.DataFrame()
         
         optimizer = BayesianOptimizer(X_space, seed=seed) if optimizer is None else optimizer
@@ -100,6 +100,15 @@ class Campaign():
         """Clears campaign data"""
         self.data = pd.DataFrame()
         self.iter = 0
+
+    @property
+    def X_space(self) -> ParamSpace:
+        """Campaign ParamSpace"""
+        return self._X_space
+    
+    def set_X_space(self, X_space: ParamSpace):
+        """Sets the campaign ParamSpace"""
+        self._X_space = X_space
 
     @property
     def optimizer(self) -> Optimizer:
@@ -342,6 +351,8 @@ class Campaign():
         """
         if self.optimizer.is_fit:
             try:
+                # In case X_space has changed, re-set the optimizer X_space
+                self.optimizer.set_X_space(self.X_space)
                 X, eval = self.optimizer.suggest(objective=self.objective, **optim_kwargs)
                 return (X, eval)
             except Exception:
@@ -371,11 +382,11 @@ class Campaign():
         for i in iters:
             iter_index = self.data.query(f'Iteration <= {i}').index
             out_iter = self.out.loc[iter_index, :]
-            out_iter = torch.tensor(out_iter.values).to(self.optimizer.device)
+            out_iter = torch.tensor(out_iter.values)
             hv[i] = self.optimizer.hypervolume(out_iter)
         
         self.data['Hypervolume (iter)'] = self.data.apply(lambda x: hv[x['Iteration']], axis=1)
-        self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(self.out.values).to(self.optimizer.device))
+        self.data['Pareto Front'] = self.optimizer.pareto(torch.tensor(self.out.values))
         
         return
 
