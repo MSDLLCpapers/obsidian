@@ -137,6 +137,9 @@ class SurrogateBoTorch(SurrogateModel):
         self.task_feature = task_feature
         
         # Train
+        if self.verbose:
+            print('Fitting surrogate model [...]')
+        
         if isinstance(self.torch_model, GPyTorchModel):
             self.loss_fcn = ExactMarginalLogLikelihood(self.torch_model.likelihood, self.torch_model)
             if self.model_type == 'DKL':
@@ -162,6 +165,9 @@ class SurrogateBoTorch(SurrogateModel):
                 loss = self.loss_fcn(output, y_p)
                 loss.backward()
                 self.optimizer.step()
+                
+                if (epoch % 50 == 0 and self.verbose):
+                    print(f'Epoch {epoch}: Loss {loss.item()}')
 
             self.torch_model.eval()
 

@@ -227,7 +227,7 @@ class BayesianOptimizer(Optimizer):
         for i in range(self.n_response):
             self.surrogate.append(
                 SurrogateBoTorch(model_type=self.surrogate_type[i], seed=self.seed,
-                                 verbose=self.verbose, hps=self.surrogate_hps[i]))
+                                 verbose=self.verbose >= 2, hps=self.surrogate_hps[i]))
             
             # Handle response NaN values on a response-by-response basis
             f_train_i = self.f_train.iloc[:, i]
@@ -243,9 +243,11 @@ class BayesianOptimizer(Optimizer):
             self.surrogate[i].fit(X_t_train_valid, f_train_i_valid,
                                   cat_dims=self.X_space.X_t_cat_idx, task_feature=self.X_space.X_t_task_idx)
             
-            if self.verbose > 0:
-                print(f'{self.surrogate_type[i]} model has been fit \
-                      to data with a train-score of: {self.surrogate[i].r2_score:.3g} for response: {self.y_names[i]}')
+            if self.verbose >= 1:
+                print(f'{self.surrogate_type[i]} model has been fit to data'
+                      + 'with an R2-train-score of: {self.surrogate[i].r2_score:.3g}'
+                      + (f'and a training-loss of: {self.surrogate[i].loss:.3g}' if self.verbose >= 2 else '')
+                      + ' for response: {self.y_names[i]}')
         return
     
     def save_state(self) -> dict:
@@ -377,6 +379,9 @@ class BayesianOptimizer(Optimizer):
         if not all(col in X.columns for col in self.X_train.columns):
             raise NameError('X for prediction does not contain all of the \
                             required predictors from the training set')
+        
+        if self.verbose >= 3:
+            print(f'Predicting {X.shape[0]} experiments [...]')
         
         X_names = list(self.X_space.X_names)
         X_pred = X[X_names].dropna(subset=X_names)  # Reinforce order and non-nan before proceeding
@@ -662,7 +667,10 @@ class BayesianOptimizer(Optimizer):
 
         if not self.is_fit:
             raise UnfitError('Surrogate model must be fit before suggesting new experiments')
-               
+            
+        if self.verbose >= 2:
+            print(f'Optimizing {m_batch} experiments [...]')
+        
         # Use indexing to handle if suggestions are made for a subset of fit targets/surrogates
         target = self._validate_target(target)
         target_locs = [self.y_names.index(t.name) for t in target]
@@ -805,6 +813,9 @@ class BayesianOptimizer(Optimizer):
                                                   num_restarts=optim_restarts, raw_samples=optim_samples,
                                                   options=optim_options,
                                                   **optim_kwargs)
+            
+            if self.verbose >= 2:
+                print(f'Optimized {aq_str} acquisition function successfully')
             
             candidates_i = self.X_space.decode(
                 pd.DataFrame(candidates.detach().cpu().numpy(),

@@ -40,7 +40,7 @@ target = [
                                        pytest.param('DKL', marks=pytest.mark.slow),
                                        'DNN'])
 def test_optimizer_fit(X_space, surrogate, Z0, serial_test=True):
-    optimizer = BayesianOptimizer(X_space, surrogate=surrogate, seed=0, verbose=0)
+    optimizer = BayesianOptimizer(X_space, surrogate=surrogate, seed=0, verbose=3)
     
     tol = 1e-2 if surrogate == 'DNN' else 1e-5
     
