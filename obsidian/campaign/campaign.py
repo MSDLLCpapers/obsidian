@@ -47,7 +47,7 @@ class Campaign():
                  objective: Objective | None = None,
                  seed: int | None = None):
         
-        self.X_space = X_space
+        self.set_X_space(X_space)
         self.data = pd.DataFrame()
         
         optimizer = BayesianOptimizer(X_space, seed=seed) if optimizer is None else optimizer
@@ -100,6 +100,15 @@ class Campaign():
         """Clears campaign data"""
         self.data = pd.DataFrame()
         self.iter = 0
+
+    @property
+    def X_space(self) -> ParamSpace:
+        """Campaign ParamSpace"""
+        return self._X_space
+    
+    def set_X_space(self, X_space: ParamSpace):
+        """Sets the campaign ParamSpace"""
+        self._X_space = X_space
 
     @property
     def optimizer(self) -> Optimizer:
