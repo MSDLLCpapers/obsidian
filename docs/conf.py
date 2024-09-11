@@ -71,6 +71,9 @@ suppress_warnings = [
     'autosummary.import_cycle',
 ]
 
+# Ignore Jupyter Lab checkpoint folders
+exclude_patterns = ['**.ipynb_checkpoints']
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
