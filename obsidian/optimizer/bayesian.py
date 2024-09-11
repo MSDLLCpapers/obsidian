@@ -582,9 +582,9 @@ class BayesianOptimizer(Optimizer):
                 optim_restarts: int = 10,
                 objective: MCAcquisitionObjective | None = None,
                 out_constraints: list[Callable] | None = None,
-                eq_constraints: Linear_Constraint | list[Linear_Constraint] = [],
-                ineq_constraints: Linear_Constraint | list[Linear_Constraint] = [],
-                nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] = [],
+                eq_constraints: Linear_Constraint | list[Linear_Constraint] = None,
+                ineq_constraints: Linear_Constraint | list[Linear_Constraint] = None,
+                nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] = None,
                 task_index: int = 0,
                 fixed_var: dict[str: float | str] | None = None,
                 X_pending: pd.DataFrame | None = None,
@@ -767,6 +767,14 @@ class BayesianOptimizer(Optimizer):
             else:
                 aq_kwargs['constraints'] = out_constraints
 
+            # If NoneType, coerce to list
+            if not eq_constraints:
+                eq_constraints = []
+            if not ineq_constraints:
+                ineq_constraints = []
+            if not nleq_constraints:
+                nleq_constraints = []
+
             # Coerce input constraints to lists
             if not isinstance(eq_constraints, list):
                 eq_constraints = [eq_constraints]
@@ -786,15 +794,15 @@ class BayesianOptimizer(Optimizer):
                 nleq_constraints += self.X_space.nonlinear_constraints
 
             # Input constraints are used by optim_acqf and friends
-            optim_kwargs = {'equality_constraints': [c() for c in eq_constraints],
-                            'inequality_constraints': [c() for c in ineq_constraints],
-                            'nonlinear_inequality_constraints': [c() for c in nleq_constraints]}
+            optim_kwargs = {'equality_constraints': [c() for c in eq_constraints] if eq_constraints else None,
+                            'inequality_constraints': [c() for c in ineq_constraints] if ineq_constraints else None,
+                            'nonlinear_inequality_constraints': [c() for c in nleq_constraints] if nleq_constraints else None}
             
             optim_options = {}  # Can optionally specify batch_limit or max_iter
             
             # If nonlinear constraints are used, BoTorch doesn't provide an ic_generator
             # Must provide manual samples = just use random initialization
-            if nleq_constraints is not None:
+            if nleq_constraints:
                 X_ic = torch.ones((optim_samples, 1 if fixed_features_list else m_batch, self.X_space.n_tdim))*torch.rand(1)
                 optim_kwargs['batch_initial_conditions'] = X_ic
                 if fixed_features_list:

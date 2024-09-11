@@ -42,27 +42,28 @@ def test_out_constraints(out_constraints):
 
 @pytest.mark.parametrize('lin_const', test_linear)
 def test_ineq_constraints(lin_const):
-    optimizer.X_space.clear_constraints()
     optimizer.X_space.constrain_inputs(lin_const)
     X_suggest, eval_suggest = optimizer.suggest(**test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+    optimizer.X_space.clear_constraints()
     
     
 @pytest.mark.parametrize('nl_const', test_nonlinear)
 def test_nleq_constraints(nl_const):
-    optimizer.X_space.clear_constraints()
     optimizer.X_space.constrain_inputs(nl_const)
     X_suggest, eval_suggest = optimizer.suggest(**test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+    optimizer.X_space.clear_constraints()
 
     
 @pytest.mark.slow
 def test_combo_constraints():
-    X_suggest, eval_suggest = optimizer.suggest(ineq_constraints=test_linear[0],
+    X_suggest, eval_suggest = optimizer.suggest(ineq_constraints=test_linear[1],
                                                 nleq_constraints=test_nonlinear[0],
                                                 out_constraints=test_out[0],
                                                 **test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+    optimizer.X_space.clear_constraints()
     
     
 if __name__ == '__main__':
