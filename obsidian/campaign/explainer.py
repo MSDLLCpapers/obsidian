@@ -67,8 +67,8 @@ class Explainer():
         Args:
             responseid (int): Index of the target response variable.
             n (int): Number of samples to generate for shap values.
-            X_ref (pd.DataFrame | None): Reference DataFrame for shap values. If None,
-                the mean of self.X_space will be used.
+            X_ref (pd.DataFrame | None, optional): Reference DataFrame for shap values. 
+                If None, the ``self.optimizer.X_best_f`` will be used. Defaults to ``None``.
             seed (int | None): Seed value for random number generation.
 
         Returns:
@@ -181,14 +181,15 @@ class Explainer():
 
     def shap_single_point(self,
                           X_new: pd.DataFrame | pd.Series,
-                          X_ref=None) -> tuple[pd.DataFrame, Figure, Figure]:
+                          X_ref: pd.DataFrame | pd.Series | None = None) -> tuple[pd.DataFrame, Figure, Figure]:
         """
         SHAP Pair-wise Marginal Explanations
         
         Args:
             X_new (pd.DataFrame | pd.Series): New data point to explain
-            X_ref (pd.DataFrame | pd.Series, optional): Reference data point
-                for shap values. Default uses ``optimizer.X_best_f``
+            X_ref (pd.DataFrame | pd.Series | None, optional): Reference data point
+                for shap values. If None, the ``optimizer.X_best_f`` will be used as the
+                reference. Defaults to ``None``.
         
         Returns:
             pd.DataFrame: DataFrame containing SHAP values for the new data point
@@ -233,23 +234,20 @@ class Explainer():
         respect to each parameter in the X_space.
 
         Args:
-            optimizer (BayesianOptimizer): The optimizer object which contains a surrogate
-                that has been fit to data
-            and can be used to make predictions.
             dx (float, optional): The perturbation size for calculating the sensitivity.
                 Defaults to ``1e-6``.
             X_ref (pd.DataFrame | pd.Series | None, optional): The reference input values for
-                calculating the sensitivity.  If None, the mean of X_space will be used as the
+                calculating the sensitivity.  If None, the ``self.optimizer.X_best_f`` will be used as the
                 reference. Defaults to ``None``.
-
+        
         Returns:
             pd.DataFrame: A DataFrame containing the sensitivity values for each parameter
                 in X_space.
-
+        
         Raises:
             ValueError: If X_ref does not contain all parameters in optimizer.X_space or if
                 X_ref is not a single row DataFrame.
-                
+               
         """
         
         if isinstance(X_ref, pd.Series):
