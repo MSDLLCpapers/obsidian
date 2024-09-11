@@ -33,15 +33,18 @@ test_out = [Blank_Constraint(target), L1_Constraint(target, offset=1)]
 test_config = {'optim_samples': 2, 'optim_restarts': 2}
 
 
-@pytest.mark.parametrize('out_constraints', test_out)
-def test_out_constraints(out_constraints):
-    X_suggest, eval_suggest = optimizer.suggest(out_constraints=out_constraints,
-                                                **test_config)
+@pytest.mark.parametrize('out_const', test_out)
+def test_out_constraints(out_const):
+    out_const.__repr__()
+    campaign.constrain_outputs(out_const)
+    X_suggest, eval_suggest = campaign.optimizer.suggest(**test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+    campaign.clear_output_constraints()
 
 
 @pytest.mark.parametrize('lin_const', test_linear)
 def test_ineq_constraints(lin_const):
+    lin_const.__repr__()
     optimizer.X_space.constrain_inputs(lin_const)
     X_suggest, eval_suggest = optimizer.suggest(**test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
@@ -50,6 +53,7 @@ def test_ineq_constraints(lin_const):
     
 @pytest.mark.parametrize('nl_const', test_nonlinear)
 def test_nleq_constraints(nl_const):
+    nl_const.__repr__()
     optimizer.X_space.constrain_inputs(nl_const)
     X_suggest, eval_suggest = optimizer.suggest(**test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
