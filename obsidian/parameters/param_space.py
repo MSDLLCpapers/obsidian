@@ -285,8 +285,14 @@ class ParamSpace(IParamSpace):
         if isinstance(constraint, Linear_Constraint):
             self.linear_constraints.append(constraint)
         elif isinstance(constraint, Nonlinear_Constraint):
-            self.linear_constraints.append(constraint)
+            self.nonlinear_constraints.append(constraint)
         
+        return
+
+    def clear_constraints(self) -> None:
+        """Clears all constraints from the input space."""
+        self.linear_constraints = []
+        self.nonlinear_constraints = []
         return
 
     def save_state(self) -> dict:
