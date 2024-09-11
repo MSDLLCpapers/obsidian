@@ -4,7 +4,9 @@ from obsidian.parameters import ParamSpace, Target
 from obsidian.optimizer import Optimizer, BayesianOptimizer
 from obsidian.experiment import ExpDesigner
 from obsidian.objectives import Objective, Objective_Sequence, obj_class_dict
+from obsidian.constraints import Output_Constraint, const_class_dict
 from obsidian.exceptions import IncompatibleObjectiveError
+from obsidian.utils import tensordict_to_dict
 import obsidian
 
 import pandas as pd
@@ -42,6 +44,7 @@ class Campaign():
     def __init__(self,
                  X_space: ParamSpace,
                  target: Target | list[Target],
+                 constraints: Output_Constraint | list[Output_Constraint] | None = None,
                  optimizer: Optimizer | None = None,
                  designer: ExpDesigner | None = None,
                  objective: Objective | None = None,
@@ -58,6 +61,9 @@ class Campaign():
         
         self.set_target(target)
         self.set_objective(objective)
+        
+        self.output_constraints = None
+        self.constrain_outputs(constraints)
         
         # Non-object attributes
         self.iter = 0
@@ -269,59 +275,6 @@ class Campaign():
         """
         return self.data[list(self.X_space.X_names)]
             
-    def save_state(self) -> dict:
-        """
-        Saves the state of the Campaign object as a dictionary.
-
-        Returns:
-            dict: A dictionary containing the saved state of the Campaign object.
-        """
-        obj_dict = {}
-        obj_dict['X_space'] = self.X_space.save_state()
-        obj_dict['optimizer'] = self.optimizer.save_state()
-        obj_dict['data'] = self.data.to_dict()
-        obj_dict['target'] = [t.save_state() for t in self.target]
-        if self.objective:
-            obj_dict['objective'] = self.objective.save_state()
-        obj_dict['seed'] = self.seed
-
-        return obj_dict
-    
-    @classmethod
-    def load_state(cls,
-                   obj_dict: dict):
-        """
-        Loads the state of the campaign from a dictionary.
-
-        Args:
-            cls (Campaign): The class object.
-            obj_dict (dict): A dictionary containing the campaign state.
-
-        Returns:
-            Campaign: A new campaign object with the loaded state.
-        """
-        
-        if 'objective' in obj_dict:
-            if obj_dict['objective']['name'] == 'Objective_Sequence':
-                new_objective = Objective_Sequence.load_state(obj_dict['objective'])
-            else:
-                obj_class = obj_class_dict[obj_dict['objective']['name']]
-                new_objective = obj_class.load_state(obj_dict['objective'])
-        else:
-            new_objective = None
-        
-        new_campaign = cls(X_space=ParamSpace.load_state(obj_dict['X_space']),
-                           target=[Target.load_state(t_dict) for t_dict in obj_dict['target']],
-                           optimizer=BayesianOptimizer.load_state(obj_dict['optimizer']),
-                           objective=new_objective,
-                           seed=obj_dict['seed'])
-        new_campaign.data = pd.DataFrame(obj_dict['data'])
-        new_campaign.data.index = new_campaign.data.index.astype('int')
-        
-        new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
-
-        return new_campaign
-
     def __repr__(self):
         """String representation of object"""
         return f"obsidian Campaign for {getattr(self,'y_names', None)}; {getattr(self,'m_exp', 0)} observations"
@@ -353,7 +306,9 @@ class Campaign():
             try:
                 # In case X_space has changed, re-set the optimizer X_space
                 self.optimizer.set_X_space(self.X_space)
-                X, eval = self.optimizer.suggest(objective=self.objective, **optim_kwargs)
+                X, eval = self.optimizer.suggest(objective=self.objective,
+                                                 out_constraints=self.output_constraints,
+                                                 **optim_kwargs)
                 return (X, eval)
             except Exception:
                 warnings.warn('Optimization failed')
@@ -430,3 +385,82 @@ class Campaign():
             )
             
         return
+
+    def constrain_outputs(self,
+                          constraints: Output_Constraint | list[Output_Constraint] | None) -> None:
+        """
+        Sets optional output constraints for the campaign.
+        """
+        if constraints is not None:
+            if isinstance(constraints, Output_Constraint):
+                constraints = [constraints]
+            self.output_constraints = constraints
+
+        return
+    
+    def clear_output_constraints(self):
+        """Clears output constraints"""
+        self.output_constraints = None
+
+    def save_state(self) -> dict:
+        """
+        Saves the state of the Campaign object as a dictionary.
+
+        Returns:
+            dict: A dictionary containing the saved state of the Campaign object.
+        """
+        obj_dict = {}
+        obj_dict['X_space'] = self.X_space.save_state()
+        obj_dict['optimizer'] = self.optimizer.save_state()
+        obj_dict['data'] = self.data.to_dict()
+        obj_dict['target'] = [t.save_state() for t in self.target]
+        if self.objective:
+            obj_dict['objective'] = self.objective.save_state()
+        obj_dict['seed'] = self.seed
+
+        if getattr(self, 'output_constraints', None):
+            obj_dict['output_constraints'] = [{'class': const.__class__.__name__,
+                                               'state': tensordict_to_dict(const.state_dict())}
+                                              for const in self.output_constraints]
+
+        return obj_dict
+    
+    @classmethod
+    def load_state(cls,
+                   obj_dict: dict):
+        """
+        Loads the state of the campaign from a dictionary.
+
+        Args:
+            cls (Campaign): The class object.
+            obj_dict (dict): A dictionary containing the campaign state.
+
+        Returns:
+            Campaign: A new campaign object with the loaded state.
+        """
+        
+        if 'objective' in obj_dict:
+            if obj_dict['objective']['name'] == 'Objective_Sequence':
+                new_objective = Objective_Sequence.load_state(obj_dict['objective'])
+            else:
+                obj_class = obj_class_dict[obj_dict['objective']['name']]
+                new_objective = obj_class.load_state(obj_dict['objective'])
+        else:
+            new_objective = None
+        
+        new_campaign = cls(X_space=ParamSpace.load_state(obj_dict['X_space']),
+                           target=[Target.load_state(t_dict) for t_dict in obj_dict['target']],
+                           optimizer=BayesianOptimizer.load_state(obj_dict['optimizer']),
+                           objective=new_objective,
+                           seed=obj_dict['seed'])
+        new_campaign.data = pd.DataFrame(obj_dict['data'])
+        new_campaign.data.index = new_campaign.data.index.astype('int')
+        
+        new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
+
+        if 'output_constraints' in obj_dict:
+            for const_dict in obj_dict['output_constraints']:
+                const = const_class_dict[const_dict['class']](new_campaign.target, **const_dict['state'])
+                new_campaign.constrain_outputs(const)
+
+        return new_campaign
