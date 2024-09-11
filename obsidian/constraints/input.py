@@ -95,6 +95,11 @@ class Linear_Constraint(Input_Constraint):
         """
         return self.ind_t, self.weights_t, self.rhs_t
 
+    def __repr__(self) -> str:
+        """String representation of object"""
+        return (f'{self.__class__.__name__}(ind={self.ind},'
+                f'weights={self.weights}, rhs={self.rhs}, equality={self.equality})')
+
 
 class Nonlinear_Constraint(Input_Constraint):
     """
@@ -168,3 +173,8 @@ class BatchVariance_Constraint(Nonlinear_Constraint):
         nonlinear_constraint = (nl_func, False)  # False for inter-point
 
         return nonlinear_constraint
+    
+    def __repr__(self) -> str:
+        """String representation of object"""
+        return (f'{self.__class__.__name__}(ind={self.ind},'
+                f'tol={self.tol})')

@@ -38,6 +38,7 @@ class Output_Constraint(Constraint):
         
         return target
 
+
 class Blank_Constraint(Output_Constraint):
     """
     Dummy constraint function that proposes all samples as feasible.
@@ -54,6 +55,11 @@ class Blank_Constraint(Output_Constraint):
             feasibility = -1*torch.ones(size=samples.shape).max(dim=-1).values
             return feasibility
         return constraint
+    
+    def __repr__(self):
+        """String representation of object"""
+        return f'{self.__class__.__name__}'
+    
     
 class L1_Constraint(Output_Constraint):
     """
@@ -73,3 +79,7 @@ class L1_Constraint(Output_Constraint):
             feasibility = (samples.sum(dim=-1) - self.offset)
             return feasibility
         return constraint
+    
+    def __repr__(self):
+        """String representation of object"""
+        return f'{self.__class__.__name__}(offset={self.offset})'
