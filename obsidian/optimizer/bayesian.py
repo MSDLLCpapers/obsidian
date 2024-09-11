@@ -7,7 +7,7 @@ from obsidian.surrogates import SurrogateBoTorch, DNN
 from obsidian.acquisition import aq_class_dict, aq_defaults, aq_hp_defaults, valid_aqs
 from obsidian.surrogates import model_class_dict
 from obsidian.objectives import Index_Objective, Objective_Sequence
-from obsidian.constraints import Linear_Constraint, Nonlinear_Constraint
+from obsidian.constraints import Linear_Constraint, Nonlinear_Constraint, Output_Constraint
 from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning
 from obsidian.config import TORCH_DTYPE
 
@@ -581,10 +581,10 @@ class BayesianOptimizer(Optimizer):
                 optim_samples: int = 512,
                 optim_restarts: int = 10,
                 objective: MCAcquisitionObjective | None = None,
-                out_constraints: list[Callable] | None = None,
-                eq_constraints: Linear_Constraint | list[Linear_Constraint] = None,
-                ineq_constraints: Linear_Constraint | list[Linear_Constraint] = None,
-                nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] = None,
+                out_constraints: Output_Constraint | list[Output_Constraint] | None = None,
+                eq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
+                ineq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
+                nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] | None = None,
                 task_index: int = 0,
                 fixed_var: dict[str: float | str] | None = None,
                 X_pending: pd.DataFrame | None = None,
@@ -633,8 +633,8 @@ class BayesianOptimizer(Optimizer):
                 of the acquisition function. The default value is ``10``.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
                 The default is ``None``.
-            out_constraints (list of Callable, optional): A list of constraints to be applied to the output space.
-                The default is ``None``.
+            out_constraints (Output_Constraint | list[Output_Constraint], optional): An output constraint, or a list
+                thereof, restricting the search space by outcomes. The default is ``None``.
             eq_constraints (Linear_Constraint | list[Linear_Constraint], optional): A linear constraint, or a list
                 thereof, restricting the search space by equality (=). The default is ``None``.
             ineq_constraints (Linear_Constraint | list[Linear_Constraint], optional):  A linear constraint, or a list
@@ -765,7 +765,9 @@ class BayesianOptimizer(Optimizer):
                 if out_constraints is not None:
                     raise UnsupportedError('Provided aquisition function does not support output constraints')
             else:
-                aq_kwargs['constraints'] = out_constraints
+                if out_constraints and not isinstance(out_constraints, list):
+                    out_constraints = [out_constraints]
+                aq_kwargs['constraints'] = [c() for c in out_constraints] if out_constraints else None
 
             # If NoneType, coerce to list
             if not eq_constraints:

@@ -4,8 +4,8 @@ from obsidian.campaign import Campaign
 from obsidian.constraints import (
     Linear_Constraint,
     BatchVariance_Constraint,
-    OutConstraint_Blank,
-    OutConstraint_L1
+    Blank_Constraint,
+    L1_Constraint
 )
 from obsidian.tests.utils import DEFAULT_MOO_PATH
 
@@ -27,7 +27,7 @@ test_linear = [
     Linear_Constraint(X_space, ind=[0, 1], weights=[1, 1], rhs=5)
 ]
 test_nonlinear = [BatchVariance_Constraint(X_space, ind=0, tol=0.1)]
-test_out = [[OutConstraint_Blank(target)], [OutConstraint_L1(target, offset=1)]]
+test_out = [Blank_Constraint(target), L1_Constraint(target, offset=1)]
 
 # Run very short optimizations for testing
 test_config = {'optim_samples': 2, 'optim_restarts': 2}
