@@ -67,7 +67,7 @@ class Explainer():
         Args:
             responseid (int): Index of the target response variable.
             n (int): Number of samples to generate for shap values.
-            X_ref (pd.DataFrame | None, optional): Reference DataFrame for shap values. 
+            X_ref (pd.DataFrame | None, optional): Reference DataFrame for shap values.
                 If None, the ``self.optimizer.X_best_f`` will be used. Defaults to ``None``.
             seed (int | None): Seed value for random number generation.
 
