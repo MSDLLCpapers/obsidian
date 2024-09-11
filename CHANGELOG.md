@@ -8,6 +8,7 @@
 - Continuous parameters have search_min/search_max; Discete parameteres have search_categories
 - Constraints are now defined by Constraint class
 - Input constraints can now be included in ParamSpace, and serialized from there
+- Output constraints can now be included in Campaign, and serialized from there
 - New interface class IParamSpace to address circular import issues between ParamSpace and Constraint
 
 ### Modified
