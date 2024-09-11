@@ -17,7 +17,7 @@ class Input_Constraint(Constraint):
     Input constraint for a given parameter space.
 
     Note: Saving and loading input constraints is managed by ParamSpace.
-        The interface class IParmaSpace is used here to avoid circular imports
+        The interface class IParamSpace is used here to avoid circular imports
         with constraints that depend on ParamSpace, which saves/loads constraints.
     """
     def __init__(self,
