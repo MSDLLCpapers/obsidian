@@ -101,7 +101,10 @@ html_theme_options = {
          "icon": "fa-brands fa-python",
          "type": "fontawesome",
       },
-  ]
+  ],
+  "analytics": {
+        "google_analytics_id": "G-BPMFV2DMZE",
+  },
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
