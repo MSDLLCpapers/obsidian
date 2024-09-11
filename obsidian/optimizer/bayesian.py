@@ -245,8 +245,8 @@ class BayesianOptimizer(Optimizer):
             
             if self.verbose >= 1:
                 print(f'{self.surrogate_type[i]} model has been fit to data'
-                      + 'with an R2-train-score of: {self.surrogate[i].r2_score:.3g}'
-                      + (f'and a training-loss of: {self.surrogate[i].loss:.3g}' if self.verbose >= 2 else '')
+                      + f' with an R2-train-score of: {self.surrogate[i].r2_score:.3g}'
+                      + (f' and a training-loss of: {self.surrogate[i].loss:.3g}' if self.verbose >= 2 else '')
                       + ' for response: {self.y_names[i]}')
         return
     
