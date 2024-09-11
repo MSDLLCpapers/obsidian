@@ -27,6 +27,111 @@ class Identity_Objective(Objective):
         return self.output_shape(samples)
 
 
+class Product_Objective(Objective):
+    """
+    Objective function that computes the weighted products of other objectives
+    
+    Args:
+        ind (tuple[int]): The indices of objectives to be used in a product
+        weights (list[float | int], optional): The weights corresponding to
+            indexed objectives. Defaults to ``(1,)*len(ind)``.
+        const (float | int): A constant value that can be added to the product
+        new_dim (bool, optional): Whether to create a new objective dimension
+            from this product. Default is ``False``. Setting to ``True`` will
+            make this the only output objective.
+        
+    """
+    def __init__(self,
+                 ind: tuple[int],
+                 weights: list[float | int] | None = None,
+                 const: float | int = 0,
+                 new_dim: bool = True) -> None:
+        super().__init__(new_dim)
+        # Always MOO if dim is being added, always SOO otherwise
+        if weights is None:
+            weights = [1]*len(ind)
+        if len(weights) != len(ind):
+            raise ValueError('The length of weights and indices must be the same')
+        self.register_buffer('ind', torch.tensor(ind, dtype=torch.int))
+        self.register_buffer('weights', torch.tensor(weights, dtype=TORCH_DTYPE))
+        self.register_buffer('const', torch.tensor(const, dtype=TORCH_DTYPE))
+        self.register_buffer('new_dim', torch.tensor(new_dim, dtype=torch.bool))
+    
+    def __repr__(self):
+        """String representation of object"""
+        return f'{self.__class__.__name__} (ind={self.ind.tolist()}, \
+            weights={self.weights.tolist()}, const={self.const})'
+    
+    def forward(self,
+                samples: Tensor,
+                X: Tensor | None = None) -> Tensor:
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
+        obj = (self.weights*samples[..., self.ind]).prod(dim=-1, keepdim=True) + self.const
+        if self.new_dim:
+            return torch.concat((samples, obj), dim=-1)
+        else:
+            return self.output_shape(obj)
+
+
+class Divide_Objective(Objective):
+    """
+    Objective function that computes the weighted quotient of other objectives
+    
+    (w_num * samples[..., ind_num])/(w_denom * samples[..., ind_denom]) + const
+    
+    Args:
+        ind_num (int): The index of the objective to be used in the numerator
+        w_num (float | int, optional): The weight corresponding to numerator
+            objective. Defaults to ``1``.
+        ind_denom (int): The index of the objective to be used in the denominator
+        w_denom (float | int, optional): The weight corresponding to denominator
+            objective. Defaults to ``1``.
+        const (float | int): A constant value that can be added to the quotient
+        new_dim (bool, optional): Whether to create a new objective dimension
+            from this quotient. Default is ``False``. Setting to ``True`` will
+            make this the only output objective.
+        
+    """
+    def __init__(self,
+                 ind_num: int,
+                 ind_denom: int,
+                 w_num: float | int = 1,
+                 w_denom: float | int = 1,
+                 const: float | int = 0,
+                 new_dim: bool = True) -> None:
+        super().__init__(new_dim)
+        # Always MOO if dim is being added, always SOO otherwise
+
+        self.register_buffer('ind_num', torch.tensor(ind_num, dtype=torch.int))
+        self.register_buffer('w_num', torch.tensor(w_num, dtype=TORCH_DTYPE))
+        self.register_buffer('ind_denom', torch.tensor(ind_denom, dtype=torch.int))
+        self.register_buffer('w_denom', torch.tensor(w_denom, dtype=TORCH_DTYPE))
+        self.register_buffer('const', torch.tensor(const, dtype=TORCH_DTYPE))
+        self.register_buffer('new_dim', torch.tensor(new_dim, dtype=torch.bool))
+        
+    def __repr__(self):
+        """String representation of object"""
+        return f'{self.__class__.__name__} (num={self.w_num} * {self.ind_num}, \
+            denom={self.w_denom} * {self.ind_denom}, const={self.const})'
+            
+    def forward(self,
+                samples: Tensor,
+                X: Tensor | None = None) -> Tensor:
+        """
+        Evaluate the objective function on the candidate set samples, X
+        """
+        w_num = (self.w_num*samples[..., self.ind_num]).unsqueeze(-1)
+        w_denom = (self.w_denom*samples[..., self.ind_denom]).unsqueeze(-1)
+        obj = w_num/w_denom + self.const
+        
+        if self.new_dim:
+            return torch.concat((samples, obj), dim=-1)
+        else:
+            return self.output_shape(obj)
+
+
 class Feature_Objective(Objective):
     """
     Creates an objective function which creates a new outcome as a linear combination of input features.
@@ -35,37 +140,37 @@ class Feature_Objective(Objective):
 
     Args:
         X_space (ParamSpace): The parameter space.
-        indices (list[float | int], optional): The indices of the parameters in the real space
-            to be used as features. Defaults to ``[0]``.
-        coeff (list[float | int | list], optional): The coefficients corresponding to each feature.
+        ind (tuple[int]): The indices of the parameters in the real space
+            to be used as features.
+        coeff (list[float | int], optional): The coefficients corresponding to each feature.
             Defaults to ``[0]``.
 
     Raises:
-        ValueError: If the length of `indices` and `coeff` are not the same.
+        ValueError: If the length of `ind` and `coeff` are not the same.
         TypeError: If the indices for input objectives are not for continuous parameters.
     """
     
     def __init__(self,
                  X_space: ParamSpace,
-                 indices: list[float | int],
-                 coeff: list[float | int | list]) -> None:
+                 ind: tuple[int],
+                 coeff: list[float | int]) -> None:
         
         super().__init__(mo=True)
         
-        if len(indices) != len(coeff):
+        if len(ind) != len(coeff):
             raise ValueError("featureids and coeff must have the same length")
         
-        for i in indices:
+        for i in ind:
             if not isinstance(X_space.params[i], Param_Continuous):
                 raise TypeError('Indices for input objectives must be for continuous parameters only')
         
         self.register_buffer('coeff', torch.tensor(coeff, dtype=TORCH_DTYPE))
-        self.register_buffer('indices', torch.tensor(indices, dtype=torch.long))
+        self.register_buffer('ind', torch.tensor(ind, dtype=torch.long))
         self.X_space = X_space
     
     def __repr__(self):
         """String representation of object"""
-        return f'{self.__class__.__name__} (indices={self.indices.tolist()}, coeff={self.coeff.tolist()})'
+        return f'{self.__class__.__name__} (ind={self.ind.tolist()}, coeff={self.coeff.tolist()})'
 
     def forward(self,
                 samples: Tensor,
@@ -78,7 +183,7 @@ class Feature_Objective(Objective):
         # if q is 1, it is omitted
 
         X_u_all = []  # Create unscaled X
-        for i in self.indices:
+        for i in self.ind:
             X_u_all.append(torch.tensor(
                 self.X_space[i].decode(X[..., i].detach().numpy()),
                 dtype=TORCH_DTYPE).unsqueeze(-1))  # Add output dimension
@@ -117,7 +222,7 @@ class Utopian_Distance(Objective):
     and a most-desirable, ideal/utopian point.
 
     Args:
-        utopian (list[float]): A list of values representing the utopian point.
+        utopian (tuple[float | int]): A list of values representing the utopian point.
         targets (Target | list[Target]): A single Target object or a list of Target objects.
 
     Attributes:
@@ -130,7 +235,7 @@ class Utopian_Distance(Objective):
     """
 
     def __init__(self,
-                 utopian: list[float],
+                 utopian: list[float | int],
                  targets: Target | list[Target]) -> None:
 
         if not isinstance(targets, list):
@@ -198,7 +303,7 @@ class Bounded_Target(Objective):
         lb (torch.Tensor): The lower bounds for the targets.
         ub (torch.Tensor): The upper bounds for the targets.
         tau (torch.Tensor): The temperature parameter for the sigmoid function.
-        indices (torch.Tensor): The indices of the non-None bounds.
+        ind (torch.Tensor): The indices of the non-None bounds.
 
     """
 
@@ -220,17 +325,17 @@ class Bounded_Target(Objective):
         super().__init__(mo=len(targets) > 1)
 
         # Only store and process the indicated bounds
-        indices = []
+        ind = []
         lb_t = []
         ub_t = []
         for i, (b, target) in enumerate(zip(bounds, targets)):
             if b is not None:
                 lb_t.append(target.transform_f(b[0]).iloc[0])
                 ub_t.append(target.transform_f(b[1]).iloc[0])
-                indices.append(i)
+                ind.append(i)
     
         self.bounds = bounds
-        self.indices = torch.tensor(indices)
+        self.ind = torch.tensor(ind)
         self.lb = torch.tensor(lb_t, dtype=TORCH_DTYPE).flatten()
         self.ub = torch.tensor(ub_t, dtype=TORCH_DTYPE).flatten()
         tau = torch.tensor(tau, dtype=TORCH_DTYPE)
@@ -239,7 +344,7 @@ class Bounded_Target(Objective):
 
     def __repr__(self):
         """String representation of object"""
-        return f'{self.__class__.__name__} (indices={self.indices.tolist()}, bounds={self.bounds})'
+        return f'{self.__class__.__name__} (ind={self.ind.tolist()}, bounds={self.bounds})'
 
     def forward(self,
                 samples: Tensor,
@@ -247,11 +352,11 @@ class Bounded_Target(Objective):
         """
         Evaluate the objective function on the candidate set samples, X
         """
-        approx_lb = torch.sigmoid((samples[..., self.indices] - self.lb) / self.tau)
-        approx_ub = torch.sigmoid((self.ub - samples[..., self.indices]) / self.tau)
+        approx_lb = torch.sigmoid((samples[..., self.ind] - self.lb) / self.tau)
+        approx_ub = torch.sigmoid((self.ub - samples[..., self.ind]) / self.tau)
         product = approx_lb * approx_ub
         out = samples.to(TORCH_DTYPE)
-        out[..., self.indices] = product
+        out[..., self.ind] = product
         return self.output_shape(out)
 
     def save_state(self) -> dict:
@@ -278,19 +383,19 @@ class Index_Objective(Objective):
     Creates an objective function that returns the single-objective output
     from a multi-output model, at the specified index.
     
-    Always a single-output objective.
+    Single-objective when index is int; multi-objective if tuple.
 
     Args:
-        index (int): The index of the value to be returned.
+        ind (int | tuple[int]): The index of the value to be returned.
     """
     def __init__(self,
-                 index: int = 0) -> None:
-        super().__init__(mo=False)
-        self.register_buffer('index', torch.tensor(index))
+                 ind: int | tuple[int] = 0) -> None:
+        super().__init__(mo=not isinstance(ind, int))
+        self.register_buffer('ind', torch.tensor(ind))
         
     def __repr__(self):
         """String representation of object"""
-        return f'{self.__class__.__name__} (index={self.index.item()})'
+        return f'{self.__class__.__name__} (ind={self.ind.item()})'
         
     def forward(self,
                 samples: Tensor,
@@ -298,4 +403,4 @@ class Index_Objective(Objective):
         """
         Evaluate the objective function on the candidate set samples, X
         """
-        return samples[..., self.index]
+        return samples[..., self.ind]

@@ -116,7 +116,7 @@ def MDS_plot(campaign: Campaign) -> Figure:
 
     fig.add_trace(go.Scatter(x=X_mds[:, 0], y=X_mds[:, 1],
                              mode='markers',
-                             name='Observations',
+                             name='',
                              marker={'color': iter_vals, 'size': 10,
                                      'cmax': iter_max, 'cmin': 0,
                                      'colorscale': [[0, obsidian_colors.rich_blue],
@@ -124,8 +124,20 @@ def MDS_plot(campaign: Campaign) -> Figure:
                                                     [1, obsidian_colors.lemon]],
                                      'colorbar': cbar
                                      },
+                             customdata=campaign.data[
+                                 list(campaign.X_space.X_names) + ['Iteration']],
                              showlegend=False
                              ))
+
+    template = ["<b>"+str(param.name)+"</b>: "+" %{customdata["+str(i)+"]"
+                + (":.3G}"if isinstance(param, Param_Continuous) else "}") + "<br>"
+                for i, param in enumerate(campaign.X_space)]
+    
+    fig.update_traces(hovertemplate=''.join(template)
+                      + '<b>Iteration</b>'
+                      + ": %{customdata["+str(len(campaign.X_space))+"]}<br>"
+                      + '<b>MDS C1</b>' + ": %{x:.3G}<br>"
+                      + '<b>MDS C2</b>' + ": %{y:.3G}<br>")
     
     fig.update_xaxes(title_text='Component 1')
     fig.update_yaxes(title_text='Component 2')
@@ -530,11 +542,12 @@ def optim_progress(campaign: Campaign,
         customdata=campaign.data[X_names],
         name='Data'))
 
-    template = ["<b>"+str(param.name)+": "+" %{customdata["+str(i)+"]"
-                + (":.3G}"if isinstance(param, Param_Continuous) else "}") + "</b><br>"
+    template = ["<b>"+str(param.name)+"</b>: "+" %{customdata["+str(i)+"]"
+                + (":.3G}"if isinstance(param, Param_Continuous) else "}") + "<br>"
                 for i, param in enumerate(campaign.X_space)]
-    fig.update_traces(hovertemplate=''.join(template) + out_names[0]
-                      + ": %{x:.3G}<br>" + out_names[1] + ": %{y:.3G}<br>")
+    fig.update_traces(hovertemplate=''.join(template)
+                      + '<b>' + out_names[0] + '</b>' + ": %{x:.3G}<br>"
+                      + '<b>' + out_names[1] + '</b>' + ": %{y:.3G}<br>")
 
     if X_suggest is not None:
         if not all(x in X_suggest.columns for x in campaign.X.columns):
