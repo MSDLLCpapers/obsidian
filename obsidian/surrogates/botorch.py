@@ -41,7 +41,6 @@ class SurrogateBoTorch(SurrogateModel):
             - ``'DNN'``: Dropout neural network. Uses MC sampling to mask neurons during training and
                 to estimate uncertainty.
               
-        device (str): The device on which the model is run.
         hps (dict): Optional surrogate function hyperparameters.
         mll (ExactMarginalLogLikelihood): The marginal log likelihood of the model.
         torch_model (torch.nn.Module): The torch model for the surrogate.
@@ -51,16 +50,11 @@ class SurrogateBoTorch(SurrogateModel):
     def __init__(self,
                  model_type: str = 'GP',
                  seed: int | None = None,
-                 verbose: int | None = False,
+                 verbose: bool = False,
                  hps: dict = {}):
         
         super().__init__(model_type=model_type, seed=seed, verbose=verbose)
         
-        if torch.cuda.is_available():
-            self.device = 'cuda'
-        else:
-            self.device = 'cpu'
-
         # Optional surrogate function hyperparameters
         self.hps = hps
                 
@@ -102,16 +96,16 @@ class SurrogateBoTorch(SurrogateModel):
 
         if issubclass(model_class_dict[self.model_type], GPyTorchModel):
             if self.model_type == 'GP' and cat_dims:  # If cat_dims is not an empty list, returns True
-                self.torch_model = model_class_dict['MixedGP'](train_X=X_p, train_Y=y_p, cat_dims=cat_dims).to(self.device)
+                self.torch_model = model_class_dict['MixedGP'](train_X=X_p, train_Y=y_p, cat_dims=cat_dims)
             else:
                 if self.model_type == 'MTGP':
                     self.torch_model = model_class_dict[self.model_type](
-                        train_X=X_p, train_Y=y_p, task_feature=task_feature, **self.hps).to(self.device)
+                        train_X=X_p, train_Y=y_p, task_feature=task_feature, **self.hps)
                 else:
                     # Note: Doesn't matter if input empty dictionary as self.hps for model without those additional args
-                    self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device)
+                    self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps)
         else:
-            self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(self.device).to(TORCH_DTYPE)
+            self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(TORCH_DTYPE)
 
         return
 
@@ -143,6 +137,9 @@ class SurrogateBoTorch(SurrogateModel):
         self.task_feature = task_feature
         
         # Train
+        if self.verbose:
+            print('Fitting surrogate model [...]')
+        
         if isinstance(self.torch_model, GPyTorchModel):
             self.loss_fcn = ExactMarginalLogLikelihood(self.torch_model.likelihood, self.torch_model)
             if self.model_type == 'DKL':
@@ -168,6 +165,9 @@ class SurrogateBoTorch(SurrogateModel):
                 loss = self.loss_fcn(output, y_p)
                 loss.backward()
                 self.optimizer.step()
+                
+                if (epoch % 50 == 0 and self.verbose):
+                    print(f'Epoch {epoch}: Loss {loss.item()}')
 
             self.torch_model.eval()
 

@@ -44,15 +44,25 @@ class Optimizer(ABC):
         self.seed = seed
         if self.seed is not None:
             torch.manual_seed(self.seed)
-            if not torch.cuda.is_available():
-                torch.use_deterministic_algorithms(True)
+            torch.use_deterministic_algorithms(True)
             np.random.seed(self.seed)
             random.seed(self.seed)
 
         # Store the parameter space which contains useful reference properties
         if not isinstance(X_space, ParamSpace):
             raise TypeError('X_space must be an obsidian ParamSpace object')
-        self.X_space = X_space
+        self.set_X_space(X_space)
+
+    @property
+    def X_space(self):
+        """
+        ParamSpace: The parameter space defining the search space for the optimization.
+        """
+        return self._X_space
+    
+    def set_X_space(self, X_space: ParamSpace):
+        self._X_space = X_space
+        return
 
     def _fixed_features(self,
                         fixed_var: dict | None = None) -> list:
@@ -101,7 +111,7 @@ class Optimizer(ABC):
         # First, get the cartesian product of all of the categorical/ordinal combos
         for x in self.X_space.X_discrete:
             if x.name not in fixed_var.keys():  # Fixed_var should take precedent and lock out other combinations
-                df_i = pd.DataFrame({x.name: x.categories})
+                df_i = pd.DataFrame({x.name: x.search_categories})
                 df_list.append(df_i)
         
         # Merge by cross

@@ -63,7 +63,7 @@ target = Target(name='Response', f_transform='Standard', aim='max')
                                        pytest.param('DKL', marks=pytest.mark.slow),
                                        'DNN'])
 def test_optimizer_fit(X_space, surrogate, Z0, serial_test=True):
-    optimizer = BayesianOptimizer(X_space, surrogate=surrogate, seed=0, verbose=0)
+    optimizer = BayesianOptimizer(X_space, surrogate=surrogate, seed=0, verbose=3)
     
     if surrogate == 'GPflat' and not X_space.X_cont:
         # GPflat will fail will a purely categorical space because the design matrix is not p.d.
@@ -119,6 +119,16 @@ def test_optimizer_suggest(m_batch, fixed_var):
     X_suggest, eval_suggest = optimizer.suggest(m_batch=m_batch, fixed_var=fixed_var,
                                                 acquisition=['EI', 'SF'], **test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+
+
+def test_suggest_searchspace():
+    optimizer.X_space[0].set_search(2, 8)
+    optimizer.X_space[3].set_search(['A', 'C'])
+    
+    X_suggest, eval_suggest = optimizer.suggest(m_batch=2, **test_config)
+    df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+    
+    optimizer.X_space.open_search()
 
 
 test_aqs = ['NEI',
