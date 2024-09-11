@@ -1022,7 +1022,8 @@ class BayesianOptimizer(Optimizer):
 
         for target in self.target:
             X_suggest_i, eval_suggest_i = self.suggest(
-                m_batch=1, acquisition=['Mean'], optim_samples=optim_samples, optim_restarts=optim_restarts, target=target)
+                m_batch=1, acquisition=['Mean'], optim_samples=optim_samples, optim_restarts=optim_restarts,
+                target=target, fixed_var=fixed_var)
             X_suggest = pd.concat([X_suggest, X_suggest_i], axis=0)
             eval_suggest = pd.concat([eval_suggest, eval_suggest_i], axis=0)
         

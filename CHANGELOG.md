@@ -9,6 +9,7 @@
 
 ### Modified
 - Optimizer and Campaign X_space attributes are now assigned using setter
+- Optimizer.maximize() appropriately recognizes fixed_var argument
 
 ### Remvoed
 - Torch device references and options (GPU compatibility may be re-added)
