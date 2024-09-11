@@ -26,7 +26,6 @@ import torch
 from torch import Tensor
 import pandas as pd
 import numpy as np
-from typing import Callable
 import warnings
 
 
@@ -767,7 +766,8 @@ class BayesianOptimizer(Optimizer):
             else:
                 if out_constraints and not isinstance(out_constraints, list):
                     out_constraints = [out_constraints]
-                aq_kwargs['constraints'] = [c() for c in out_constraints] if out_constraints else None
+                aq_kwargs['constraints'] = [c.forward(scale=objective is None)
+                                            for c in out_constraints] if out_constraints else None
 
             # If NoneType, coerce to list
             if not eq_constraints:
