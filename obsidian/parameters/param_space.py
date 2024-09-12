@@ -1,21 +1,39 @@
 """A collection of parameters jointly defining an operating or optimization space"""
 
-from .continuous import Parameter, Param_Continuous, Param_Observational
-from .discrete import (
-    Param_Categorical, Param_Ordinal,
-    Param_Discrete, Param_Discrete_Numeric,
-    Task, CAT_SEP
+from .base import (
+    IParamSpace,
+    Parameter
 )
-from abc import ABC
-import torch
+from .continuous import (
+    Param_Continuous,
+    Param_Observational
+)
+from .discrete import (
+    Param_Categorical,
+    Param_Ordinal,
+    Param_Discrete,
+    Param_Discrete_Numeric,
+    Task,
+    CAT_SEP
+)
 
+from .config import param_class_dict
+from obsidian.constraints import (
+    Input_Constraint,
+    Linear_Constraint,
+    Nonlinear_Constraint,
+    const_class_dict
+)
+
+from obsidian.exceptions import UnsupportedError
+from obsidian.utils import tensordict_to_dict
+
+import torch
 import numpy as np
 import pandas as pd
 
-from obsidian.exceptions import UnsupportedError
 
-
-class ParamSpace(ABC):
+class ParamSpace(IParamSpace):
     """
     Class designed to define the parameter space in which an optimization
     can be conducted.
@@ -104,26 +122,12 @@ class ParamSpace(ABC):
             self.X_t_task_idx = next(i_t for i_t, i in self.tinv_map.items() if self[i] in self.X_task)
         else:
             self.X_t_task_idx = None
+        
+        # Set up storage for constraints
+        self.linear_constraints = []
+        self.nonlinear_constraints = []
 
         return
-
-    def __iter__(self):
-        """Iterate over the parameters in the parameter space"""
-        return iter(self.params)
-
-    def __len__(self):
-        """Number of parameters in the parameter space"""
-        return len(self.params)
-        
-    def __repr__(self):
-        """String representation of object"""
-        return f"{self.__class__.__name__}(params={[p.name for p in self]})"
-
-    def __getitem__(self, index: int | str) -> Parameter:
-        """Retrieve a parameter by index"""
-        if isinstance(index, str):
-            index = self.X_names.index(index)
-        return self.params[index]
 
     def map_transform(self) -> dict:
         """
@@ -247,47 +251,10 @@ class ParamSpace(ABC):
         
         return X_search_t
 
-    def open_search(self):
+    def open_search(self) -> None:
         """Set the search space to the parameter space"""
         for param in self:
             param.open_search()
-
-    def save_state(self) -> dict:
-        """
-        Saves the state of the ParamSpace object.
-
-        Returns:
-            dict: A dictionary containing the state of the ParamSpace object.
-        """
-        obj_dict = {}
-        for param in self:
-            obj_dict[param.name] = {'state': param.save_state(), 'class': param.__class__.__name__}
-        return obj_dict
-    
-    @classmethod
-    def load_state(cls,
-                   obj_dict: dict):
-        """
-        Loads the state of the ParamSpace object from a dictionary.
-
-        Args:
-            obj_dict (dict): A dictionary containing the state of the ParamSpace object.
-
-        Returns:
-            ParamSpace: A new ParamSpace object with the loaded state.
-
-        """
-        param_type_dict = {'Param_Continuous': Param_Continuous,
-                           'Param_Categorical': Param_Categorical,
-                           'Param_Ordinal': Param_Ordinal,
-                           'Param_Discrete_Numeric': Param_Discrete_Numeric,
-                           'Param_Observational': Param_Observational,
-                           'Task': Task}
-        params = []
-        for param, param_dict in obj_dict.items():
-            param = param_type_dict[param_dict['class']].load_state(param_dict['state'])
-            params.append(param)
-        return cls(params=params)
     
     def mean(self) -> pd.DataFrame:
         """
@@ -306,3 +273,80 @@ class ParamSpace(ABC):
         df_mean = pd.DataFrame([row])
 
         return df_mean
+
+    def constrain_inputs(self,
+                         constraint: Input_Constraint) -> None:
+        """
+        Constrains the input space based on the specified equality, inequality, or nonlinear constraint.
+
+        Args:
+            constraint (Input_Constraint): The constraint to be applied to the input space.
+        """
+        if isinstance(constraint, Linear_Constraint):
+            self.linear_constraints.append(constraint)
+        elif isinstance(constraint, Nonlinear_Constraint):
+            self.nonlinear_constraints.append(constraint)
+        
+        return
+
+    def clear_constraints(self) -> None:
+        """Clears all constraints from the input space."""
+        self.linear_constraints = []
+        self.nonlinear_constraints = []
+        return
+
+    def save_state(self) -> dict:
+        """
+        Saves the state of the ParamSpace object.
+
+        Returns:
+            dict: A dictionary containing the state of the ParamSpace object.
+        """
+        obj_dict = {}
+        for param in self:
+            obj_dict[param.name] = {'class': param.__class__.__name__,
+                                    'state': param.save_state()}
+            
+        if getattr(self, 'linear_constraints', []):
+            obj_dict['linear_constraints'] = [{'class': const.__class__.__name__,
+                                               'state': tensordict_to_dict(const.state_dict())}
+                                              for const in self.linear_constraints]
+        if getattr(self, 'nonlinear_constraints', []):
+            obj_dict['nonlinear_constraints'] = [{'class': const.__class__.__name__,
+                                                  'state': tensordict_to_dict(const.state_dict())}
+                                                 for const in self.nonlinear_constraints]
+
+        return obj_dict
+    
+    @classmethod
+    def load_state(cls,
+                   obj_dict: dict):
+        """
+        Loads the state of the ParamSpace object from a dictionary.
+
+        Args:
+            obj_dict (dict): A dictionary containing the state of the ParamSpace object.
+
+        Returns:
+            ParamSpace: A new ParamSpace object with the loaded state.
+
+        """
+
+        params = []
+        for param, param_dict in obj_dict.items():
+            if 'constraint' not in param:
+                param = param_class_dict[param_dict['class']].load_state(param_dict['state'])
+                params.append(param)
+
+        new_X_space = cls(params=params)
+
+        if 'linear_constraints' in obj_dict:
+            for const_dict in obj_dict['linear_constraints']:
+                const = const_class_dict[const_dict['class']](new_X_space, **const_dict['state'])
+                new_X_space.constrain_inputs(const)
+        if 'nonlinear_constraints' in obj_dict:
+            for const_dict in obj_dict['nonlinear_constraints']:
+                const = const_class_dict[const_dict['class']](new_X_space, **const_dict['state'])
+                new_X_space.constrain_inputs(const)
+
+        return new_X_space
