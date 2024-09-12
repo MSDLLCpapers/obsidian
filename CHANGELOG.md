@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Untracked Changes]
+
+## [0.8.5]
 ### Added
 - More optional outputs for verbose settings
 - Parameters in ParamSpace can also be indexed by name
