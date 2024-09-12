@@ -7,6 +7,7 @@ from obsidian.surrogates import SurrogateBoTorch, DNN
 from obsidian.acquisition import aq_class_dict, aq_defaults, aq_hp_defaults, valid_aqs
 from obsidian.surrogates import model_class_dict
 from obsidian.objectives import Index_Objective, Objective_Sequence
+from obsidian.constraints import Linear_Constraint, Nonlinear_Constraint, Output_Constraint
 from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning
 from obsidian.config import TORCH_DTYPE
 
@@ -25,7 +26,6 @@ import torch
 from torch import Tensor
 import pandas as pd
 import numpy as np
-from typing import Callable
 import warnings
 
 
@@ -580,10 +580,10 @@ class BayesianOptimizer(Optimizer):
                 optim_samples: int = 512,
                 optim_restarts: int = 10,
                 objective: MCAcquisitionObjective | None = None,
-                out_constraints: list[Callable] | None = None,
-                eq_constraints: tuple[Tensor, Tensor, float] | None = None,
-                ineq_constraints: tuple[Tensor, Tensor, float] | None = None,
-                nleq_constraints: tuple[Callable, bool] | None = None,
+                out_constraints: Output_Constraint | list[Output_Constraint] | None = None,
+                eq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
+                ineq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
+                nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] | None = None,
                 task_index: int = 0,
                 fixed_var: dict[str: float | str] | None = None,
                 X_pending: pd.DataFrame | None = None,
@@ -632,15 +632,14 @@ class BayesianOptimizer(Optimizer):
                 of the acquisition function. The default value is ``10``.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
                 The default is ``None``.
-            out_constraints (list of Callable, optional): A list of constraints to be applied to the output space.
-                The default is ``None``.
-            eq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the equality
-                constraints, the target values, and the tolerance. The default is ``None``.
-            ineq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the inequality
-                constraints, the target values, and the tolerance. The default is ``None``.
-            nleq_constraints (tuple of Callable, bool, optional): A tuple of functions representing the nonlinear
-                inequality constraints and a boolean indicating whether the constraints are active.
-                The default is ``None``.
+            out_constraints (Output_Constraint | list[Output_Constraint], optional): An output constraint, or a list
+                thereof, restricting the search space by outcomes. The default is ``None``.
+            eq_constraints (Linear_Constraint | list[Linear_Constraint], optional): A linear constraint, or a list
+                thereof, restricting the search space by equality (=). The default is ``None``.
+            ineq_constraints (Linear_Constraint | list[Linear_Constraint], optional):  A linear constraint, or a list
+                thereof, restricting the search space by inequality (>=). The default is ``None``.
+            nleq_constraints (Nonlinear_Constraint | list[Nonlinear_Constraint], optional):  A nonlinear constraint,
+                or a list thereof, restricting the search space by nonlinear feasibility. The default is ``None``.
             task_index (int, optional): The index of the task to optimize for multi-task models. The default is ``0``.
             fixed_var (dict(str:float), optional): Name of a variable and setting, over which the
                 suggestion should be fixed. Default values is ``None``
@@ -661,7 +660,6 @@ class BayesianOptimizer(Optimizer):
             IncorrectObjectiveError: If the objective does not successfully execute on a sample.
             TypeError: If the acquisition is not a list of strings or dictionaries.
             UnsupportedError: If the provided acquisition function does not support output constraints.
-            UnsupportedError: If nonlinear constraints are provided with discrete features.
 
         """
 
@@ -760,29 +758,53 @@ class BayesianOptimizer(Optimizer):
             aq_kwargs = {'model': model, 'sampler': sampler, 'X_pending': X_t_pending}
             
             aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
-                        
-            # Type check for constraints
-            for constraint_type in eq_constraints, ineq_constraints, nleq_constraints, out_constraints:
-                if constraint_type:
-                    if not isinstance(constraint_type, list):
-                        raise TypeError('Constraints must be passed as lists of callables')
-            
+
+            # Raise errors related to certain constraints
             if aq_str in ['UCB', 'Mean', 'TS', 'SF', 'SR', 'NIPV']:
                 if out_constraints is not None:
                     raise UnsupportedError('Provided aquisition function does not support output constraints')
             else:
-                aq_kwargs['constraints'] = out_constraints
+                if out_constraints and not isinstance(out_constraints, list):
+                    out_constraints = [out_constraints]
+                aq_kwargs['constraints'] = [c.forward(scale=objective is None)
+                                            for c in out_constraints] if out_constraints else None
+
+            # If NoneType, coerce to list
+            if not eq_constraints:
+                eq_constraints = []
+            if not ineq_constraints:
+                ineq_constraints = []
+            if not nleq_constraints:
+                nleq_constraints = []
+
+            # Coerce input constraints to lists
+            if not isinstance(eq_constraints, list):
+                eq_constraints = [eq_constraints]
+            if not isinstance(ineq_constraints, list):
+                ineq_constraints = [ineq_constraints]
+            if not isinstance(nleq_constraints, list):
+                nleq_constraints = [nleq_constraints]
+
+            # Append X_space constraints
+            if getattr(self.X_space, 'linear_constraints', []):
+                for c in self.X_space.linear_constraints:
+                    if c.equality:
+                        eq_constraints.append(c)
+                    else:
+                        ineq_constraints.append(c)
+            if getattr(self.X_space, 'nonlinear_constraints', []):
+                nleq_constraints += self.X_space.nonlinear_constraints
 
             # Input constraints are used by optim_acqf and friends
-            optim_kwargs = {'equality_constraints': eq_constraints,
-                            'inequality_constraints': ineq_constraints,
-                            'nonlinear_inequality_constraints': nleq_constraints}
+            optim_kwargs = {'equality_constraints': [c() for c in eq_constraints] if eq_constraints else None,
+                            'inequality_constraints': [c() for c in ineq_constraints] if ineq_constraints else None,
+                            'nonlinear_inequality_constraints': [c() for c in nleq_constraints] if nleq_constraints else None}
             
             optim_options = {}  # Can optionally specify batch_limit or max_iter
             
             # If nonlinear constraints are used, BoTorch doesn't provide an ic_generator
             # Must provide manual samples = just use random initialization
-            if nleq_constraints is not None:
+            if nleq_constraints:
                 X_ic = torch.ones((optim_samples, 1 if fixed_features_list else m_batch, self.X_space.n_tdim))*torch.rand(1)
                 optim_kwargs['batch_initial_conditions'] = X_ic
                 if fixed_features_list:

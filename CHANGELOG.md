@@ -6,12 +6,16 @@
 - Parameters in ParamSpace can also be indexed by name
 - Parameters now have search_space property, to modify the optimizer search space from the full space
 - Continuous parameters have search_min/search_max; Discete parameteres have search_categories
+- Constraints are now defined by Constraint class
+- Input constraints can now be included in ParamSpace, and serialized from there
+- Output constraints can now be included in Campaign, and serialized from there
+- New interface class IParamSpace to address circular import issues between ParamSpace and Constraint
 
 ### Modified
 - Optimizer and Campaign X_space attributes are now assigned using setter
 - Optimizer.maximize() appropriately recognizes fixed_var argument
 
-### Remvoed
+### Removed
 - Torch device references and options (GPU compatibility may be re-added)
 
 ## [0.8.4]
