@@ -242,12 +242,16 @@ class ParamSpace(IParamSpace):
                 X_search_t = pd.concat([X_search_t, cont_bounds], axis=1)
                 
             # For discrete, encode the available categories, then log the min-max of encoded columns
-            elif isinstance(param, Param_Discrete):
+            elif isinstance(param, Param_Discrete) and (not isinstance(param, Param_Ordinal)):
                 # Discrete parameter bounds aren't actually handled here; they are handled in optimizer._fixed_features())
                 cat_e = param.encode(param.search_categories)
                 disc_bounds = pd.DataFrame(np.vstack([[0]*cat_e.shape[-1], cat_e.max().values]),
                                            columns=cat_e.columns)
                 X_search_t = pd.concat([X_search_t, disc_bounds], axis=1)
+            elif isinstance(param, Param_Ordinal):
+                cat_e = param.encode(param.search_categories)
+                cont_bounds = pd.DataFrame([min(cat_e), max(cat_e)], columns=[param.name])
+                X_search_t = pd.concat([X_search_t, cont_bounds], axis=1)
         
         return X_search_t
 
