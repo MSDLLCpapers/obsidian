@@ -71,6 +71,23 @@ class Param_Discrete(Parameter):
         """Maximum parameter value (nc-1)"""
         return self.nc-1
         
+    def set_search(self,
+                   search_categories: list[str]):
+        """
+        Set the search space for the parameter
+
+        Args:
+            search_categories (list[str]): The search space for the parameter.
+        """
+        for c in search_categories:
+            self._validate_value(c)
+            
+        self.search_categories = search_categories
+    
+    def open_search(self):
+        """Set the search space to the parameter space"""
+        self.set_search(self.categories)
+    
     def _validate_value(self,
                         value: str):
         """
@@ -91,7 +108,8 @@ class Param_Discrete(Parameter):
 
     def __init__(self,
                  name: str,
-                 categories: str | list[str]):
+                 categories: str | list[str],
+                 search_categories: list[str] = None):
         super().__init__(name=name)
         if isinstance(categories, str):
             self.categories = categories.split(',')
@@ -100,6 +118,15 @@ class Param_Discrete(Parameter):
             self.categories = categories
         for c in self.categories:
             self._validate_value(c)
+        
+        # Set the search space to the parameter space by default
+        if not search_categories:
+            search_categories = self.categories
+        else:
+            if isinstance(categories, str):
+                search_categories = search_categories.split(',')
+                search_categories = [c.rstrip().lstrip() for c in search_categories]
+        self.set_search(search_categories)
     
     def __repr__(self):
         """String representation of object"""

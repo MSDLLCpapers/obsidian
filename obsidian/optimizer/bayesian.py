@@ -7,6 +7,7 @@ from obsidian.surrogates import SurrogateBoTorch, DNN
 from obsidian.acquisition import aq_class_dict, aq_defaults, aq_hp_defaults, valid_aqs
 from obsidian.surrogates import model_class_dict
 from obsidian.objectives import Index_Objective, Objective_Sequence
+from obsidian.constraints import Linear_Constraint, Nonlinear_Constraint, Output_Constraint
 from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning
 from obsidian.config import TORCH_DTYPE
 
@@ -25,7 +26,6 @@ import torch
 from torch import Tensor
 import pandas as pd
 import numpy as np
-from typing import Callable
 import warnings
 
 
@@ -64,7 +64,6 @@ class BayesianOptimizer(Optimizer):
     Attributes:
         surrogate_type (list[str]): The shorthand name of each surrogate model.
         surrogate_hps (list[dict]): The hyperparameters for each surrogate model.
-        device (str): The device to use for computations ('cuda' if available, 'cpu' otherwise).
         is_fit (bool): Indicates whether the surrogate model has been fit to data.
 
     Raises:
@@ -121,8 +120,6 @@ class BayesianOptimizer(Optimizer):
         for surrogate_str in self.surrogate_type:
             if surrogate_str not in model_class_dict.keys():
                 raise KeyError(f'Surrogate model must be selected from one of: {model_class_dict.keys()}')
-
-        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         return
     
@@ -230,7 +227,7 @@ class BayesianOptimizer(Optimizer):
         for i in range(self.n_response):
             self.surrogate.append(
                 SurrogateBoTorch(model_type=self.surrogate_type[i], seed=self.seed,
-                                 verbose=self.verbose, hps=self.surrogate_hps[i]))
+                                 verbose=self.verbose >= 2, hps=self.surrogate_hps[i]))
             
             # Handle response NaN values on a response-by-response basis
             f_train_i = self.f_train.iloc[:, i]
@@ -246,9 +243,11 @@ class BayesianOptimizer(Optimizer):
             self.surrogate[i].fit(X_t_train_valid, f_train_i_valid,
                                   cat_dims=self.X_space.X_t_cat_idx, task_feature=self.X_space.X_t_task_idx)
             
-            if self.verbose > 0:
-                print(f'{self.surrogate_type[i]} model has been fit \
-                      to data with a train-score of: {self.surrogate[i].r2_score:.3g} for response: {self.y_names[i]}')
+            if self.verbose >= 1:
+                print(f'{self.surrogate_type[i]} model has been fit to data'
+                      + f' with an R2-train-score of: {self.surrogate[i].r2_score:.3g}'
+                      + (f' and a training-loss of: {self.surrogate[i].loss:.3g}' if self.verbose >= 2 else '')
+                      + f' for response: {self.y_names[i]}')
         return
     
     def save_state(self) -> dict:
@@ -380,6 +379,9 @@ class BayesianOptimizer(Optimizer):
         if not all(col in X.columns for col in self.X_train.columns):
             raise NameError('X for prediction does not contain all of the \
                             required predictors from the training set')
+        
+        if self.verbose >= 3:
+            print(f'Predicting {X.shape[0]} experiments [...]')
         
         X_names = list(self.X_space.X_names)
         X_pred = X[X_names].dropna(subset=X_names)  # Reinforce order and non-nan before proceeding
@@ -516,7 +518,9 @@ class BayesianOptimizer(Optimizer):
 
         # If using an objective, want to calculate EI/PI from here
         o = f_t if not objective else objective(f_t.unsqueeze(0), X_baseline).squeeze(0)
-
+        if objective:
+            aq_kwargs['objective'] = objective
+        
         # Improvement aqs based on inflation or deflation of best point
         if aq in ['EI', 'PI']:
             o_max = o.max(dim=0).values * (1+hps['inflate'])
@@ -552,9 +556,12 @@ class BayesianOptimizer(Optimizer):
             aq_kwargs['partitioning'] = NondominatedPartitioning(aq_kwargs['ref_point'], Y=o)
 
         if aq == 'NIPV':
-            X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T.to(self.device)
+            X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T
             qmc_samples = draw_sobol_samples(bounds=X_bounds, n=128, q=m_batch)
             aq_kwargs['mc_points'] = qmc_samples.squeeze(-2)
+            aq_kwargs['sampler'] = None
+            if objective:
+                raise UnsupportedError('NIPV does not support objectives')
 
         if aq == 'NParEGO':
             w = hps['scalarization_weights']
@@ -573,10 +580,10 @@ class BayesianOptimizer(Optimizer):
                 optim_samples: int = 512,
                 optim_restarts: int = 10,
                 objective: MCAcquisitionObjective | None = None,
-                out_constraints: list[Callable] | None = None,
-                eq_constraints: tuple[Tensor, Tensor, float] | None = None,
-                ineq_constraints: tuple[Tensor, Tensor, float] | None = None,
-                nleq_constraints: tuple[Callable, bool] | None = None,
+                out_constraints: Output_Constraint | list[Output_Constraint] | None = None,
+                eq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
+                ineq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
+                nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] | None = None,
                 task_index: int = 0,
                 fixed_var: dict[str: float | str] | None = None,
                 X_pending: pd.DataFrame | None = None,
@@ -625,15 +632,14 @@ class BayesianOptimizer(Optimizer):
                 of the acquisition function. The default value is ``10``.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
                 The default is ``None``.
-            out_constraints (list of Callable, optional): A list of constraints to be applied to the output space.
-                The default is ``None``.
-            eq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the equality
-                constraints, the target values, and the tolerance. The default is ``None``.
-            ineq_constraints (tuple of Tensor, Tensor, float, optional): A tuple of tensors representing the inequality
-                constraints, the target values, and the tolerance. The default is ``None``.
-            nleq_constraints (tuple of Callable, bool, optional): A tuple of functions representing the nonlinear
-                inequality constraints and a boolean indicating whether the constraints are active.
-                The default is ``None``.
+            out_constraints (Output_Constraint | list[Output_Constraint], optional): An output constraint, or a list
+                thereof, restricting the search space by outcomes. The default is ``None``.
+            eq_constraints (Linear_Constraint | list[Linear_Constraint], optional): A linear constraint, or a list
+                thereof, restricting the search space by equality (=). The default is ``None``.
+            ineq_constraints (Linear_Constraint | list[Linear_Constraint], optional):  A linear constraint, or a list
+                thereof, restricting the search space by inequality (>=). The default is ``None``.
+            nleq_constraints (Nonlinear_Constraint | list[Nonlinear_Constraint], optional):  A nonlinear constraint,
+                or a list thereof, restricting the search space by nonlinear feasibility. The default is ``None``.
             task_index (int, optional): The index of the task to optimize for multi-task models. The default is ``0``.
             fixed_var (dict(str:float), optional): Name of a variable and setting, over which the
                 suggestion should be fixed. Default values is ``None``
@@ -654,16 +660,20 @@ class BayesianOptimizer(Optimizer):
             IncorrectObjectiveError: If the objective does not successfully execute on a sample.
             TypeError: If the acquisition is not a list of strings or dictionaries.
             UnsupportedError: If the provided acquisition function does not support output constraints.
-            UnsupportedError: If nonlinear constraints are provided with discrete features.
 
         """
 
         if not self.is_fit:
             raise UnfitError('Surrogate model must be fit before suggesting new experiments')
-               
+            
+        if self.verbose >= 2:
+            print(f'Optimizing {m_batch} experiments [...]')
+        
         # Use indexing to handle if suggestions are made for a subset of fit targets/surrogates
         target = self._validate_target(target)
         target_locs = [self.y_names.index(t.name) for t in target]
+        
+        # Select the model(s) to use for optimization
         model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) if i in target_locs]
         if all(isinstance(m, GPyTorchModel) for m in model_list):
             model = ModelListGP(*model_list)
@@ -685,10 +695,11 @@ class BayesianOptimizer(Optimizer):
 
         optim_type = 'single' if o_dim == 1 else 'multi'
 
-        # Default to noisy expected improvement if no aq method is provided
+        # Default if no aq method is provided
         if not acquisition:
             acquisition = [aq_defaults[optim_type]]
 
+        # Type check for acquisition
         if not isinstance(acquisition, list):
             raise TypeError('acquisition must be a list of strings or dictionaries')
         if not all(isinstance(item, (str, dict)) for item in acquisition):
@@ -702,14 +713,16 @@ class BayesianOptimizer(Optimizer):
             samplers = []
             for m in model.models:
                 if isinstance(m, DNN):
-                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed).to(self.device)
+                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
                 else:
-                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed).to(self.device)
+                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
                 samplers.append(sampler_i)
             sampler = ListSampler(*samplers)
         else:
-            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed).to(self.device)
-        X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T.to(self.device)
+            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
+            
+        # Calculate search bounds for optimization
+        X_bounds = torch.tensor(self.X_space.search_space.values, dtype=TORCH_DTYPE)
         
         # Set up master lists to hold the candidates from multi-acquisition results
         candidates_all = []
@@ -744,39 +757,58 @@ class BayesianOptimizer(Optimizer):
             # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
             aq_kwargs = {'model': model, 'sampler': sampler, 'X_pending': X_t_pending}
             
-            if aq_str != 'NIPV':
-                aq_kwargs['objective'] = objective
-            else:
-                aq_kwargs['sampler'] = None
-            
-            # Type check for constraints
-            for constraint_type in eq_constraints, ineq_constraints, nleq_constraints, out_constraints:
-                if constraint_type:
-                    if not isinstance(constraint_type, list):
-                        raise TypeError('Constraints must be passed as lists of callables')
-            
+            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
+
+            # Raise errors related to certain constraints
             if aq_str in ['UCB', 'Mean', 'TS', 'SF', 'SR', 'NIPV']:
                 if out_constraints is not None:
                     raise UnsupportedError('Provided aquisition function does not support output constraints')
             else:
-                aq_kwargs['constraints'] = out_constraints
+                if out_constraints and not isinstance(out_constraints, list):
+                    out_constraints = [out_constraints]
+                aq_kwargs['constraints'] = [c.forward(scale=objective is None)
+                                            for c in out_constraints] if out_constraints else None
+
+            # If NoneType, coerce to list
+            if not eq_constraints:
+                eq_constraints = []
+            if not ineq_constraints:
+                ineq_constraints = []
+            if not nleq_constraints:
+                nleq_constraints = []
+
+            # Coerce input constraints to lists
+            if not isinstance(eq_constraints, list):
+                eq_constraints = [eq_constraints]
+            if not isinstance(ineq_constraints, list):
+                ineq_constraints = [ineq_constraints]
+            if not isinstance(nleq_constraints, list):
+                nleq_constraints = [nleq_constraints]
+
+            # Append X_space constraints
+            if getattr(self.X_space, 'linear_constraints', []):
+                for c in self.X_space.linear_constraints:
+                    if c.equality:
+                        eq_constraints.append(c)
+                    else:
+                        ineq_constraints.append(c)
+            if getattr(self.X_space, 'nonlinear_constraints', []):
+                nleq_constraints += self.X_space.nonlinear_constraints
 
             # Input constraints are used by optim_acqf and friends
-            optim_kwargs = {'equality_constraints': eq_constraints,
-                            'inequality_constraints': ineq_constraints,
-                            'nonlinear_inequality_constraints': nleq_constraints}
+            optim_kwargs = {'equality_constraints': [c() for c in eq_constraints] if eq_constraints else None,
+                            'inequality_constraints': [c() for c in ineq_constraints] if ineq_constraints else None,
+                            'nonlinear_inequality_constraints': [c() for c in nleq_constraints] if nleq_constraints else None}
             
             optim_options = {}  # Can optionally specify batch_limit or max_iter
             
             # If nonlinear constraints are used, BoTorch doesn't provide an ic_generator
             # Must provide manual samples = just use random initialization
-            if nleq_constraints is not None:
+            if nleq_constraints:
                 X_ic = torch.ones((optim_samples, 1 if fixed_features_list else m_batch, self.X_space.n_tdim))*torch.rand(1)
                 optim_kwargs['batch_initial_conditions'] = X_ic
                 if fixed_features_list:
                     raise UnsupportedError('Nonlinear constraints are not supported with discrete features.')
-            
-            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
             
             # Hypervolume aqs fail with X_t_pending when optim_sequential=True
             if aq_str in ['NEHVI', 'EHVI']:
@@ -803,6 +835,9 @@ class BayesianOptimizer(Optimizer):
                                                   num_restarts=optim_restarts, raw_samples=optim_samples,
                                                   options=optim_options,
                                                   **optim_kwargs)
+            
+            if self.verbose >= 2:
+                print(f'Optimized {aq_str} acquisition function successfully')
             
             candidates_i = self.X_space.decode(
                 pd.DataFrame(candidates.detach().cpu().numpy(),
@@ -857,7 +892,7 @@ class BayesianOptimizer(Optimizer):
         """
         
         if not self.is_fit:
-            raise UnfitError('Surrogate model must be fit before suggesting new experiments')
+            raise UnfitError('Surrogate model must be fit before evaluating new experiments')
                 
         # Use indexing to handle if suggestions are made for a subset of fit targets/surrogates
         target = self._validate_target(target)
@@ -865,8 +900,8 @@ class BayesianOptimizer(Optimizer):
 
         # Begin evaluation with y_predict with pred interval
         eval_suggest = self.predict(X_suggest)
-        X_t = torch.tensor(self.X_space.encode(X_suggest).values, dtype=TORCH_DTYPE).to(self.device)
-        X_t_train = torch.tensor(self.X_space.encode(self.X_train).values, dtype=TORCH_DTYPE).to(self.device)
+        X_t = torch.tensor(self.X_space.encode(X_suggest).values, dtype=TORCH_DTYPE)
+        X_t_train = torch.tensor(self.X_space.encode(self.X_train).values, dtype=TORCH_DTYPE)
 
         # Evaluate f_predict on new and pending points
         f_all = []
@@ -924,27 +959,25 @@ class BayesianOptimizer(Optimizer):
         optim_type = 'single' if o_dim == 1 else 'multi'
         
         if eval_aq:
-            # Default to noisy expected improvement if no aq method is provided
+            # Default if no aq method is provided
             if not acquisition:
                 acquisition = [aq_defaults[optim_type]]
 
             if not isinstance(acquisition, (str, dict)):
                 raise TypeError('Acquisition must be either a string or a dictionary')
             
-            # Extract acq function names and custom hyperparameters from the 'acquisition' list in config
-            aq_str, aq_hps = self._validate_hypers(o_dim, acquisition)
-
             model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) if i in target_locs]
             if all(isinstance(m, GPyTorchModel) for m in model_list):
                 model = ModelListGP(*model_list)
             else:
                 model = ModelList(*model_list)
+            
+            # Extract acq function names and custom hyperparameters from the 'acquisition' list in config
+            aq_str, aq_hps = self._validate_hypers(o_dim, acquisition)
 
             # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
-            aq_kwargs = {'model': model, 'X_pending': X_t_pending}
-            if aq_str != 'NIPV':
-                aq_kwargs['objective'] = objective
-                
+            aq_kwargs = {'model': model, 'sampler': None, 'X_pending': X_t_pending}
+                       
             aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, X_suggest.shape[0], target_locs, X_t_pending, objective))
                 
             # If it's random search, no need to evaluate aq
@@ -1011,7 +1044,8 @@ class BayesianOptimizer(Optimizer):
 
         for target in self.target:
             X_suggest_i, eval_suggest_i = self.suggest(
-                m_batch=1, acquisition=['Mean'], optim_samples=optim_samples, optim_restarts=optim_restarts, target=target)
+                m_batch=1, acquisition=['Mean'], optim_samples=optim_samples, optim_restarts=optim_restarts,
+                target=target, fixed_var=fixed_var)
             X_suggest = pd.concat([X_suggest, X_suggest_i], axis=0)
             eval_suggest = pd.concat([eval_suggest, eval_suggest_i], axis=0)
         

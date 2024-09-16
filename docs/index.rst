@@ -1,3 +1,13 @@
+.. raw:: html
+
+   <div style="visibility: hidden;">
+Home
+====
+
+.. raw:: html
+
+   </div>
+
 .. toctree::
    :hidden:
    :maxdepth: 2

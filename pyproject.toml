@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "obsidian-apo"
-version = "0.8.4"
+version = "0.8.5"
 description = "Automated experiment design and black-box optimization"
 authors = [
     "Kevin Stone <kevin.stone38@gmail.com>",

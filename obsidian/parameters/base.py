@@ -23,6 +23,11 @@ class Parameter(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
+    def set_search(self):
+        """Set the search space for the parameter"""
+        pass  # pragma: no cover
+
+    @abstractmethod
     def encode(X):
         """Encode parameter to a format that can be used for training"""
         pass  # pragma: no cover
@@ -55,3 +60,30 @@ class Parameter(ABC):
             Parameter: A new instance of the Parameter class with the loaded state.
         """
         return cls(**obj_dict)
+
+
+class IParamSpace(ABC):
+    """
+    Interface for parameter space classes.
+    """
+
+    def __init__(self, params: list[Parameter]):
+        self.params = tuple(params)
+    
+    def __iter__(self):
+        """Iterate over the parameters in the parameter space"""
+        return iter(self.params)
+
+    def __len__(self):
+        """Number of parameters in the parameter space"""
+        return len(self.params)
+        
+    def __repr__(self):
+        """String representation of object"""
+        return f"{self.__class__.__name__}(params={[p.name for p in self]})"
+
+    def __getitem__(self, index: int | str) -> Parameter:
+        """Retrieve a parameter by index"""
+        if isinstance(index, str):
+            index = self.X_names.index(index)
+        return self.params[index]

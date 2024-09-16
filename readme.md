@@ -21,9 +21,11 @@ ReadMe
 
 __obsidian__ is a library for algorithmic process design and black-box optimization using AI-guided experiment design
 
-
 </div>
 
+```code
+pip install obsidian-apo
+```
 
 The _obsidian_ library offers a set of modules for designing, executing, analyzing, and visualizing algorithmic process optimization (APO) using sample-efficient strategies such as Bayesian Optimization (BO). _obsidian_ uses highly flexible models to build internal representations of the measured system in a way that can be explored for characterization and exploited for maximization based on uncertainty estimation and exploration strategies. _obsidian_ supports batch experimentation (joint optimization and parallel evaluation) and is highly configurable for varying use cases, although the default specifications are encouraged.
 
@@ -32,7 +34,7 @@ _We thank you for your patience and invite you to collaborate with us while __ob
  # Key Features
 
  1. __End-User-Friendly__: Designed to elevate the average process development scientist. No machine learning experience required.
- 2. __Deployable__ using pre-built _Dash_ application. Each class is fully serializable, without third-party packages, to enable web-based API usage. 
+ 2. __Deployable__ using pre-built _Dash_ application (`pip install obsidian-apo[app]`). Each class is fully serializable, without third-party packages, to enable web-based API usage. 
  3. __Explainable__ and visualizable using SHAP analysis and interactive figures.
  5. __Flexible__: Handles any input (numeric, discrete) and optionally input/output constraints, multiple outcomes, batch optimization, and a variety of novelty objective compositions. We know that experiment campaigns can have fluctuating objectives and resources, and _obsidian_ is built to support that.
  6. __Purpose-Driven Development__: Impactful features proposed, developed, maintained, and used by laboratory bench scientists. Revelantly designed for process development, optimization, and characterization.
@@ -96,13 +98,53 @@ campaign.fit()
 ## Suggest New Experiments
 
 ```python
-campaign.optimizer.suggest(m_batch=2)
+campaign.suggest(m_batch=2)
 ```
 
 |    |   Temperature |   Concentration |    Enzyme | Variant   | Stir Rate   |   Yield (pred) |   Yield lb |   Yield ub | aq Method   |   aq Value |
 |---:|--------------:|----------------:|----------:|:----------|:------------|---------------:|-----------:|-----------:|:------------|-----------:|
 |  0 |           -10 |              10 | 0.0918096 | MRK001    | Medium      |       112.497  |   102.558  |   122.436  | EI          |   0.848569 |
 |  1 |           -10 |             150 | 0.0882423 | MRK002    | High        |        89.8334 |    79.8589 |    99.8079 | EI          |   0.870511 |
+
+# Interpret Results
+
+```python
+from obsidian.plotting import surface_plot, optim_progress
+surface_plot(campaign.optimizer, feature_ids=(0,2))
+```
+
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_surface.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+
+```python
+optim_progress(campaign)
+```
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_optimprogress.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+
+```python
+from obsidian.campaign import Explainer
+exp = Explainer(campaiagn)
+exp.shap_explain()
+exp.shap_summary()
+```
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_shap.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+
+```python
+exp.shap_pdp_ice(ind = 2, ice_color_var = 3)
+```
+
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_pdp_ice.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
 
 # Installation
 
@@ -118,6 +160,22 @@ pip install obsidian-apo[app]
 ```
 
 Be sure to `pip` install in a newly created `conda` environment to avoid dependency conflicts.
+
+# Launching the App
+
+Clone this repository using the following command:
+```
+git clone https://github.com/MSDLLCpapers/obsidian.git
+```
+
+With `obsidian-apo[app]` installed on an activate Python environment, navigate to the new folder and simply run the folloiwng command:
+```
+python app.py
+```
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_app.png?raw=true" width="600" alt = "obsidian app">
+</div>
+<br>
 
 # Contributing
 
