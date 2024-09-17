@@ -62,7 +62,7 @@ def visualize_inputs(campaign: Campaign) -> Figure:
         col_i = i % cols + 1
         fig.add_trace(go.Scatter(x=X.index, y=X[param],
                                  mode='markers', name=param,
-                                 marker=dict(color=color_list[i], symbol = marker_shapes),
+                                 marker=dict(color=color_list[i], symbol=marker_shapes),
                                  showlegend=False),
                       row=row_i, col=col_i)
         fig.update_xaxes(tickvals=np.around(np.linspace(0, campaign.m_exp, 5)),
@@ -74,8 +74,8 @@ def visualize_inputs(campaign: Campaign) -> Figure:
             text="Note: The diamond markers denote samples that achieve the best sum of targets.",
             showarrow=False,
             xref="paper", yref="paper",
-            x=0, 
-            y=-0.2,  
+            x=0,
+            y=-0.2,
             font=dict(style="italic")
         )
     
@@ -341,7 +341,7 @@ def factor_plot(optimizer: Optimizer,
         Y_mu_ref = Y_pred_ref[y_name+('_t (pred)' if f_transform else ' (pred)')].values
         fig.add_trace(go.Scatter(x=X_ref.iloc[:, feature_id].values, y=Y_mu_ref,
                                  mode='markers',
-                                 marker=dict(symbol = 'diamond'),
+                                 marker=dict(symbol='diamond'),
                                  line={'color': obsidian_colors.teal},
                                  name='Reference'),
                       )
