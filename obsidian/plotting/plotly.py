@@ -341,9 +341,9 @@ def factor_plot(optimizer: Optimizer,
         Y_mu_ref = Y_pred_ref[y_name+('_t (pred)' if f_transform else ' (pred)')].values
         fig.add_trace(go.Scatter(x=X_ref.iloc[:, feature_id].values, y=Y_mu_ref,
                                  mode='markers',
-                                 marker='diamond',
+                                 marker=dict(symbol = 'diamond'),
                                  line={'color': obsidian_colors.teal},
-                                 name='Ref'),
+                                 name='Reference'),
                       )
     fig.update_xaxes(title_text=X_name)
     fig.update_yaxes(title_text=y_name)
