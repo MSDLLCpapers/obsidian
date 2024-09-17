@@ -10,7 +10,6 @@ from obsidian.plotting.branding import obsidian_color_list as colors
 import plotly.graph_objects as go
 from plotly.graph_objects import Figure
 from plotly.subplots import make_subplots
-from sklearn.manifold import MDS
 
 import pandas as pd
 import numpy as np
@@ -99,6 +98,12 @@ def MDS_plot(campaign: Campaign) -> Figure:
     Returns:
         fig (Figure): The MDS plot
     """
+    try:
+        from sklearn.manifold import MDS
+    except ImportError:
+        raise ImportError('The `sklearn` package (>1.0) is required for the MDS plot. \
+                          Please install it using `pip install scikit-learn`')
+
     mds = MDS(n_components=2)
     X_mds = mds.fit_transform(campaign.X_space.encode(campaign.X))
 

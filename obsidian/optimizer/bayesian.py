@@ -3,7 +3,7 @@
 from .base import Optimizer
 
 from obsidian.parameters import ParamSpace, Target, Task
-from obsidian.surrogates import SurrogateBoTorch, DNN
+from obsidian.surrogates import SurrogateBoTorch, EnsembleModel
 from obsidian.acquisition import aq_class_dict, aq_defaults, aq_hp_defaults, valid_aqs
 from obsidian.surrogates import model_class_dict
 from obsidian.objectives import Index_Objective, Objective_Sequence
@@ -18,7 +18,7 @@ from botorch.sampling.list_sampler import ListSampler
 from botorch.sampling.index_sampler import IndexSampler
 from botorch.models.model_list_gp_regression import ModelListGP
 from botorch.models.gpytorch import GPyTorchModel
-from botorch.models.model import ModelList
+from botorch.models.model import ModelList, Model
 from botorch.utils.sampling import draw_sobol_samples
 from botorch.utils.multi_objective.box_decompositions.non_dominated import NondominatedPartitioning
 
@@ -478,6 +478,7 @@ class BayesianOptimizer(Optimizer):
                          hps: dict,
                          m_batch: int,
                          target_locs: list[int],
+                         model: Model,
                          X_t_pending: Tensor | None = None,
                          objective: MCAcquisitionObjective | None = None) -> dict:
         """
@@ -533,7 +534,9 @@ class BayesianOptimizer(Optimizer):
         # Noisy aqs require X_train reference
         if aq in ['NEI', 'NEHVI', 'NParEGO']:
             aq_kwargs['X_baseline'] = X_baseline
-      
+            if any(isinstance(m, EnsembleModel) for m in model.models):
+                aq_kwargs['cache_root'] = False
+
         # Hypervolume requires reference point
         if aq in ['EHVI', 'NEHVI']:
 
@@ -569,6 +572,9 @@ class BayesianOptimizer(Optimizer):
                 w = torch.tensor(w)
                 w = w/torch.sum(torch.abs(w))
             aq_kwargs['scalarization_weights'] = w
+
+        if aq == 'SF':
+            aq_kwargs['X_baseline'] = X_baseline
 
         return aq_kwargs
 
@@ -712,7 +718,7 @@ class BayesianOptimizer(Optimizer):
         if not isinstance(model, ModelListGP):
             samplers = []
             for m in model.models:
-                if isinstance(m, DNN):
+                if isinstance(m, EnsembleModel):
                     sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
                 else:
                     sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
@@ -757,7 +763,9 @@ class BayesianOptimizer(Optimizer):
             # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
             aq_kwargs = {'model': model, 'sampler': sampler, 'X_pending': X_t_pending}
             
-            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch, target_locs, X_t_pending, objective))
+            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch,
+                                                   target_locs, model,
+                                                   X_t_pending, objective))
 
             # Raise errors related to certain constraints
             if aq_str in ['UCB', 'Mean', 'TS', 'SF', 'SR', 'NIPV']:
@@ -812,7 +820,10 @@ class BayesianOptimizer(Optimizer):
             
             # Hypervolume aqs fail with X_t_pending when optim_sequential=True
             if aq_str in ['NEHVI', 'EHVI']:
-                optim_sequential = False
+                if optim_sequential and X_t_pending is not None:
+                    warnings.warn('Hypervolume aqs with X_pending require joint optimization. \
+                                   Setting optim_sequential to False', UserWarning)
+                    optim_sequential = False
 
             # If it's random search, no need to do optimization; Otherwise, initialize the aq function and optimize
             if aq_str == 'RS':
@@ -978,7 +989,9 @@ class BayesianOptimizer(Optimizer):
             # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
             aq_kwargs = {'model': model, 'sampler': None, 'X_pending': X_t_pending}
                        
-            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, X_suggest.shape[0], target_locs, X_t_pending, objective))
+            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, X_suggest.shape[0],
+                                                   target_locs, model,
+                                                   X_t_pending, objective))
                 
             # If it's random search, no need to evaluate aq
             if aq_str == 'RS':
