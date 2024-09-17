@@ -10,7 +10,6 @@ from obsidian.plotting.branding import obsidian_color_list as colors
 import plotly.graph_objects as go
 from plotly.graph_objects import Figure
 from plotly.subplots import make_subplots
-from sklearn.manifold import MDS
 
 import pandas as pd
 import numpy as np
@@ -99,6 +98,12 @@ def MDS_plot(campaign: Campaign) -> Figure:
     Returns:
         fig (Figure): The MDS plot
     """
+    try:
+        from sklearn.manifold import MDS
+    except ImportError:
+        raise ImportError('The `sklearn` package (>1.0) is required for the MDS plot. \
+                          Please install it using `pip install scikit-learn`')
+
     mds = MDS(n_components=2)
     X_mds = mds.fit_transform(campaign.X_space.encode(campaign.X))
 
@@ -280,13 +285,12 @@ def factor_plot(optimizer: Optimizer,
     # Create a dataframe of test samples for plotting
     n_samples = 100
     if X_ref is None:
-        df_mean = optimizer.X_best_f
-        X_test = pd.concat([df_mean]*n_samples, axis=0).reset_index(drop=True)
+        X_ref = optimizer.X_best_f
     else:
         if not isinstance(X_ref, pd.DataFrame):
             raise TypeError('X_ref must be a DataFrame')
-        X_test = pd.concat([X_ref]*n_samples, axis=0).reset_index(drop=True)
-
+    X_test = pd.concat([X_ref]*n_samples, axis=0).reset_index(drop=True)
+    
     # Vary the indicated column
     X_name = X_test.columns[feature_id]
     param_i = optimizer.X_space.params[feature_id]
@@ -316,7 +320,7 @@ def factor_plot(optimizer: Optimizer,
                              line={'color': obsidian_colors.teal},
                              name='Mean'),
                   )
-    if (X_ref is not None) and plotRef:
+    if plotRef:
         Y_pred_ref = optimizer.predict(X_ref, return_f_inv=not f_transform)
         Y_mu_ref = Y_pred_ref[y_name+('_t (pred)' if f_transform else ' (pred)')].values
         fig.add_trace(go.Scatter(x=X_ref.iloc[:, feature_id].values, y=Y_mu_ref,
@@ -382,8 +386,7 @@ def surface_plot(optimizer: Optimizer,
 
     # Create a dataframe of test samples for plotting
     n_grid = 100
-    df_mean = optimizer.X_best_f
-    X_test = pd.concat([df_mean]*(n_grid**2), axis=0).reset_index(drop=True)
+    X_test = pd.concat([optimizer.X_best_f]*(n_grid**2), axis=0).reset_index(drop=True)
     
     # Create a mesh grid which is necessary for the 3D plot
     X0_name = X_test.columns[feature_ids[0]]

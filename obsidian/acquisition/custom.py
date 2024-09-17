@@ -64,10 +64,11 @@ class qSpaceFill(MCAcquisitionFunction):
     """
     def __init__(self,
                  model: Model,
+                 X_baseline: Tensor,
                  sampler: MCSampler | None = None,
                  objective: MCAcquisitionObjective | None = None,
                  posterior_transform: PosteriorTransform | None = None,
-                 X_pending: Tensor | None = None):
+                 X_pending: Tensor | None = None,):
         
         if sampler is None:
             sampler = SobolQMCNormalSampler(sample_shape=torch.Size([512]))
@@ -80,6 +81,8 @@ class qSpaceFill(MCAcquisitionFunction):
 
         super().__init__(model=model, sampler=sampler, objective=objective,
                          posterior_transform=posterior_transform, X_pending=X_pending)
+
+        self.register_buffer('X_baseline', X_baseline)
         
     @t_batch_mode_transform()
     def forward(self,
@@ -88,7 +91,7 @@ class qSpaceFill(MCAcquisitionFunction):
         Evaluate the acquisition function on the candidate set x
         """
         # x dimensions: b * q * d
-        x_train = self.model.train_inputs[0][0]  # train_inputs is a list of tuples
+        x_train = self.X_baseline
         
         # For sequential mode, add pending data points to "train"
         if self.X_pending is not None:
