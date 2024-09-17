@@ -820,7 +820,10 @@ class BayesianOptimizer(Optimizer):
             
             # Hypervolume aqs fail with X_t_pending when optim_sequential=True
             if aq_str in ['NEHVI', 'EHVI']:
-                optim_sequential = False
+                if optim_sequential and X_t_pending is not None:
+                    warnings.warn('Hypervolume aqs with X_pending require joint optimization. \
+                                   Setting optim_sequential to False', UserWarning)
+                    optim_sequential = False
 
             # If it's random search, no need to do optimization; Otherwise, initialize the aq function and optimize
             if aq_str == 'RS':
