@@ -534,7 +534,9 @@ class BayesianOptimizer(Optimizer):
         # Noisy aqs require X_train reference
         if aq in ['NEI', 'NEHVI', 'NParEGO']:
             aq_kwargs['X_baseline'] = X_baseline
-      
+            if any(isinstance(m, EnsembleModel) for m in model.models):
+                aq_kwargs['cache_root'] = False
+
         # Hypervolume requires reference point
         if aq in ['EHVI', 'NEHVI']:
 
@@ -571,8 +573,8 @@ class BayesianOptimizer(Optimizer):
                 w = w/torch.sum(torch.abs(w))
             aq_kwargs['scalarization_weights'] = w
 
-        if any(isinstance(m, EnsembleModel) for m in model.models):
-            aq_kwargs['cache_root'] = False
+        if aq == 'SF':
+            aq_kwargs['X_baseline'] = X_baseline
 
         return aq_kwargs
 
