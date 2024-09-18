@@ -561,7 +561,19 @@ def optim_progress(campaign: Campaign,
         marker=marker_dict,
         customdata=campaign.data[X_names],
         name='Data'))
-
+    
+    # Highlight the best samples
+    if hasattr(campaign.optimizer, 'X_best_f_idx'):
+        fig.add_trace(go.Scatter(x=pd.Series(out_exp.iloc[campaign.optimizer.X_best_f_idx, 0]),
+                                 y=pd.Series(out_exp.iloc[campaign.optimizer.X_best_f_idx, 1]),
+                                 mode='markers',
+                                 marker=dict(symbol='diamond-open', size=14),
+                                 line={'color': 'black'},
+                                 legendgroup='marker_shape', showlegend=True,
+                                 name='Best')
+                      )
+        fig.update_layout(showlegend=True)
+    
     template = ["<b>"+str(param.name)+"</b>: "+" %{customdata["+str(i)+"]"
                 + (":.3G}"if isinstance(param, Param_Continuous) else "}") + "<br>"
                 for i, param in enumerate(campaign.X_space)]
