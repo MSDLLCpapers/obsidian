@@ -8,7 +8,7 @@ from obsidian.acquisition import aq_class_dict, aq_defaults, aq_hp_defaults, val
 from obsidian.surrogates import model_class_dict
 from obsidian.objectives import Index_Objective, Objective_Sequence
 from obsidian.constraints import Linear_Constraint, Nonlinear_Constraint, Output_Constraint
-from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning
+from obsidian.exceptions import IncompatibleObjectiveError, UnsupportedError, UnfitError, DataWarning, OptimizerWarning
 from obsidian.config import TORCH_DTYPE
 
 from botorch.acquisition.objective import MCAcquisitionObjective
@@ -713,6 +713,10 @@ class BayesianOptimizer(Optimizer):
         
         # Compute static variable inputs
         fixed_features_list = self._fixed_features(fixed_var)
+        if len(fixed_features_list) > 25:
+            warnings.warn(f'The combinations of discrete features is large at {len(fixed_features_list)}.'
+                          + ' Optimization will proceed very slowly due to the combinatorial explosion.'
+                          + ' Recommend reducing the number of discrete parameters used.', OptimizerWarning)
         
         # Set up the sampler, for MC-based optimization of acquisition functions
         if not isinstance(model, ModelListGP):
