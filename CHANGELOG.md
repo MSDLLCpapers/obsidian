@@ -8,6 +8,7 @@
 - Greatly reduced the number of samples for DNN posterior, speeding up optimization
 - Stabilized the mean estimate of ensemble surrogates by avoiding resampling
 - Disabled root caching for ensemble surrogates during optimization
+- Increased the maximum length of a category name to 32 characters
 
 ## [0.8.5]
 ### Added
