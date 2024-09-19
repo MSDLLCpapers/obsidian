@@ -8,6 +8,8 @@ from obsidian.optimizer import BayesianOptimizer
 from obsidian.experiment.benchmark import shifted_parab
 from obsidian.tests.utils import approx_equal, equal_state_dicts
 
+from botorch.models.ensemble import EnsembleModel
+
 import pandas as pd
 import numpy as np
 import pytest
@@ -80,8 +82,14 @@ def test_optimizer_fit(X_space, surrogate, Z0, serial_test=True):
         optimizer_2.__repr__()
         y_pred = optimizer.predict(optimizer.X_train)
         y_pred_2 = optimizer_2.predict(optimizer.X_train)
-        y_error = ((y_pred_2-y_pred)/y_pred.max(axis=0)).values
-        assert abs(y_error).max() < tol, 'Prediction error in loading parameters of saved optimizer'
+        y_error = ((y_pred_2-y_pred)/y_pred.max(axis=0))
+
+        # Only check the mean for ensemble models, as the lb/ub are not deterministic
+        if isinstance(optimizer.surrogate[0].torch_model, EnsembleModel):
+            check_cols = [col for col in y_pred if '(pred)' in col]
+            y_error = y_error[check_cols]
+
+        assert abs(y_error.values).max() < tol, 'Prediction error in loading parameters of saved optimizer'
 
 
 # Generate a baseline optimizer to use for future tests

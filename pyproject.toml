@@ -58,12 +58,12 @@ sphinx = { version =  "^7.3.7", optional = true}
 myst-parser = { version =  "^3.0.1", optional = true}
 pydata-sphinx-theme = { version =  "^0.15.4", optional = true}
 linkify-it-py = { version =  "^2.0.3", optional = true}
-scikit-learn = "^1.5.1"
+scikit-learn = { version = "^1.5.1", optional = true}
 
 
 [tool.poetry.extras]
 app = ["flask", "dash", "dash-daq", "dash-bootstrap-components"]
-dev = ["pytest", "xlrd", "ipykernel", "jupyterlab", "flake8", "pytest-cov"]
+dev = ["pytest", "xlrd", "ipykernel", "jupyterlab", "flake8", "pytest-cov", "scikit-learn"]
 docs = ["sphinx", "myst-parser", "pydata-sphinx-theme", "linkify-it-py"]
 
 

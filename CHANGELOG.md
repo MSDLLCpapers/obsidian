@@ -1,6 +1,13 @@
 # Changelog
 
 ## [Untracked Changes]
+### Added
+- Improved methods for fitting PyTorch surrogates, including auto-stopping by parameter value norm
+
+### Modified
+- Greatly reduced the number of samples for DNN posterior, speeding up optimization
+- Stabilized the mean estimate of ensemble surrogates by avoiding resampling
+- Disabled root caching for ensemble surrogates during optimization
 
 ## [0.8.5]
 ### Added
