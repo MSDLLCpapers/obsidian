@@ -24,3 +24,8 @@ class UnfitError(Exception):
 class DataWarning(UserWarning):
     """Warning that gets raised if there is an issue with input data"""
     pass
+
+
+class OptimizerWarning(UserWarning):
+    """Warning that gets raised if there is an issue with optimization configuration"""
+    pass

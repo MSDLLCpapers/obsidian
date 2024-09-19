@@ -37,7 +37,7 @@ class Param_Discrete(Parameter):
         Returns:
             np.ndarray: Values mapped to the unit interval [0, 1].
         """
-        X_str = X.flatten().astype('U11')
+        X_str = X.flatten().astype('U32')
         indices = [self.categories.index(x) for x in X_str]
         return (np.array(indices)/self.nc).reshape(X.shape)
     
@@ -54,7 +54,7 @@ class Param_Discrete(Parameter):
         """
 
         return np.array(self.categories)[(X.flatten()*self.nc)
-                                         .astype('int')].reshape(X.shape).astype('U11')
+                                         .astype('int')].reshape(X.shape).astype('U32')
 
     @property
     def min(self):
@@ -100,6 +100,9 @@ class Param_Discrete(Parameter):
             KeyError: If the value is not in the list of categories.
             TypeError: If the value is not a string
         """
+        if len(value) > 32:
+            raise ValueError(f'Category names must be <= 32 characters. Too long value encountered: {value}')
+
         if not isinstance(value, str):
             raise TypeError(f'Value {value} is not a string')
         
@@ -157,7 +160,7 @@ class Param_Categorical(Param_Discrete):
     # No decorator on this, we need to handle dataframes
     def encode(self, X: str | ArrayLike):
         """Encode parameter to a format that can be used for training"""
-        X_str = np.array(X).flatten().astype('U11')
+        X_str = np.array(X).flatten().astype('U32')
         X_cat = pd.Series(X_str).astype(pd.CategoricalDtype(categories=self.categories))
         X_ohe = pd.get_dummies(X_cat, prefix_sep=CAT_SEP, dtype=float, prefix=self.name)
 
@@ -182,7 +185,7 @@ class Task(Param_Discrete):
     @transform_with_type
     def decode(self, X: np.ndarray):
         """Decode parameter from transformed space"""
-        return np.array(self.unit_demap(X/self.nc)).astype('U11')
+        return np.array(self.unit_demap(X/self.nc)).astype('U32')
 
 
 class Param_Discrete_Numeric(Param_Discrete):
