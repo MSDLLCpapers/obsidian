@@ -1,0 +1,6 @@
+threehump\_camel
+================
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: threehump_camel

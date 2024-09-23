@@ -1,0 +1,16 @@
+sequence
+========
+
+.. automodule:: obsidian.objectives.sequence
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~Objective_Sequence
+   
+
+
+

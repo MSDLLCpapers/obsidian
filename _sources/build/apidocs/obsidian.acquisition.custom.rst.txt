@@ -1,0 +1,17 @@
+custom
+======
+
+.. automodule:: obsidian.acquisition.custom
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~qMean
+      ~qSpaceFill
+   
+
+
+

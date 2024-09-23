@@ -1,0 +1,18 @@
+analysis
+========
+
+.. automodule:: obsidian.campaign.analysis
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~calc_ofat_ranges
+   
+
+
+
+

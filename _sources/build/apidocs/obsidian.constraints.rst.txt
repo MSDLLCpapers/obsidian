@@ -1,0 +1,24 @@
+﻿constraints
+===========
+
+.. automodule:: obsidian.constraints
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module_shallow.rst
+   :recursive:
+
+
+   base
+
+
+   input
+
+   output
+

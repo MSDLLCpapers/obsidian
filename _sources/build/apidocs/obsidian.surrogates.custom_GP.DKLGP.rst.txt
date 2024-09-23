@@ -1,0 +1,112 @@
+DKLGP
+=====
+
+.. currentmodule:: obsidian.surrogates.custom_GP
+
+.. autoclass:: DKLGP
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DKLGP.__init__
+      ~DKLGP.add_module
+      ~DKLGP.added_loss_terms
+      ~DKLGP.apply
+      ~DKLGP.bfloat16
+      ~DKLGP.buffers
+      ~DKLGP.children
+      ~DKLGP.compile
+      ~DKLGP.condition_on_observations
+      ~DKLGP.constraint_for_parameter_name
+      ~DKLGP.constraints
+      ~DKLGP.construct_inputs
+      ~DKLGP.cpu
+      ~DKLGP.cuda
+      ~DKLGP.double
+      ~DKLGP.eval
+      ~DKLGP.extra_repr
+      ~DKLGP.float
+      ~DKLGP.forward
+      ~DKLGP.get_buffer
+      ~DKLGP.get_extra_state
+      ~DKLGP.get_fantasy_model
+      ~DKLGP.get_parameter
+      ~DKLGP.get_submodule
+      ~DKLGP.half
+      ~DKLGP.hyperparameters
+      ~DKLGP.initialize
+      ~DKLGP.ipu
+      ~DKLGP.load_state_dict
+      ~DKLGP.load_strict_shapes
+      ~DKLGP.local_load_samples
+      ~DKLGP.modules
+      ~DKLGP.named_added_loss_terms
+      ~DKLGP.named_buffers
+      ~DKLGP.named_children
+      ~DKLGP.named_constraints
+      ~DKLGP.named_hyperparameters
+      ~DKLGP.named_modules
+      ~DKLGP.named_parameters
+      ~DKLGP.named_parameters_and_constraints
+      ~DKLGP.named_priors
+      ~DKLGP.named_variational_parameters
+      ~DKLGP.parameters
+      ~DKLGP.posterior
+      ~DKLGP.pyro_load_from_samples
+      ~DKLGP.pyro_sample_from_prior
+      ~DKLGP.register_added_loss_term
+      ~DKLGP.register_backward_hook
+      ~DKLGP.register_buffer
+      ~DKLGP.register_constraint
+      ~DKLGP.register_forward_hook
+      ~DKLGP.register_forward_pre_hook
+      ~DKLGP.register_full_backward_hook
+      ~DKLGP.register_full_backward_pre_hook
+      ~DKLGP.register_load_state_dict_post_hook
+      ~DKLGP.register_module
+      ~DKLGP.register_parameter
+      ~DKLGP.register_prior
+      ~DKLGP.register_state_dict_pre_hook
+      ~DKLGP.requires_grad_
+      ~DKLGP.sample_from_prior
+      ~DKLGP.set_extra_state
+      ~DKLGP.set_train_data
+      ~DKLGP.share_memory
+      ~DKLGP.state_dict
+      ~DKLGP.subset_output
+      ~DKLGP.to
+      ~DKLGP.to_empty
+      ~DKLGP.to_pyro_random_module
+      ~DKLGP.to_random_module
+      ~DKLGP.train
+      ~DKLGP.transform_inputs
+      ~DKLGP.type
+      ~DKLGP.update_added_loss_term
+      ~DKLGP.variational_parameters
+      ~DKLGP.xpu
+      ~DKLGP.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DKLGP.T_destination
+      ~DKLGP.batch_shape
+      ~DKLGP.call_super_init
+      ~DKLGP.dtypes_of_buffers
+      ~DKLGP.dump_patches
+      ~DKLGP.num_outputs
+      ~DKLGP.train_targets
+      ~DKLGP.likelihood
+      ~DKLGP.training
+   
+   

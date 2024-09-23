@@ -1,0 +1,25 @@
+branding
+========
+
+.. automodule:: obsidian.plotting.branding
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+   
+      ~hex_to_rgb
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~ColorMaps
+      ~ColorScheme
+      ~Palette
+   
+
+
+

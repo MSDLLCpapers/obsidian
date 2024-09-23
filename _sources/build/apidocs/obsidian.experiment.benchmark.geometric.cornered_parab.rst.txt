@@ -1,0 +1,6 @@
+cornered\_parab
+===============
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: cornered_parab

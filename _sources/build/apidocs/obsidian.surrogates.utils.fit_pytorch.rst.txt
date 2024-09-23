@@ -1,0 +1,6 @@
+fit\_pytorch
+============
+
+.. currentmodule:: obsidian.surrogates.utils
+
+.. autofunction:: fit_pytorch

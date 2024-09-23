@@ -1,0 +1,19 @@
+base
+====
+
+.. automodule:: obsidian.parameters.base
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~IParamSpace
+      ~Parameter
+   
+
+
+
+

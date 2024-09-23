@@ -1,0 +1,22 @@
+﻿acquisition
+===========
+
+.. automodule:: obsidian.acquisition
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module_shallow.rst
+   :recursive:
+
+
+   botorch
+
+
+   custom
+

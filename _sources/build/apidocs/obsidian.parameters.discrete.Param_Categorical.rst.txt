@@ -1,0 +1,38 @@
+Param\_Categorical
+==================
+
+.. currentmodule:: obsidian.parameters.discrete
+
+.. autoclass:: Param_Categorical
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Param_Categorical.__init__
+      ~Param_Categorical.decode
+      ~Param_Categorical.encode
+      ~Param_Categorical.load_state
+      ~Param_Categorical.open_search
+      ~Param_Categorical.save_state
+      ~Param_Categorical.set_search
+      ~Param_Categorical.unit_demap
+      ~Param_Categorical.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Param_Categorical.max
+      ~Param_Categorical.min
+      ~Param_Categorical.nc
+   
+   

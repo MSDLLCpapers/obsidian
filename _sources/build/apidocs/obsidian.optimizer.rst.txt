@@ -1,0 +1,22 @@
+﻿optimizer
+=========
+
+.. automodule:: obsidian.optimizer
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module.rst
+   :recursive:
+
+
+   base
+
+   bayesian
+
+

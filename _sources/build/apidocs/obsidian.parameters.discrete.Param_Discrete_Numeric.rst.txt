@@ -1,0 +1,39 @@
+Param\_Discrete\_Numeric
+========================
+
+.. currentmodule:: obsidian.parameters.discrete
+
+.. autoclass:: Param_Discrete_Numeric
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Param_Discrete_Numeric.__init__
+      ~Param_Discrete_Numeric.decode
+      ~Param_Discrete_Numeric.encode
+      ~Param_Discrete_Numeric.load_state
+      ~Param_Discrete_Numeric.open_search
+      ~Param_Discrete_Numeric.save_state
+      ~Param_Discrete_Numeric.set_search
+      ~Param_Discrete_Numeric.unit_demap
+      ~Param_Discrete_Numeric.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Param_Discrete_Numeric.max
+      ~Param_Discrete_Numeric.min
+      ~Param_Discrete_Numeric.nc
+      ~Param_Discrete_Numeric.range
+   
+   

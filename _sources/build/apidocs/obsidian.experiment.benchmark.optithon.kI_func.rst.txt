@@ -1,0 +1,6 @@
+kI\_func
+========
+
+.. currentmodule:: obsidian.experiment.benchmark.optithon
+
+.. autofunction:: kI_func

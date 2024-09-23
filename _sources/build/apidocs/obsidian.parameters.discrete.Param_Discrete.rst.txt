@@ -1,0 +1,38 @@
+Param\_Discrete
+===============
+
+.. currentmodule:: obsidian.parameters.discrete
+
+.. autoclass:: Param_Discrete
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Param_Discrete.__init__
+      ~Param_Discrete.decode
+      ~Param_Discrete.encode
+      ~Param_Discrete.load_state
+      ~Param_Discrete.open_search
+      ~Param_Discrete.save_state
+      ~Param_Discrete.set_search
+      ~Param_Discrete.unit_demap
+      ~Param_Discrete.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Param_Discrete.max
+      ~Param_Discrete.min
+      ~Param_Discrete.nc
+   
+   

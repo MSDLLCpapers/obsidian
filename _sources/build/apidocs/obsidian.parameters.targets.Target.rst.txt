@@ -1,0 +1,25 @@
+Target
+======
+
+.. currentmodule:: obsidian.parameters.targets
+
+.. autoclass:: Target
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Target.__init__
+      ~Target.load_state
+      ~Target.save_state
+      ~Target.transform_f
+   
+   
+
+   
+   
+   

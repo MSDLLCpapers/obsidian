@@ -1,0 +1,18 @@
+output
+======
+
+.. automodule:: obsidian.constraints.output
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~Blank_Constraint
+      ~L1_Constraint
+      ~Output_Constraint
+   
+
+
+

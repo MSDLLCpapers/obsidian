@@ -1,0 +1,23 @@
+ExpDesigner
+===========
+
+.. currentmodule:: obsidian.experiment.design
+
+.. autoclass:: ExpDesigner
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ExpDesigner.__init__
+      ~ExpDesigner.initialize
+   
+   
+
+   
+   
+   

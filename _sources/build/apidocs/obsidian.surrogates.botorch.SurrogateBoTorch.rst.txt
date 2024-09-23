@@ -1,0 +1,28 @@
+SurrogateBoTorch
+================
+
+.. currentmodule:: obsidian.surrogates.botorch
+
+.. autoclass:: SurrogateBoTorch
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SurrogateBoTorch.__init__
+      ~SurrogateBoTorch.fit
+      ~SurrogateBoTorch.init_model
+      ~SurrogateBoTorch.load_state
+      ~SurrogateBoTorch.predict
+      ~SurrogateBoTorch.save_state
+      ~SurrogateBoTorch.score
+   
+   
+
+   
+   
+   

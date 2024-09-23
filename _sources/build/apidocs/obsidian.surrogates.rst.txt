@@ -1,0 +1,29 @@
+﻿surrogates
+==========
+
+.. automodule:: obsidian.surrogates
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module.rst
+   :recursive:
+
+
+   base
+
+   botorch
+
+
+   custom_GP
+
+   custom_torch
+
+   utils
+
+

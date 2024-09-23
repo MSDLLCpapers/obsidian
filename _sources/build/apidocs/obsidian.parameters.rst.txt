@@ -1,0 +1,33 @@
+﻿parameters
+==========
+
+.. automodule:: obsidian.parameters
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module.rst
+   :recursive:
+
+
+   base
+
+
+   continuous
+
+   discrete
+
+   param_space
+
+   targets
+
+   transforms
+
+   utils
+
+

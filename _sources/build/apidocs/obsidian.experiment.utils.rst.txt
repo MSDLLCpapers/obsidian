@@ -1,0 +1,18 @@
+utils
+=====
+
+.. automodule:: obsidian.experiment.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~factorial_DOE
+   
+
+
+
+

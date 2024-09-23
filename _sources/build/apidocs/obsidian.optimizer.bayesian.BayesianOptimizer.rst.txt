@@ -1,0 +1,40 @@
+BayesianOptimizer
+=================
+
+.. currentmodule:: obsidian.optimizer.bayesian
+
+.. autoclass:: BayesianOptimizer
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BayesianOptimizer.__init__
+      ~BayesianOptimizer.evaluate
+      ~BayesianOptimizer.fit
+      ~BayesianOptimizer.hypervolume
+      ~BayesianOptimizer.load_state
+      ~BayesianOptimizer.maximize
+      ~BayesianOptimizer.pareto
+      ~BayesianOptimizer.pf_distance
+      ~BayesianOptimizer.predict
+      ~BayesianOptimizer.save_state
+      ~BayesianOptimizer.set_X_space
+      ~BayesianOptimizer.suggest
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BayesianOptimizer.X_space
+      ~BayesianOptimizer.is_fit
+   
+   

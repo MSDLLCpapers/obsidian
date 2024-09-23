@@ -1,0 +1,22 @@
+benchmark
+=========
+
+.. automodule:: obsidian.experiment.benchmark
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module.rst
+   :recursive:
+
+
+   geometric
+
+   optithon
+
+

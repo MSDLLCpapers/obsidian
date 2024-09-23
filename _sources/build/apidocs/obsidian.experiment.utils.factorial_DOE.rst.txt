@@ -1,0 +1,6 @@
+factorial\_DOE
+==============
+
+.. currentmodule:: obsidian.experiment.utils
+
+.. autofunction:: factorial_DOE

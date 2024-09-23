@@ -1,0 +1,35 @@
+Explainer
+=========
+
+.. currentmodule:: obsidian.campaign.explainer
+
+.. autoclass:: Explainer
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Explainer.__init__
+      ~Explainer.sensitivity
+      ~Explainer.set_optimizer
+      ~Explainer.shap_explain
+      ~Explainer.shap_pdp_ice
+      ~Explainer.shap_single_point
+      ~Explainer.shap_summary
+      ~Explainer.shap_summary_bar
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Explainer.optimizer
+   
+   

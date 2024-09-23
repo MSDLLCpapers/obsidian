@@ -1,0 +1,27 @@
+SurrogateModel
+==============
+
+.. currentmodule:: obsidian.surrogates.base
+
+.. autoclass:: SurrogateModel
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SurrogateModel.__init__
+      ~SurrogateModel.fit
+      ~SurrogateModel.load_state
+      ~SurrogateModel.predict
+      ~SurrogateModel.save_state
+      ~SurrogateModel.score
+   
+   
+
+   
+   
+   

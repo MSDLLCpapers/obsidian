@@ -1,0 +1,6 @@
+transform\_with\_type
+=====================
+
+.. currentmodule:: obsidian.parameters.utils
+
+.. autofunction:: transform_with_type
