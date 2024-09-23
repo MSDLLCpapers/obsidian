@@ -214,21 +214,29 @@ class Param_Discrete_Numeric(Param_Discrete):
 
     def __init__(self,
                  name,
-                 categories: list[int | float]):
+                 categories: list[int | float],
+                 search_categories: list[int | float] = None):
         
         if not isinstance(categories, list):
             raise TypeError('Categories must be a number or list of numbers')
-               
-        self.categories = categories
-        for c in self.categories:
-            self._validate_value(c)
-        
+
         self.name = name
         self.categories = categories if isinstance(categories, list) else [categories]
         self.categories.sort()
-        for c in categories:
+        for c in self.categories:
             self._validate_value(c)
-
+        
+        # Set the search space to the parameter space by default
+        if not search_categories:
+            search_categories = self.categories
+        else:
+            if not isinstance(search_categories, list):
+                search_categories = [search_categories]
+            for c in search_categories:
+                self._validate_value(c)
+        search_categories.sort()
+        self.set_search(search_categories)
+    
     def _validate_value(self,
                         value: int | float):
         """
