@@ -517,16 +517,17 @@ def optim_progress(campaign: Campaign,
             response_ids = (0)
     if isinstance(response_ids, int):
         response_ids = (response_ids,)
-
+    
+    for id in response_ids:
+        if id >= len(campaign.out.columns):
+            raise ValueError(f'Response ID {id} is out of range')
+    
     # Extract input and output names
     out_names = []
     for id in response_ids:
         out_names.append(campaign.out.columns[id])
     X_names = list(campaign.X.columns)
-
-    for id in response_ids:
-        if id >= len(out_names):
-            raise ValueError(f'Response ID {id} is out of range')
+    
     if isinstance(color_feature_id, int):
         if color_feature_id >= len(campaign.X_space):
             raise ValueError(f'Color feature ID {color_feature_id} is out of range')
@@ -535,10 +536,10 @@ def optim_progress(campaign: Campaign,
         if color_feature_id not in campaign.data.columns:
             raise ValueError(f'Color feature {color_feature_id} is not in the data')
         x_color_name = color_feature_id
-
+    
     # Unpack experimental data to plot progress
     out_exp = campaign.out[out_names]
-    if not campaign._is_mo:
+    if not campaign._is_mo or len(response_ids) < 2:
         # In this case, we only have 1 response to plot, so use the index on x-axis
         out_exp = out_exp.reset_index(drop=False).rename(columns={'index': 'Experiment'})
         out_names.insert(0, 'Experiment')
@@ -644,13 +645,11 @@ def optim_progress(campaign: Campaign,
     )
 
     fig.update_layout(coloraxis_colorbar=dict(yanchor="top", y=1, x=0, ticks="outside"))
-
-    fig.update_layout(legend=dict(
-        yanchor="bottom",
-        y=0.05,
-        xanchor="right",
-        x=0.95
-    ))
+    
+    fig.update_layout(legend=dict(x=1, y=1,
+                                  xanchor="right", yanchor="bottom",
+                                  bordercolor='grey', borderwidth=1),
+                      legend_orientation="h")
 
     fig.update_layout(width=500, height=400, template='ggplot2')
     
