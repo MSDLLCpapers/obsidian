@@ -87,8 +87,8 @@ class Campaign():
         if not all(name in df.columns for name in self.y_names):
             raise KeyError('Input dataset does not contain all of the required response target names')
         
-        new_data = df
-
+        new_data = df.copy(deep=True)
+        
         if 'Iteration' not in new_data.columns:
             new_data['Iteration'] = self.iter
         else:
