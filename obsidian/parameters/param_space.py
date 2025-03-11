@@ -194,7 +194,7 @@ class ParamSpace(IParamSpace):
                        'encode': param_i.encode,
                        'decode': param_i.decode}
             # Include all matches, including OH columns (e.g. Parameter N_i)
-            cols = [col for col in X.columns if param_i.name in col]
+            cols = [col for col in X.columns if ((param_i.name == col) or (param_i.name == col.split(CAT_SEP)[0]))]
             # Skip if one of the possible parameters is excluded from the transform operation
             if cols != []:
                 X_t_i = pd.DataFrame(methods[type](X[cols].values))
