@@ -1,0 +1,867 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>input &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'build/apidocs/obsidian.constraints.input';</script>
+    <link rel="icon" href="../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="output" href="obsidian.constraints.output.html" />
+    <link rel="prev" title="base" href="obsidian.constraints.base.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="obsidian.parameters.html">parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.campaign.html">campaign</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.optimizer.html">optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.surrogates.html">surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.experiment.html">experiment</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="obsidian.acquisition.html">acquisition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.objectives.html">objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.plotting.html">plotting</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="obsidian.constraints.html">constraints</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="obsidian.constraints.base.html">base</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsidian.constraints.output.html">output</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.exceptions.html">exceptions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../stubs/api_docs.html" class="nav-link">API Documentation</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="obsidian.constraints.html" class="nav-link">constraints</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">input</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-obsidian.constraints.input">
+<span id="input"></span><h1>input<a class="headerlink" href="#module-obsidian.constraints.input" title="Link to this heading">#</a></h1>
+<p>Constraints on the input features of a parameter space</p>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#obsidian.constraints.input.BatchVariance_Constraint" title="obsidian.constraints.input.BatchVariance_Constraint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BatchVariance_Constraint</span></code></a>(X_space, ind[, tol])</p></td>
+<td><p>Constraint how much one parameter can vary over a batch of optimized points</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#obsidian.constraints.input.Input_Constraint" title="obsidian.constraints.input.Input_Constraint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Input_Constraint</span></code></a>(X_space)</p></td>
+<td><p>Input constraint for a given parameter space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#obsidian.constraints.input.Linear_Constraint" title="obsidian.constraints.input.Linear_Constraint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Linear_Constraint</span></code></a>(X_space[, ind, weights, ...])</p></td>
+<td><p>Input constraint for a given parameter space.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#obsidian.constraints.input.Nonlinear_Constraint" title="obsidian.constraints.input.Nonlinear_Constraint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Nonlinear_Constraint</span></code></a>(X_space)</p></td>
+<td><p>Abstract class for nonlinear constraints</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="obsidian.constraints.input.BatchVariance_Constraint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obsidian.constraints.input.</span></span><span class="sig-name descname"><span class="pre">BatchVariance_Constraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.base.IParamSpace.html#obsidian.parameters.base.IParamSpace" title="obsidian.parameters.base.IParamSpace"><span class="pre">IParamSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/constraints/input.html#BatchVariance_Constraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.constraints.input.BatchVariance_Constraint" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#obsidian.constraints.input.Nonlinear_Constraint" title="obsidian.constraints.input.Nonlinear_Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nonlinear_Constraint</span></code></a></p>
+<p>Constraint how much one parameter can vary over a batch of optimized points</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.BatchVariance_Constraint.X_space">
+<span class="sig-name descname"><span class="pre">X_space</span></span><a class="headerlink" href="#obsidian.constraints.input.BatchVariance_Constraint.X_space" title="Link to this definition">#</a></dt>
+<dd><p>The parameter space object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace" title="obsidian.parameters.param_space.ParamSpace">ParamSpace</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.BatchVariance_Constraint.indices">
+<span class="sig-name descname"><span class="pre">indices</span></span><a class="headerlink" href="#obsidian.constraints.input.BatchVariance_Constraint.indices" title="Link to this definition">#</a></dt>
+<dd><p>The indices of the parameters to be constrained.
+Defaults to <code class="docutils literal notranslate"><span class="pre">[0]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float | int], optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.BatchVariance_Constraint.coeff">
+<span class="sig-name descname"><span class="pre">coeff</span></span><a class="headerlink" href="#obsidian.constraints.input.BatchVariance_Constraint.coeff" title="Link to this definition">#</a></dt>
+<dd><p>The coefficients for the parameters in the
+constraint equation. Defaults to <code class="docutils literal notranslate"><span class="pre">[1]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float | int | list], optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.BatchVariance_Constraint.rhs">
+<span class="sig-name descname"><span class="pre">rhs</span></span><a class="headerlink" href="#obsidian.constraints.input.BatchVariance_Constraint.rhs" title="Link to this definition">#</a></dt>
+<dd><p>The right-hand side value of the constraint equation.
+Defaults to <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int | float, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.constraints.input.BatchVariance_Constraint.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/constraints/input.html#BatchVariance_Constraint.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.constraints.input.BatchVariance_Constraint.forward" title="Link to this definition">#</a></dt>
+<dd><p>Forward method for the input constraint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A tuple containing the callable function and a boolean</dt><dd><p>indicating whether the constraint is an intra-point constraint.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[callable, bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Input_Constraint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obsidian.constraints.input.</span></span><span class="sig-name descname"><span class="pre">Input_Constraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.base.IParamSpace.html#obsidian.parameters.base.IParamSpace" title="obsidian.parameters.base.IParamSpace"><span class="pre">IParamSpace</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/constraints/input.html#Input_Constraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.constraints.input.Input_Constraint" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="obsidian.constraints.base.html#obsidian.constraints.base.Constraint" title="obsidian.constraints.base.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Constraint</span></code></a></p>
+<p>Input constraint for a given parameter space.</p>
+<dl class="simple">
+<dt>Note: Saving and loading input constraints is managed by ParamSpace.</dt><dd><p>The interface class IParamSpace is used here to avoid circular imports
+with constraints that depend on ParamSpace, which saves/loads constraints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Linear_Constraint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obsidian.constraints.input.</span></span><span class="sig-name descname"><span class="pre">Linear_Constraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.base.IParamSpace.html#obsidian.parameters.base.IParamSpace" title="obsidian.parameters.base.IParamSpace"><span class="pre">IParamSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/constraints/input.html#Linear_Constraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.constraints.input.Linear_Constraint" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#obsidian.constraints.input.Input_Constraint" title="obsidian.constraints.input.Input_Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input_Constraint</span></code></a></p>
+<p>Input constraint for a given parameter space.</p>
+<p>Note: SUM(LHS) &lt;= RHS equivalent to -SUM(LHS) &gt;= -RHS</p>
+<dl class="simple">
+<dt>Linear constraints must return:</dt><dd><p>tuple = (indices = Tensor, coefficients = Tensor, rhs = float)
+where sum_i(X[indices[i]] * coefficients[i]) = rhs (equality) or &gt;= rhs (inequality)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Linear_Constraint.X_space">
+<span class="sig-name descname"><span class="pre">X_space</span></span><a class="headerlink" href="#obsidian.constraints.input.Linear_Constraint.X_space" title="Link to this definition">#</a></dt>
+<dd><p>The parameter space object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace" title="obsidian.parameters.param_space.ParamSpace">ParamSpace</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Linear_Constraint.ind">
+<span class="sig-name descname"><span class="pre">ind</span></span><a class="headerlink" href="#obsidian.constraints.input.Linear_Constraint.ind" title="Link to this definition">#</a></dt>
+<dd><p>The indices of the parameters to be constrained.
+Defaults to <code class="docutils literal notranslate"><span class="pre">[0]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float | int], optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Linear_Constraint.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#obsidian.constraints.input.Linear_Constraint.weights" title="Link to this definition">#</a></dt>
+<dd><p>The coefficients for the parameters in the
+constraint equation. Defaults to <code class="docutils literal notranslate"><span class="pre">[1]</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[float | int | list], optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Linear_Constraint.rhs">
+<span class="sig-name descname"><span class="pre">rhs</span></span><a class="headerlink" href="#obsidian.constraints.input.Linear_Constraint.rhs" title="Link to this definition">#</a></dt>
+<dd><p>The right-hand side value of the constraint equation.
+Defaults to <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int | float, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Linear_Constraint.equality">
+<span class="sig-name descname"><span class="pre">equality</span></span><a class="headerlink" href="#obsidian.constraints.input.Linear_Constraint.equality" title="Link to this definition">#</a></dt>
+<dd><p>Whether the constraint is an equality (=)  or inequality (&gt;=)
+constraint. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code> for inequality constraint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Linear_Constraint.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/obsidian/constraints/input.html#Linear_Constraint.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.constraints.input.Linear_Constraint.forward" title="Link to this definition">#</a></dt>
+<dd><p>Forward method for the input constraint.</p>
+<p>Forms the linear constraint in the tuple that can be handled by BoTorch optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A tuple containing the indices, coefficients,</dt><dd><p>and right-hand side value of the constraint in the encoded space.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[Tensor, Tensor, Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Nonlinear_Constraint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obsidian.constraints.input.</span></span><span class="sig-name descname"><span class="pre">Nonlinear_Constraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.base.IParamSpace.html#obsidian.parameters.base.IParamSpace" title="obsidian.parameters.base.IParamSpace"><span class="pre">IParamSpace</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/constraints/input.html#Nonlinear_Constraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.constraints.input.Nonlinear_Constraint" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#obsidian.constraints.input.Input_Constraint" title="obsidian.constraints.input.Input_Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">Input_Constraint</span></code></a></p>
+<p>Abstract class for nonlinear constraints</p>
+<dl>
+<dt>Nonlinear inequality constraints must return:</dt><dd><p>tuple = (constraint(x) = callable, intra-point = bool)</p>
+<dl>
+<dt>where:</dt><dd><p>Intra point: callable takes X in (d) and return scalar
+Intra point: when q = 1, or when applying the same constraint to each</p>
+<blockquote>
+<div><p>candidate in the batch</p>
+</div></blockquote>
+<p>Inter point: callable takes X in (q x d) and returns scalar
+Inter point: When q &gt; 1 and the constraints are applied to an entire</p>
+<blockquote>
+<div><p>batch of candidates</p>
+</div></blockquote>
+</dd>
+</dl>
+<p>Use 1-d tensor of indices for intra point constraint
+Use 2-d tensor of indices for inter point constraint where indices[i] = (k_i, l_i, …)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.constraints.input.Nonlinear_Constraint.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">callable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/obsidian/constraints/input.html#Nonlinear_Constraint.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.constraints.input.Nonlinear_Constraint.forward" title="Link to this definition">#</a></dt>
+<dd><p>Forward method for the input constraint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>A tuple containing the callable function and a boolean</dt><dd><p>indicating whether the constraint is an intra-point constraint.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[callable, bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="obsidian.constraints.base.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">base</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="obsidian.constraints.output.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">output</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.BatchVariance_Constraint"><code class="docutils literal notranslate"><span class="pre">BatchVariance_Constraint</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.BatchVariance_Constraint.X_space"><code class="docutils literal notranslate"><span class="pre">BatchVariance_Constraint.X_space</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.BatchVariance_Constraint.indices"><code class="docutils literal notranslate"><span class="pre">BatchVariance_Constraint.indices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.BatchVariance_Constraint.coeff"><code class="docutils literal notranslate"><span class="pre">BatchVariance_Constraint.coeff</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.BatchVariance_Constraint.rhs"><code class="docutils literal notranslate"><span class="pre">BatchVariance_Constraint.rhs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.BatchVariance_Constraint.forward"><code class="docutils literal notranslate"><span class="pre">BatchVariance_Constraint.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Input_Constraint"><code class="docutils literal notranslate"><span class="pre">Input_Constraint</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Linear_Constraint"><code class="docutils literal notranslate"><span class="pre">Linear_Constraint</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Linear_Constraint.X_space"><code class="docutils literal notranslate"><span class="pre">Linear_Constraint.X_space</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Linear_Constraint.ind"><code class="docutils literal notranslate"><span class="pre">Linear_Constraint.ind</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Linear_Constraint.weights"><code class="docutils literal notranslate"><span class="pre">Linear_Constraint.weights</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Linear_Constraint.rhs"><code class="docutils literal notranslate"><span class="pre">Linear_Constraint.rhs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Linear_Constraint.equality"><code class="docutils literal notranslate"><span class="pre">Linear_Constraint.equality</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Linear_Constraint.forward"><code class="docutils literal notranslate"><span class="pre">Linear_Constraint.forward()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Nonlinear_Constraint"><code class="docutils literal notranslate"><span class="pre">Nonlinear_Constraint</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.constraints.input.Nonlinear_Constraint.forward"><code class="docutils literal notranslate"><span class="pre">Nonlinear_Constraint.forward()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/build/apidocs/obsidian.constraints.input.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

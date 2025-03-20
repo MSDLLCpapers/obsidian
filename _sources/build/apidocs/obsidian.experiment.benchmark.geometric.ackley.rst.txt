@@ -1,0 +1,6 @@
+ackley
+======
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: ackley

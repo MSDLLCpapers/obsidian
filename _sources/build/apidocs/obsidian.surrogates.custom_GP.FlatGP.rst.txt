@@ -1,0 +1,112 @@
+FlatGP
+======
+
+.. currentmodule:: obsidian.surrogates.custom_GP
+
+.. autoclass:: FlatGP
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FlatGP.__init__
+      ~FlatGP.add_module
+      ~FlatGP.added_loss_terms
+      ~FlatGP.apply
+      ~FlatGP.bfloat16
+      ~FlatGP.buffers
+      ~FlatGP.children
+      ~FlatGP.compile
+      ~FlatGP.condition_on_observations
+      ~FlatGP.constraint_for_parameter_name
+      ~FlatGP.constraints
+      ~FlatGP.construct_inputs
+      ~FlatGP.cpu
+      ~FlatGP.cuda
+      ~FlatGP.double
+      ~FlatGP.eval
+      ~FlatGP.extra_repr
+      ~FlatGP.float
+      ~FlatGP.forward
+      ~FlatGP.get_buffer
+      ~FlatGP.get_extra_state
+      ~FlatGP.get_fantasy_model
+      ~FlatGP.get_parameter
+      ~FlatGP.get_submodule
+      ~FlatGP.half
+      ~FlatGP.hyperparameters
+      ~FlatGP.initialize
+      ~FlatGP.ipu
+      ~FlatGP.load_state_dict
+      ~FlatGP.load_strict_shapes
+      ~FlatGP.local_load_samples
+      ~FlatGP.modules
+      ~FlatGP.named_added_loss_terms
+      ~FlatGP.named_buffers
+      ~FlatGP.named_children
+      ~FlatGP.named_constraints
+      ~FlatGP.named_hyperparameters
+      ~FlatGP.named_modules
+      ~FlatGP.named_parameters
+      ~FlatGP.named_parameters_and_constraints
+      ~FlatGP.named_priors
+      ~FlatGP.named_variational_parameters
+      ~FlatGP.parameters
+      ~FlatGP.posterior
+      ~FlatGP.pyro_load_from_samples
+      ~FlatGP.pyro_sample_from_prior
+      ~FlatGP.register_added_loss_term
+      ~FlatGP.register_backward_hook
+      ~FlatGP.register_buffer
+      ~FlatGP.register_constraint
+      ~FlatGP.register_forward_hook
+      ~FlatGP.register_forward_pre_hook
+      ~FlatGP.register_full_backward_hook
+      ~FlatGP.register_full_backward_pre_hook
+      ~FlatGP.register_load_state_dict_post_hook
+      ~FlatGP.register_module
+      ~FlatGP.register_parameter
+      ~FlatGP.register_prior
+      ~FlatGP.register_state_dict_pre_hook
+      ~FlatGP.requires_grad_
+      ~FlatGP.sample_from_prior
+      ~FlatGP.set_extra_state
+      ~FlatGP.set_train_data
+      ~FlatGP.share_memory
+      ~FlatGP.state_dict
+      ~FlatGP.subset_output
+      ~FlatGP.to
+      ~FlatGP.to_empty
+      ~FlatGP.to_pyro_random_module
+      ~FlatGP.to_random_module
+      ~FlatGP.train
+      ~FlatGP.transform_inputs
+      ~FlatGP.type
+      ~FlatGP.update_added_loss_term
+      ~FlatGP.variational_parameters
+      ~FlatGP.xpu
+      ~FlatGP.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FlatGP.T_destination
+      ~FlatGP.batch_shape
+      ~FlatGP.call_super_init
+      ~FlatGP.dtypes_of_buffers
+      ~FlatGP.dump_patches
+      ~FlatGP.num_outputs
+      ~FlatGP.train_targets
+      ~FlatGP.likelihood
+      ~FlatGP.training
+   
+   

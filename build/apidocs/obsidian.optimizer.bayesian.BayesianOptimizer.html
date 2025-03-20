@@ -1,0 +1,1015 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>BayesianOptimizer &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'build/apidocs/obsidian.optimizer.bayesian.BayesianOptimizer';</script>
+    <link rel="icon" href="../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="surrogates" href="obsidian.surrogates.html" />
+    <link rel="prev" title="bayesian" href="obsidian.optimizer.bayesian.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="obsidian.parameters.html">parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.campaign.html">campaign</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="obsidian.optimizer.html">optimizer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="obsidian.optimizer.base.html">base</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="obsidian.optimizer.bayesian.html">bayesian</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">BayesianOptimizer</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.surrogates.html">surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.experiment.html">experiment</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="obsidian.acquisition.html">acquisition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.objectives.html">objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.constraints.html">constraints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.exceptions.html">exceptions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../stubs/api_docs.html" class="nav-link">API Documentation</a></li>
+    
+    
+    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
+    
+    
+    <li class="breadcrumb-item"><a href="obsidian.optimizer.bayesian.html" class="nav-link">bayesian</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">BayesianOptimizer</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="bayesianoptimizer">
+<h1>BayesianOptimizer<a class="headerlink" href="#bayesianoptimizer" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obsidian.optimizer.bayesian.</span></span><span class="sig-name descname"><span class="pre">BayesianOptimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace" title="obsidian.parameters.param_space.ParamSpace"><span class="pre">ParamSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'GP'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="obsidian.optimizer.base.Optimizer.html#obsidian.optimizer.base.Optimizer" title="obsidian.optimizer.base.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></a></p>
+<p>BayesianOptimizer is a class that implements a Bayesian optimization algorithm.</p>
+<p>This class is used to optimize a given function by iteratively selecting the next set of input parameters
+based on the results of previous evaluations. It uses a surrogate model to approximate the underlying function
+and an acquisition function to determine the next set of parameters to evaluate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_space</strong> (<a class="reference internal" href="obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace" title="obsidian.parameters.param_space.ParamSpace"><em>ParamSpace</em></a>) – The parameter space defining the search space for the optimization.</p></li>
+<li><p><strong>surrogate</strong> (<em>str</em><em> | </em><em>dict</em><em> | </em><em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>list</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – <p>The surrogate model(s) to use.
+It can be a string representing a single model type, a dictionary specifying multiple model types
+with their hyperparameters, or a list of strings or dictionaries.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">'GP'</span></code>. Options are as follows:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'GP'</span></code>: Gaussian Process with default settings (Matern Kernel, Gamma covariance priors)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'MixedGP'</span></code>: GP with mixed parameter types (continuous, categorical). Will be re-selected
+by default if ‘GP’ is selected and input space is mixed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DKL'</span></code>: GP with a NN feature-extractor (deep kernel learning)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'GPflat'</span></code>: GP without priors. May result in optimization instability, but removes bias
+for special situations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'GPprior'</span></code>: GP with custom priors on the mean, likelihood, and covariance</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'MTGP'</span></code>: Multi-task GP for multi-output optimization. Will be re-selected by default
+if ‘GP’ is selected and the input space contains Task parameters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DNN'</span></code>: Dropout neural network. Uses MC sampling to mask neurons during training and
+to estimate uncertainty.</p></li>
+</ul>
+</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – The random seed to use. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>verbose</strong> (<em>int</em><em>, </em><em>optional</em>) – The verbosity level. Defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.surrogate_type">
+<span class="sig-name descname"><span class="pre">surrogate_type</span></span><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.surrogate_type" title="Link to this definition">#</a></dt>
+<dd><p>The shorthand name of each surrogate model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.surrogate_hps">
+<span class="sig-name descname"><span class="pre">surrogate_hps</span></span><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.surrogate_hps" title="Link to this definition">#</a></dt>
+<dd><p>The hyperparameters for each surrogate model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.is_fit">
+<span class="sig-name descname"><span class="pre">is_fit</span></span><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.is_fit" title="Link to this definition">#</a></dt>
+<dd><p>Indicates whether the surrogate model has been fit to data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>TypeError</strong> – If the surrogate argument is not a string, dict, or list of str/dict.</p></li>
+<li><p><strong>ValueError</strong> – If the surrogate dictionary contains more than one surrogate model type.</p></li>
+<li><p><strong>KeyError</strong> – If the surrogate model is not selected from the available models.</p></li>
+<li><p><strong>ValueError</strong> – If the number of responses does not match the number of specified surrogate</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace" title="obsidian.parameters.param_space.ParamSpace"><span class="pre">ParamSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'GP'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.__init__" title="obsidian.optimizer.bayesian.BayesianOptimizer.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(X_space[, surrogate, seed, verbose])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.evaluate" title="obsidian.optimizer.bayesian.BayesianOptimizer.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a>(X_suggest[, X_t_pending, target, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.fit" title="obsidian.optimizer.bayesian.BayesianOptimizer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(Z, target)</p></td>
+<td><p>Fits the BO surrogate model to data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">hypervolume</span></code>(f[, ref_point, weights])</p></td>
+<td><p>Calculates the hypervolume of the given data points.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.load_state" title="obsidian.optimizer.bayesian.BayesianOptimizer.load_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_state</span></code></a>(config_save)</p></td>
+<td><p>Loads the parameters of the Bayesian Optimizer from a previously fit optimizer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.maximize" title="obsidian.optimizer.bayesian.BayesianOptimizer.maximize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maximize</span></code></a>([optim_samples, optim_restarts, ...])</p></td>
+<td><p>Predicts the conditions which return the maximum response value within the parameter space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pareto</span></code>(f)</p></td>
+<td><p>Determines the Pareto dominance of a given set of solutions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pf_distance</span></code>(y)</p></td>
+<td><p>Calculates the pairwise distance between the given input <cite>y</cite> and the Pareto front.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.predict" title="obsidian.optimizer.bayesian.BayesianOptimizer.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(X[, return_f_inv, PI_range])</p></td>
+<td><p>Predicts a response over a range of experiments using the surrogate function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.save_state" title="obsidian.optimizer.bayesian.BayesianOptimizer.save_state"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_state</span></code></a>()</p></td>
+<td><p>Saves the parameters of the Bayesian Optimizer so that they can be reloaded without fitting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_X_space</span></code>(X_space)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#obsidian.optimizer.bayesian.BayesianOptimizer.suggest" title="obsidian.optimizer.bayesian.BayesianOptimizer.suggest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">suggest</span></code></a>([m_batch, target, acquisition, ...])</p></td>
+<td><p>Suggest future experiments based on a maximization of some acquisition function calculated from the expectation of a surrogate model.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">X_space</span></code></p></td>
+<td><p>The parameter space defining the search space for the optimization.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="obsidian.optimizer.bayesian.BayesianOptimizer.is_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_fit</span></code></a></p></td>
+<td><p>Check if all surrogate mdoels in optimizer are fit</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_suggest</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_t_pending</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><span class="pre">Target</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acquisition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MCAcquisitionObjective</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_aq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.evaluate" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X_suggest</strong> (<em>pd.DataFrame</em>) – Experiment matrix of real input variables, selected by optimizer.</p></li>
+<li><p><strong>X_t_pending</strong> (<em>Tensor</em>) – Suggested experiments yet to be run</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><em>Target</em></a><em> or </em><em>list</em><em> of </em><a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><em>Target</em></a><em>, </em><em>optional</em>) – The response(s) to be used for optimization,</p></li>
+<li><p><strong>acquisition</strong> (<em>str</em><em> | </em><em>dict</em><em>, </em><em>optional</em>) – Acquisition function name (str) or dictionary
+containing the acquisition function name and its hyperparameters.</p></li>
+<li><p><strong>objective</strong> (<em>MCAcquisitionObjective</em><em>, </em><em>optional</em>) – The objective function to be used for optimization.
+The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>eval_aq</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to also evaluate the aq function. The default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Response prediction, pred interval, transformed mean, aq value,</dt><dd><p>and objective function evaluation(s)</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><span class="pre">Target</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.fit" title="Link to this definition">#</a></dt>
+<dd><p>Fits the BO surrogate model to data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> (<em>pd.DataFrame</em>) – Total dataset including inputs (X) and response values (y)</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><em>Target</em></a><em> or </em><em>list</em><em> of </em><a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><em>Target</em></a>) – The responses (y) to be used for optimization,
+packed into a Target object or list thereof</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. Updates the model in self.surrogate</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NameError</strong> – If the target is not present in the data.</p></li>
+<li><p><strong>ValueError</strong> – If the number of responses does not match the number of specified surrogate models.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_fit</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
+<dd><p>Check if all surrogate mdoels in optimizer are fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the optimizer is fit, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.load_state">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.load_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.load_state" title="Link to this definition">#</a></dt>
+<dd><p>Loads the parameters of the Bayesian Optimizer from a previously fit optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_save</strong> (<em>dict</em>) – A dictionary containing the fit parameters for later loading.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None. Updates the parameters of the BayesianOptimizer and its surrogate model.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the number of saved models does not match the number of named models.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.maximize">
+<span class="sig-name descname"><span class="pre">maximize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optim_samples=1026</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_restarts=50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_var:</span> <span class="pre">dict[slice(&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">None)]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.maximize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.maximize" title="Link to this definition">#</a></dt>
+<dd><p>Predicts the conditions which return the maximum response value within the parameter space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optim_samples</strong> (<em>int</em>) – The number of samples to be used for optimization. Default is <code class="docutils literal notranslate"><span class="pre">1026</span></code>.</p></li>
+<li><p><strong>optim_restarts</strong> (<em>int</em>) – The number of restarts for the optimization process. Default is <code class="docutils literal notranslate"><span class="pre">50</span></code>.</p></li>
+<li><p><strong>(</strong><strong>dict</strong><strong>(</strong><strong>str</strong> (<em>fixed_var</em>) – float), optional): Name of a variable and setting, over which the
+suggestion should be fixed. Default values is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>tuple[pd.DataFrame, pd.DataFrame] = (X_suggest, eval_suggest)</dt><dd><dl class="simple">
+<dt>X_suggest (pd.DataFrame): Experiment matrix of real input variables,</dt><dd><p>selected by optimizer.</p>
+</dd>
+<dt>y_suggest (pd.DataFrame): Mean results and prediction interval for</dt><dd><p>each suggested experiment.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_f_inv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PI_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.predict" title="Link to this definition">#</a></dt>
+<dd><p>Predicts a response over a range of experiments using the surrogate function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>pd.DataFrame</em>) – Experiments to predict over.</p></li>
+<li><p><strong>return_f_inv</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to return the inverse-transformed objective function,
+which is the raw response (unscored). The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>. Most internal calls set to <code class="docutils literal notranslate"><span class="pre">False</span></code> to handle
+the transformed objective function.</p></li>
+<li><p><strong>PI_range</strong> (<em>float</em><em>, </em><em>optional</em>) – The nominal coverage range for the returned prediction interval</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mean prediction and prediction interval for each response</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If the input is not a DataFrame.</p></li>
+<li><p><a class="reference internal" href="obsidian.exceptions.html#obsidian.exceptions.UnfitError" title="obsidian.exceptions.UnfitError"><strong>UnfitError</strong></a> – If the surrogate model has not been fit before predicting.</p></li>
+<li><p><strong>ValueError</strong> – If the prediction interval range is greater than 1.</p></li>
+<li><p><strong>NameError</strong> – If the input does not contain all of the required predictors from the training set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.save_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.save_state" title="Link to this definition">#</a></dt>
+<dd><p>Saves the parameters of the Bayesian Optimizer so that they can be reloaded without fitting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the fit parameters for later loading.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="obsidian.exceptions.html#obsidian.exceptions.UnfitError" title="obsidian.exceptions.UnfitError"><strong>UnfitError</strong></a> – If the surrogate model has not been fit before saving the optimizer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.optimizer.bayesian.BayesianOptimizer.suggest">
+<span class="sig-name descname"><span class="pre">suggest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_batch:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target:</span> <span class="pre">~obsidian.parameters.targets.Target</span> <span class="pre">|</span> <span class="pre">list[~obsidian.parameters.targets.Target]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acquisition:</span> <span class="pre">list[str]</span> <span class="pre">|</span> <span class="pre">list[dict]</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_sequential:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_samples:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optim_restarts:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objective:</span> <span class="pre">~botorch.acquisition.objective.MCAcquisitionObjective</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_constraints:</span> <span class="pre">~obsidian.constraints.output.Output_Constraint</span> <span class="pre">|</span> <span class="pre">list[~obsidian.constraints.output.Output_Constraint]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eq_constraints:</span> <span class="pre">~obsidian.constraints.input.Linear_Constraint</span> <span class="pre">|</span> <span class="pre">list[~obsidian.constraints.input.Linear_Constraint]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ineq_constraints:</span> <span class="pre">~obsidian.constraints.input.Linear_Constraint</span> <span class="pre">|</span> <span class="pre">list[~obsidian.constraints.input.Linear_Constraint]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nleq_constraints:</span> <span class="pre">~obsidian.constraints.input.Nonlinear_Constraint</span> <span class="pre">|</span> <span class="pre">list[~obsidian.constraints.input.Nonlinear_Constraint]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_index:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_var:</span> <span class="pre">dict[slice(&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">float</span> <span class="pre">|</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">None)]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_pending:</span> <span class="pre">~pandas.core.frame.DataFrame</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_pending:</span> <span class="pre">~pandas.core.frame.DataFrame</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/obsidian/optimizer/bayesian.html#BayesianOptimizer.suggest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.optimizer.bayesian.BayesianOptimizer.suggest" title="Link to this definition">#</a></dt>
+<dd><p>Suggest future experiments based on a maximization of some acquisition
+function calculated from the expectation of a surrogate model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m_batch</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of experiments to suggest at once. The default is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><em>Target</em></a><em> or </em><em>list</em><em> of </em><a class="reference internal" href="obsidian.parameters.targets.Target.html#obsidian.parameters.targets.Target" title="obsidian.parameters.targets.Target"><em>Target</em></a><em>, </em><em>optional</em>) – The response(s) to be used for optimization,</p></li>
+<li><p><strong>acquisition</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>list</em><em> of </em><em>dict</em><em>, </em><em>optional</em>) – <p>Indicator for the desired acquisition function(s).
+A list will propose experiments for each acquisition function based on <code class="docutils literal notranslate"><span class="pre">optim_sequential</span></code>.</p>
+<p>The default is <code class="docutils literal notranslate"><span class="pre">['NEI']</span></code> for single-output and <code class="docutils literal notranslate"><span class="pre">['NEHVI']</span></code> for multi-output.
+Options are as follows:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'EI'</span></code>: Expected Improvement (relative to best of <code class="docutils literal notranslate"><span class="pre">y_train</span></code>). Accepts hyperparameter
+<code class="docutils literal notranslate"><span class="pre">'inflate'</span></code>, a positive or negative float to inflate/deflate the best point for explore/exploit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'NEI'</span></code>: Noisy Expected Improvement. More robust than <code class="docutils literal notranslate"><span class="pre">EI</span></code> and uses all of <code class="docutils literal notranslate"><span class="pre">y_train</span></code>,
+but accepts no hyperparameters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'PI'</span></code>: Probability of Improvement (relative to best of <code class="docutils literal notranslate"><span class="pre">y_train</span></code>). Accepts hyperparameter
+<code class="docutils literal notranslate"><span class="pre">'inflate'</span></code>, a positive or negative float to inflate/deflate the best point for explore/exploit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'UCB'</span></code>: Upper Confidence Bound. Accepts hyperparameter <code class="docutils literal notranslate"><span class="pre">'beta'</span></code>, a positive float which sets
+the number of standard deviations above the mean.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'SR'</span></code>: Simple Regret</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'RS'</span></code>: Random Sampling</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Mean'</span></code>: Mean of the posterior distribution (pure exploitation/maximization of objective)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'SF'</span></code>: Space Filling. Requests points that maximize the minimumd distance to <code class="docutils literal notranslate"><span class="pre">X_train</span></code> based
+on Euclidean distance.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'NIPV'</span></code>: Negative Integrated Posterior Variance. Requests the point which most improves the prediction
+interval for a random selection of points in the design space. Used for active learning.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'EHVI'</span></code>: Expected Hypervolume Improvement. Can accept a <code class="docutils literal notranslate"><span class="pre">ref_point</span></code>, otherwise a point just
+below the minimum of <code class="docutils literal notranslate"><span class="pre">y_train</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'NEHVI'</span></code>: Noisy Expected Hypervolume Improvement. Can accept a <code class="docutils literal notranslate"><span class="pre">ref_point</span></code>, otherwise a point
+just below the minimum of <code class="docutils literal notranslate"><span class="pre">y_train</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'NParEGO'</span></code>: Noisy Pareto Efficient Global Optimization. Can accept <code class="docutils literal notranslate"><span class="pre">scalarization_weights</span></code>, a
+list of weights for each objective.</p></li>
+</ul>
+</p></li>
+<li><p><strong>optim_sequential</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to optimize batch designs sequentially
+(by fantasy) or simultaneously. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>optim_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of samples to use for quasi Monte Carlo sampling
+of the acquisition function. Also used for initializing the acquisition optimizer.
+The default value is <code class="docutils literal notranslate"><span class="pre">512</span></code>.</p></li>
+<li><p><strong>optim_restarts</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of restarts to use in the global optimization
+of the acquisition function. The default value is <code class="docutils literal notranslate"><span class="pre">10</span></code>.</p></li>
+<li><p><strong>objective</strong> (<em>MCAcquisitionObjective</em><em>, </em><em>optional</em>) – The objective function to be used for optimization.
+The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>out_constraints</strong> (<a class="reference internal" href="obsidian.constraints.output.html#obsidian.constraints.output.Output_Constraint" title="obsidian.constraints.output.Output_Constraint"><em>Output_Constraint</em></a><em> | </em><em>list</em><em>[</em><a class="reference internal" href="obsidian.constraints.output.html#obsidian.constraints.output.Output_Constraint" title="obsidian.constraints.output.Output_Constraint"><em>Output_Constraint</em></a><em>]</em><em>, </em><em>optional</em>) – An output constraint, or a list
+thereof, restricting the search space by outcomes. The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>eq_constraints</strong> (<a class="reference internal" href="obsidian.constraints.input.html#obsidian.constraints.input.Linear_Constraint" title="obsidian.constraints.input.Linear_Constraint"><em>Linear_Constraint</em></a><em> | </em><em>list</em><em>[</em><a class="reference internal" href="obsidian.constraints.input.html#obsidian.constraints.input.Linear_Constraint" title="obsidian.constraints.input.Linear_Constraint"><em>Linear_Constraint</em></a><em>]</em><em>, </em><em>optional</em>) – A linear constraint, or a list
+thereof, restricting the search space by equality (=). The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>ineq_constraints</strong> (<a class="reference internal" href="obsidian.constraints.input.html#obsidian.constraints.input.Linear_Constraint" title="obsidian.constraints.input.Linear_Constraint"><em>Linear_Constraint</em></a><em> | </em><em>list</em><em>[</em><a class="reference internal" href="obsidian.constraints.input.html#obsidian.constraints.input.Linear_Constraint" title="obsidian.constraints.input.Linear_Constraint"><em>Linear_Constraint</em></a><em>]</em><em>, </em><em>optional</em>) – A linear constraint, or a list
+thereof, restricting the search space by inequality (&gt;=). The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>nleq_constraints</strong> (<a class="reference internal" href="obsidian.constraints.input.html#obsidian.constraints.input.Nonlinear_Constraint" title="obsidian.constraints.input.Nonlinear_Constraint"><em>Nonlinear_Constraint</em></a><em> | </em><em>list</em><em>[</em><a class="reference internal" href="obsidian.constraints.input.html#obsidian.constraints.input.Nonlinear_Constraint" title="obsidian.constraints.input.Nonlinear_Constraint"><em>Nonlinear_Constraint</em></a><em>]</em><em>, </em><em>optional</em>) – A nonlinear constraint,
+or a list thereof, restricting the search space by nonlinear feasibility. The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>task_index</strong> (<em>int</em><em>, </em><em>optional</em>) – The index of the task to optimize for multi-task models. The default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+<li><p><strong>(</strong><strong>dict</strong><strong>(</strong><strong>str</strong> (<em>fixed_var</em>) – float), optional): Name of a variable and setting, over which the
+suggestion should be fixed. Default values is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>X_pending</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – Experiments that are expected to be run before the next optimal set</p></li>
+<li><p><strong>eval_pending</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – Acquisition values associated with X_pending</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>tuple[pd.DataFrame, pd.DataFrame] = (X_suggest, eval_suggest)</dt><dd><dl class="simple">
+<dt>X_suggest (pd.DataFrame): Experiment matrix of real input variables,</dt><dd><p>selected by optimizer.</p>
+</dd>
+<dt>eval_suggest (pd.DataFrame): Mean results (response, prediction interval, f(response), obj</dt><dd><p>function for
+each suggested experiment.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="obsidian.exceptions.html#obsidian.exceptions.UnfitError" title="obsidian.exceptions.UnfitError"><strong>UnfitError</strong></a> – If the surrogate model has not been fit before suggesting new experiments.</p></li>
+<li><p><strong>TypeError</strong> – If the target is not a Target object or a list of Target objects.</p></li>
+<li><p><strong>IncorrectObjectiveError</strong> – If the objective does not successfully execute on a sample.</p></li>
+<li><p><strong>TypeError</strong> – If the acquisition is not a list of strings or dictionaries.</p></li>
+<li><p><a class="reference internal" href="obsidian.exceptions.html#obsidian.exceptions.UnsupportedError" title="obsidian.exceptions.UnsupportedError"><strong>UnsupportedError</strong></a> – If the provided acquisition function does not support output constraints.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="obsidian.optimizer.bayesian.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">bayesian</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="obsidian.surrogates.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">surrogates</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.surrogate_type"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.surrogate_type</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.surrogate_hps"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.surrogate_hps</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.is_fit"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.is_fit</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.__init__"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.evaluate"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.evaluate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.fit"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.fit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id0"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.is_fit</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.load_state"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.load_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.maximize"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.maximize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.predict"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.predict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.save_state"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.save_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.optimizer.bayesian.BayesianOptimizer.suggest"><code class="docutils literal notranslate"><span class="pre">BayesianOptimizer.suggest()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/build/apidocs/obsidian.optimizer.bayesian.BayesianOptimizer.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

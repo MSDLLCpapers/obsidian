@@ -1,0 +1,6 @@
+Vm\_func
+========
+
+.. currentmodule:: obsidian.experiment.benchmark.optithon
+
+.. autofunction:: Vm_func

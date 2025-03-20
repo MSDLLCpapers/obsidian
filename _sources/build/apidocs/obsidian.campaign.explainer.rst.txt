@@ -1,0 +1,18 @@
+explainer
+=========
+
+.. automodule:: obsidian.campaign.explainer
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~Explainer
+   
+
+
+
+

@@ -1,0 +1,56 @@
+Campaign
+========
+
+.. currentmodule:: obsidian.campaign.campaign
+
+.. autoclass:: Campaign
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Campaign.__init__
+      ~Campaign.add_data
+      ~Campaign.clear_data
+      ~Campaign.clear_objective
+      ~Campaign.clear_output_constraints
+      ~Campaign.constrain_outputs
+      ~Campaign.evaluate
+      ~Campaign.fit
+      ~Campaign.initialize
+      ~Campaign.load_state
+      ~Campaign.save_state
+      ~Campaign.set_X_space
+      ~Campaign.set_designer
+      ~Campaign.set_objective
+      ~Campaign.set_optimizer
+      ~Campaign.set_target
+      ~Campaign.suggest
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Campaign.X
+      ~Campaign.X_best
+      ~Campaign.X_space
+      ~Campaign.designer
+      ~Campaign.f
+      ~Campaign.m_exp
+      ~Campaign.o
+      ~Campaign.objective
+      ~Campaign.optimizer
+      ~Campaign.out
+      ~Campaign.response_max
+      ~Campaign.target
+      ~Campaign.y
+   
+   

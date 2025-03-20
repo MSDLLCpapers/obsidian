@@ -1,0 +1,22 @@
+IParamSpace
+===========
+
+.. currentmodule:: obsidian.parameters.base
+
+.. autoclass:: IParamSpace
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~IParamSpace.__init__
+   
+   
+
+   
+   
+   

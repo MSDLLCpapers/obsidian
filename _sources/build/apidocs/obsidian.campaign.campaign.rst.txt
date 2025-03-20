@@ -1,0 +1,18 @@
+campaign
+========
+
+.. automodule:: obsidian.campaign.campaign
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~Campaign
+   
+
+
+
+

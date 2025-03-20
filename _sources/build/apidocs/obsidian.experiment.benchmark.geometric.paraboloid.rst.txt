@@ -1,0 +1,6 @@
+paraboloid
+==========
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: paraboloid

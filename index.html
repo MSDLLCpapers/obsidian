@@ -1,0 +1,860 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Home &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <link rel="icon" href="_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="stubs/api_docs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div style="visibility: hidden;"><section id="home">
+<h1>Home<a class="headerlink" href="#home" title="Link to this heading">#</a></h1>
+</div><div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div align = "center">
+   <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo_dark.svg?raw=true" class="only-dark" width="100" alt = "obsidian logo">
+</div><!---
+obsidian
+ReadMe
+-->
+<div align = "center">
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo.svg?raw=true" class="only-light" width="100" alt = "obsidian logo">
+</div>
+<div align="center">
+<h1> obsidian</h1>
+<p><img alt="Supports Python" src="https://img.shields.io/badge/Python-3.10-teal" />
+<a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-GPLv3-teal.svg" /></a>
+<a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/issues"><img alt="Issues" src="https://img.shields.io/github/issues/msdllcpapers/obsidian?color=teal" /></a>
+<a class="reference external" href="https://pypi.org/project/obsidian-apo/"><img alt="PyPI" src="https://img.shields.io/pypi/v/obsidian-apo.svg?color=teal" /></a>
+<a class="reference external" href="https://msdllcpapers.github.io/obsidian/"><img alt="Docs" src="https://img.shields.io/badge/read-docs-teal" /></a>
+<a class="reference external" href="https://codecov.io/github/kstone40/obsidian"><img alt="Codecov" src="https://img.shields.io/codecov/c/github/kstone40/obsidian?color=teal" /></a></p>
+<p><strong>obsidian</strong> is a library for algorithmic process design and black-box optimization using AI-guided experiment design</p>
+</div>
+<div class="highlight-code notranslate"><div class="highlight"><pre><span></span>pip install obsidian-apo
+</pre></div>
+</div>
+<p>The <em>obsidian</em> library offers a set of modules for designing, executing, analyzing, and visualizing algorithmic process optimization (APO) using sample-efficient strategies such as Bayesian Optimization (BO). <em>obsidian</em> uses highly flexible models to build internal representations of the measured system in a way that can be explored for characterization and exploited for maximization based on uncertainty estimation and exploration strategies. <em>obsidian</em> supports batch experimentation (joint optimization and parallel evaluation) and is highly configurable for varying use cases, although the default specifications are encouraged.</p>
+<p><em>We thank you for your patience and invite you to collaborate with us while <strong>obsidian</strong> is in beta!</em></p>
+<section class="tex2jax_ignore mathjax_ignore" id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>End-User-Friendly</strong>: Designed to elevate the average process development scientist. No machine learning experience required.</p></li>
+<li><p><strong>Deployable</strong> using pre-built <em>Dash</em> application (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">obsidian-apo[app]</span></code>). Each class is fully serializable, without third-party packages, to enable web-based API usage.</p></li>
+<li><p><strong>Explainable</strong> and visualizable using SHAP analysis and interactive figures.</p></li>
+<li><p><strong>Flexible</strong>: Handles any input (numeric, discrete) and optionally input/output constraints, multiple outcomes, batch optimization, and a variety of novelty objective compositions. We know that experiment campaigns can have fluctuating objectives and resources, and <em>obsidian</em> is built to support that.</p></li>
+<li><p><strong>Purpose-Driven Development</strong>: Impactful features proposed, developed, maintained, and used by laboratory bench scientists. Revelantly designed for process development, optimization, and characterization.</p></li>
+</ol>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="how-it-works-algorithmic-optimization">
+<h2>How it Works: Algorithmic Optimization<a class="headerlink" href="#how-it-works-algorithmic-optimization" title="Link to this heading">#</a></h2>
+<p>The workflow for algorithmic process optimization is an iterative workflow of the following steps:</p>
+<ol class="arabic simple">
+<li><p>Collect data</p></li>
+<li><p>Fit a model to the data and estimate uncertainty across a design space</p></li>
+<li><p>Search for new experiments and evaluate for objective and/or informational utility</p></li>
+<li><p>Design experiments where utility is maximized</p></li>
+<li><p>Repeat</p></li>
+</ol>
+<p>The central object ob the <strong>obsidian</strong> library is the <code class="docutils literal notranslate"><span class="pre">BayesianOptimizer</span></code>, which can be optionally wrapped by a <code class="docutils literal notranslate"><span class="pre">Campaign</span></code>. A bayesian optimization has two key components that govern the optimization:</p>
+<ol class="arabic simple">
+<li><p>The surrogate model: A black-box model which is regressed to data and used for inference. Most often a <em>Gaussian Process</em> (<code class="docutils literal notranslate"><span class="pre">surrogate='GP'</span></code>).</p></li>
+<li><p>The acquisition function: A mathematical description of the quality of potential experiments, as it pertains to optimization. Most often <em>Expected Improvement</em> (<code class="docutils literal notranslate"><span class="pre">acquisition=['EI']</span></code>).</p></li>
+</ol>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Link to this heading">#</a></h2>
+<section id="specify-parameters-initialize-a-design">
+<h3>Specify Parameters &amp; Initialize a Design<a class="headerlink" href="#specify-parameters-initialize-a-design" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">obsidian</span><span class="w"> </span><span class="kn">import</span> <span class="n">Campaign</span><span class="p">,</span> <span class="n">ParamSpace</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Param_Categorical</span><span class="p">,</span> <span class="n">Param_Ordinal</span><span class="p">,</span> <span class="n">Param_Continuous</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Param_Continuous</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+    <span class="n">Param_Continuous</span><span class="p">(</span><span class="s1">&#39;Concentration&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">150</span><span class="p">),</span>
+    <span class="n">Param_Continuous</span><span class="p">(</span><span class="s1">&#39;Enzyme&#39;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.30</span><span class="p">),</span>
+    <span class="n">Param_Categorical</span><span class="p">(</span><span class="s1">&#39;Variant&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;MRK001&#39;</span><span class="p">,</span> <span class="s1">&#39;MRK002&#39;</span><span class="p">,</span> <span class="s1">&#39;MRK003&#39;</span><span class="p">]),</span>
+    <span class="n">Param_Ordinal</span><span class="p">(</span><span class="s1">&#39;Stir Rate&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Low&#39;</span><span class="p">,</span> <span class="s1">&#39;Medium&#39;</span><span class="p">,</span> <span class="s1">&#39;High&#39;</span><span class="p">]),</span>
+    <span class="p">]</span>
+
+<span class="n">X_space</span> <span class="o">=</span> <span class="n">ParamSpace</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">Target</span><span class="p">(</span><span class="s1">&#39;Yield&#39;</span><span class="p">,</span> <span class="n">aim</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">)</span>
+<span class="n">campaign</span> <span class="o">=</span> <span class="n">Campaign</span><span class="p">(</span><span class="n">X_space</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="n">X0</span> <span class="o">=</span> <span class="n">campaign</span><span class="o">.</span><span class="n">designer</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;LHS&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p></p></th>
+<th class="head text-right"><p>Temperature</p></th>
+<th class="head text-right"><p>Concentration</p></th>
+<th class="head text-right"><p>Enzyme</p></th>
+<th class="head text-left"><p>Variant</p></th>
+<th class="head text-left"><p>Stir Rate</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>0</p></td>
+<td class="text-right"><p>8</p></td>
+<td class="text-right"><p>17</p></td>
+<td class="text-right"><p>0.1405</p></td>
+<td class="text-left"><p>MRK001</p></td>
+<td class="text-left"><p>Medium</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>12</p></td>
+<td class="text-right"><p>143</p></td>
+<td class="text-right"><p>0.1695</p></td>
+<td class="text-left"><p>MRK003</p></td>
+<td class="text-left"><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>2</p></td>
+<td class="text-right"><p>4</p></td>
+<td class="text-right"><p>101</p></td>
+<td class="text-right"><p>0.2855</p></td>
+<td class="text-left"><p>MRK002</p></td>
+<td class="text-left"><p>High</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>3</p></td>
+<td class="text-right"><p>28</p></td>
+<td class="text-right"><p>87</p></td>
+<td class="text-right"><p>0.1115</p></td>
+<td class="text-left"><p>MRK002</p></td>
+<td class="text-left"><p>Low</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>4</p></td>
+<td class="text-right"><p>-4</p></td>
+<td class="text-right"><p>115</p></td>
+<td class="text-right"><p>0.2275</p></td>
+<td class="text-left"><p>MRK001</p></td>
+<td class="text-left"><p>Low</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>5</p></td>
+<td class="text-right"><p>-8</p></td>
+<td class="text-right"><p>73</p></td>
+<td class="text-right"><p>0.0825</p></td>
+<td class="text-left"><p>MRK002</p></td>
+<td class="text-left"><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>6</p></td>
+<td class="text-right"><p>20</p></td>
+<td class="text-right"><p>129</p></td>
+<td class="text-right"><p>0.0535</p></td>
+<td class="text-left"><p>MRK001</p></td>
+<td class="text-left"><p>High</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>7</p></td>
+<td class="text-right"><p>24</p></td>
+<td class="text-right"><p>31</p></td>
+<td class="text-right"><p>0.2565</p></td>
+<td class="text-left"><p>MRK002</p></td>
+<td class="text-left"><p>Medium</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>8</p></td>
+<td class="text-right"><p>16</p></td>
+<td class="text-right"><p>59</p></td>
+<td class="text-right"><p>0.1985</p></td>
+<td class="text-left"><p>MRK003</p></td>
+<td class="text-left"><p>High</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>9</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>45</p></td>
+<td class="text-right"><p>0.0245</p></td>
+<td class="text-left"><p>MRK003</p></td>
+<td class="text-left"><p>Low</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="collect-data-and-fit-the-optimizer">
+<h3>Collect Data and Fit the Optimizer<a class="headerlink" href="#collect-data-and-fit-the-optimizer" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">campaign</span><span class="o">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">Z0</span><span class="p">)</span>
+<span class="n">campaign</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="suggest-new-experiments">
+<h3>Suggest New Experiments<a class="headerlink" href="#suggest-new-experiments" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">campaign</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">m_batch</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p></p></th>
+<th class="head text-right"><p>Temperature</p></th>
+<th class="head text-right"><p>Concentration</p></th>
+<th class="head text-right"><p>Enzyme</p></th>
+<th class="head text-left"><p>Variant</p></th>
+<th class="head text-left"><p>Stir Rate</p></th>
+<th class="head text-right"><p>Yield (pred)</p></th>
+<th class="head text-right"><p>Yield lb</p></th>
+<th class="head text-right"><p>Yield ub</p></th>
+<th class="head text-left"><p>aq Method</p></th>
+<th class="head text-right"><p>aq Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>0</p></td>
+<td class="text-right"><p>-10</p></td>
+<td class="text-right"><p>10</p></td>
+<td class="text-right"><p>0.0918096</p></td>
+<td class="text-left"><p>MRK001</p></td>
+<td class="text-left"><p>Medium</p></td>
+<td class="text-right"><p>112.497</p></td>
+<td class="text-right"><p>102.558</p></td>
+<td class="text-right"><p>122.436</p></td>
+<td class="text-left"><p>EI</p></td>
+<td class="text-right"><p>0.848569</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>-10</p></td>
+<td class="text-right"><p>150</p></td>
+<td class="text-right"><p>0.0882423</p></td>
+<td class="text-left"><p>MRK002</p></td>
+<td class="text-left"><p>High</p></td>
+<td class="text-right"><p>89.8334</p></td>
+<td class="text-right"><p>79.8589</p></td>
+<td class="text-right"><p>99.8079</p></td>
+<td class="text-left"><p>EI</p></td>
+<td class="text-right"><p>0.870511</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="interpret-results">
+<h2>Interpret Results<a class="headerlink" href="#interpret-results" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">surface_plot</span><span class="p">,</span> <span class="n">optim_progress</span>
+<span class="n">surface_plot</span><span class="p">(</span><span class="n">campaign</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">feature_ids</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_surface.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">optim_progress</span><span class="p">(</span><span class="n">campaign</span><span class="p">)</span>
+</pre></div>
+</div>
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_optimprogress.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.campaign</span><span class="w"> </span><span class="kn">import</span> <span class="n">Explainer</span>
+<span class="n">exp</span> <span class="o">=</span> <span class="n">Explainer</span><span class="p">(</span><span class="n">campaiagn</span><span class="p">)</span>
+<span class="n">exp</span><span class="o">.</span><span class="n">shap_explain</span><span class="p">()</span>
+<span class="n">exp</span><span class="o">.</span><span class="n">shap_summary</span><span class="p">()</span>
+</pre></div>
+</div>
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_shap.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exp</span><span class="o">.</span><span class="n">shap_pdp_ice</span><span class="p">(</span><span class="n">ind</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ice_color_var</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_pdp_ice.png?raw=true" width="400" alt = "obsidian app">
+</div>
+<br>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>The latest <em>obsidian</em> release can be installed using pip:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">obsidian</span><span class="o">-</span><span class="n">apo</span>
+</pre></div>
+</div>
+<p>To install the required dependencies for running the <em>Dash</em> app:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">obsidian</span><span class="o">-</span><span class="n">apo</span><span class="p">[</span><span class="n">app</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Be sure to <code class="docutils literal notranslate"><span class="pre">pip</span></code> install in a newly created <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment to avoid dependency conflicts.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="launching-the-app">
+<h2>Launching the App<a class="headerlink" href="#launching-the-app" title="Link to this heading">#</a></h2>
+<p>Clone this repository using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">MSDLLCpapers</span><span class="o">/</span><span class="n">obsidian</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">obsidian-apo[app]</span></code> installed on an activate Python environment, navigate to the new folder and simply run the folloiwng command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">app</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<div align='center'>
+  <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/tutorials/demo_app.png?raw=true" width="600" alt = "obsidian app">
+</div>
+<br>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">#</a></h2>
+<p>See <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/blob/main/CONTRIBUTING.md">CONTRIBUTING</a> to learn more.</p>
+<section id="developers">
+<h3>Developers<a class="headerlink" href="#developers" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Kevin Stone (Merck &amp; Co., Inc.) <a class="reference external" href="mailto:kevin&#46;stone&#37;&#52;&#48;merck&#46;com">kevin<span>&#46;</span>stone<span>&#64;</span>merck<span>&#46;</span>com</a></p></li>
+<li><p>Yuting Xu (Merck &amp; Co., Inc.) <a class="reference external" href="mailto:yuting&#46;xu&#37;&#52;&#48;merck&#46;com">yuting<span>&#46;</span>xu<span>&#64;</span>merck<span>&#46;</span>com</a></p></li>
+</ul>
+</section>
+<section id="contributors">
+<h3>Contributors<a class="headerlink" href="#contributors" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Ajit Vikram (Merck &amp; Co., Inc.)</p></li>
+<li><p>Melodie Christensen (Merck &amp; Co., Inc.)</p></li>
+<li><p>Kobi Felton (Merck &amp; Co., Inc.)</p></li>
+</ul>
+</section>
+<section id="license">
+<h3>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h3>
+<p><strong>obsidian</strong> is licensed by the <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/blob/main/LICENSE">GPLv3 license</a>.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="stubs/api_docs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Documentation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works-algorithmic-optimization">How it Works: Algorithmic Optimization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-example">Usage Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-parameters-initialize-a-design">Specify Parameters &amp; Initialize a Design</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#collect-data-and-fit-the-optimizer">Collect Data and Fit the Optimizer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#suggest-new-experiments">Suggest New Experiments</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interpret-results">Interpret Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#launching-the-app">Launching the App</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#developers">Developers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contributors">Contributors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

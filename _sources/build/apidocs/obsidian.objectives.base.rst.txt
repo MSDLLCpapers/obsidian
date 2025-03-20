@@ -1,0 +1,16 @@
+base
+====
+
+.. automodule:: obsidian.objectives.base
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~Objective
+   
+
+
+

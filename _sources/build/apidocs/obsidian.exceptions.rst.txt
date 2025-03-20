@@ -1,0 +1,21 @@
+﻿exceptions
+==========
+
+.. automodule:: obsidian.exceptions
+
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+      :template: base.rst
+   
+      ~DataWarning
+      ~IncompatibleObjectiveError
+      ~OptimizerWarning
+      ~SurrogateFitError
+      ~UnfitError
+      ~UnsupportedError
+   
+
+
+

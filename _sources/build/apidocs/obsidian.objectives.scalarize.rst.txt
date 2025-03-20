@@ -1,0 +1,19 @@
+scalarize
+=========
+
+.. automodule:: obsidian.objectives.scalarize
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~Scalar_Chebyshev
+      ~Scalar_WeightedNorm
+      ~Scalar_WeightedSum
+      ~Scalarization
+   
+
+
+

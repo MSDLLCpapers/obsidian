@@ -1,0 +1,6 @@
+perm
+====
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: perm

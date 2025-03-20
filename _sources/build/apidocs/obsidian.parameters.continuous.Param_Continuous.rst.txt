@@ -1,0 +1,36 @@
+Param\_Continuous
+=================
+
+.. currentmodule:: obsidian.parameters.continuous
+
+.. autoclass:: Param_Continuous
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Param_Continuous.__init__
+      ~Param_Continuous.decode
+      ~Param_Continuous.encode
+      ~Param_Continuous.load_state
+      ~Param_Continuous.open_search
+      ~Param_Continuous.save_state
+      ~Param_Continuous.set_search
+      ~Param_Continuous.unit_demap
+      ~Param_Continuous.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Param_Continuous.range
+   
+   

@@ -1,0 +1,860 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Surrogate Model &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'wiki/4_SurrogateModel';</script>
+    <link rel="icon" href="../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Acquisition Function" href="5_AcquisitionFunction.html" />
+    <link rel="prev" title="Data Structure" href="3_Data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_APO_Workflow_and_CodeStructure.html">Algorithmic Process Optimization (APO) Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_Analysis_and_Visualization.html">Additional Analysis and Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_Data.html">Data Structure</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Surrogate Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_AcquisitionFunction.html">Acquisition Function</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../stubs/wiki.html" class="nav-link">Wiki</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Surrogate Model</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="surrogate-model">
+<h1>Surrogate Model<a class="headerlink" href="#surrogate-model" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2>1. Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>The <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/surrogates"><code class="docutils literal notranslate"><span class="pre">obsidian.surrogates</span></code></a> submodule is a key component of the Obsidian APO library. It provides a collection of surrogate models used to approximate the objective function in the optimization process. These surrogate models are essential for efficient exploration of the parameter space and for making informed decisions about which points to evaluate next.</p>
+</section>
+<section id="basic-syntax">
+<h2>2. Basic Syntax<a class="headerlink" href="#basic-syntax" title="Link to this heading">#</a></h2>
+<p>To use a surrogate model in your optimization process, you typically don’t need to interact with it directly. The <code class="docutils literal notranslate"><span class="pre">obsidian.optimizer</span></code> submodule will handle the creation and management of the surrogate model. However, if you need to create a surrogate model manually, you can do so using the <code class="docutils literal notranslate"><span class="pre">SurrogateBoTorch</span></code> class.</p>
+<p>Below is a simple example using the default standard GP surrogate:</p>
+<section id="define-the-parameter-space">
+<h3>Define the parameter space:<a class="headerlink" href="#define-the-parameter-space" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParamSpace</span><span class="p">,</span> <span class="n">Param_Continuous</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">ParamSpace</span><span class="p">([</span><span class="n">Param_Continuous</span><span class="p">(</span><span class="s1">&#39;X1&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span><span class="n">Param_Continuous</span><span class="p">(</span><span class="s1">&#39;X2&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="n">X_space</span> <span class="o">=</span> <span class="n">ParamSpace</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="simulate-training-data">
+<h3>Simulate training data:<a class="headerlink" href="#simulate-training-data" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.experiment</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExpDesigner</span>
+<span class="n">designer</span> <span class="o">=</span> <span class="n">ExpDesigner</span><span class="p">(</span><span class="n">X_space</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">789</span><span class="p">)</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">designer</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">m_initial</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Sobol&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">Target</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">f_transform</span> <span class="o">=</span> <span class="s1">&#39;Standard&#39;</span><span class="p">,</span> <span class="n">aim</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.experiment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.experiment.benchmark</span><span class="w"> </span><span class="kn">import</span> <span class="n">paraboloid</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">X_space</span><span class="p">,</span> <span class="n">paraboloid</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="n">y_train</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">y_train_transformed</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">transform_f</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">fit</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train_transformed</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p></p></th>
+<th class="head text-right"><p>X1</p></th>
+<th class="head text-right"><p>X2</p></th>
+<th class="head text-right"><p>Y Trans</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0.709874</p></td>
+<td class="text-right"><p>0.891838</p></td>
+<td class="text-right"><p>-0.692069</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>0.316783</p></td>
+<td class="text-right"><p>0.0374523</p></td>
+<td class="text-right"><p>-1.283</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>2</p></td>
+<td class="text-right"><p>0.102254</p></td>
+<td class="text-right"><p>0.517022</p></td>
+<td class="text-right"><p>-0.229447</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>3</p></td>
+<td class="text-right"><p>0.99438</p></td>
+<td class="text-right"><p>0.412149</p></td>
+<td class="text-right"><p>-1.33756</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>4</p></td>
+<td class="text-right"><p>0.80163</p></td>
+<td class="text-right"><p>0.663557</p></td>
+<td class="text-right"><p>0.252902</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>5</p></td>
+<td class="text-right"><p>0.162435</p></td>
+<td class="text-right"><p>0.265744</p></td>
+<td class="text-right"><p>-0.351742</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>6</p></td>
+<td class="text-right"><p>0.385264</p></td>
+<td class="text-right"><p>0.788242</p></td>
+<td class="text-right"><p>0.507141</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>7</p></td>
+<td class="text-right"><p>0.523473</p></td>
+<td class="text-right"><p>0.140918</p></td>
+<td class="text-right"><p>0.113744</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>8</p></td>
+<td class="text-right"><p>0.588516</p></td>
+<td class="text-right"><p>0.604981</p></td>
+<td class="text-right"><p>1.423</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>9</p></td>
+<td class="text-right"><p>0.445465</p></td>
+<td class="text-right"><p>0.465715</p></td>
+<td class="text-right"><p>1.59703</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="create-a-surrogate-model-using-the-default-gp-model-and-fit-the-model-to-the-training-data">
+<h3>Create a surrogate model (using the default ‘GP’ model), and fit the model to the training  data:<a class="headerlink" href="#create-a-surrogate-model-using-the-default-gp-model-and-fit-the-model-to-the-training-data" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.surrogates</span><span class="w"> </span><span class="kn">import</span> <span class="n">SurrogateBoTorch</span>
+<span class="n">surrogate</span> <span class="o">=</span> <span class="n">SurrogateBoTorch</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;GP&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">123</span><span class="p">)</span>
+<span class="n">surrogate</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train_transformed</span><span class="p">,</span><span class="n">cat_dims</span><span class="o">=</span><span class="p">[],</span><span class="n">task_feature</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="generate-new-input-experimental-conditions-and-make-predictions">
+<h3>Generate new input experimental conditions and make predictions:<a class="headerlink" href="#generate-new-input-experimental-conditions-and-make-predictions" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_new</span> <span class="o">=</span> <span class="n">designer</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">m_initial</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Sobol&#39;</span><span class="p">)</span>
+<span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="n">surrogate</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">pred_mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span><span class="n">pred_std</span><span class="o">=</span><span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_markdown</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p></p></th>
+<th class="head text-right"><p>X1</p></th>
+<th class="head text-right"><p>X2</p></th>
+<th class="head text-right"><p>pred_mean</p></th>
+<th class="head text-right"><p>pred_std</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>0</p></td>
+<td class="text-right"><p>0.709874</p></td>
+<td class="text-right"><p>0.891838</p></td>
+<td class="text-right"><p>-0.669406</p></td>
+<td class="text-right"><p>0.120078</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>0.316783</p></td>
+<td class="text-right"><p>0.0374523</p></td>
+<td class="text-right"><p>-1.25515</p></td>
+<td class="text-right"><p>0.119587</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>2</p></td>
+<td class="text-right"><p>0.102254</p></td>
+<td class="text-right"><p>0.517022</p></td>
+<td class="text-right"><p>-0.217739</p></td>
+<td class="text-right"><p>0.12007</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="customization-options">
+<h2>3. Customization Options<a class="headerlink" href="#customization-options" title="Link to this heading">#</a></h2>
+<section id="available-surrogate-models">
+<h3>3.1 Available Surrogate Models<a class="headerlink" href="#available-surrogate-models" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">obsidian.surrogates</span></code> submodule offers several types of surrogate models.
+You can choose different surrogate models by specifying the <code class="docutils literal notranslate"><span class="pre">model_type</span></code> parameter when creating a <code class="docutils literal notranslate"><span class="pre">SurrogateBoTorch</span></code> instance.
+Available options are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'GP'</span></code>: Standard Gaussian Process, which is the default surrogate model suitable for most optimization tasks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'MixedGP'</span></code>: Mixed input Gaussian Process, which is a GP model that can handle mixed continuous and categorical input spaces.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DKL'</span></code>: Deep Kernel Learning GP, which is a GP model with a neural network feature extractor.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'GPflat'</span></code>: A GP model with non-informative or no prior distributions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'GPprior'</span></code>: A GP model with custom prior distributions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'MTGP'</span></code>: Multi-Task GP, which is a GP model for multi-output optimization.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'DNN'</span></code>: Dropout Neural Network model.</p></li>
+</ul>
+</section>
+<section id="hyperparameters">
+<h3>3.2 Hyperparameters<a class="headerlink" href="#hyperparameters" title="Link to this heading">#</a></h3>
+<p>You can pass custom hyperparameters to the surrogate model using the <code class="docutils literal notranslate"><span class="pre">hps</span></code> argument as:</p>
+<blockquote>
+<div><p>surrogate = SurrogateBoTorch(model_type=‘GP’, hps={‘custom_param_1’: value_1, ‘custom_param_2’: value_2, …})</p>
+</div></blockquote>
+<p>Some specific examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">surrogate</span> <span class="o">=</span> <span class="n">SurrogateBoTorch</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;FlatGP&#39;</span><span class="p">,</span> <span class="n">hps</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;nu&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">})</span>
+<span class="n">surrogate</span> <span class="o">=</span> <span class="n">SurrogateBoTorch</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;DNN&#39;</span><span class="p">,</span> <span class="n">hps</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;p_dropout&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;h_width&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;h_layers&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;num_outputs&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-gp-models">
+<h3>3.3 Custom GP Models<a class="headerlink" href="#custom-gp-models" title="Link to this heading">#</a></h3>
+<p>The submodule provides several custom GP implementations:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PriorGP</span></code>: A GP with custom prior distributions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FlatGP</span></code>: A GP with non-informative or no prior distributions</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DKLGP</span></code>: A GP with a neural network feature extractor</p></li>
+</ul>
+</section>
+<section id="custom-neural-network-model">
+<h3>3.4 Custom Neural Network Model<a class="headerlink" href="#custom-neural-network-model" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">DNN</span></code> class provides a customizable dropout neural network model.
+The ‘hps’ parameter allows you to customize the DNN architecture.
+You can adjust multiple DNN hyperparameters such as dropout probability, hidden layer width, and number of hidden layers.</p>
+</section>
+</section>
+<section id="additional-examples">
+<h2>4. Additional Examples<a class="headerlink" href="#additional-examples" title="Link to this heading">#</a></h2>
+<section id="using-a-mixed-gp-for-categorical-and-continuous-variables">
+<h3>4.1 Using a Mixed GP for categorical and continuous variables<a class="headerlink" href="#using-a-mixed-gp-for-categorical-and-continuous-variables" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># DO NOT RUN</span>
+<span class="n">surrogate</span> <span class="o">=</span> <span class="n">SurrogateBoTorch</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;MixedGP&#39;</span><span class="p">)</span>
+<span class="c1"># cat_dims should be a list of indices for categorical variables in your input space</span>
+<span class="n">surrogate</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">cat_dims</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>  <span class="c1"># Assuming columns 0 and 2 are categorical</span>
+</pre></div>
+</div>
+</section>
+<section id="using-a-dnn-surrogate">
+<h3>4.2 Using a DNN surrogate<a class="headerlink" href="#using-a-dnn-surrogate" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">surrogate</span> <span class="o">=</span> <span class="n">SurrogateBoTorch</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;DNN&#39;</span><span class="p">,</span> <span class="n">hps</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;p_dropout&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;h_width&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s1">&#39;h_layers&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+<span class="n">surrogate</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train_transformed</span><span class="p">,</span><span class="n">cat_dims</span><span class="o">=</span><span class="p">[],</span><span class="n">task_feature</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-usage">
+<h2>5. Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">#</a></h2>
+<section id="saving-and-loading-models">
+<h3>5.1 Saving and Loading Models<a class="headerlink" href="#saving-and-loading-models" title="Link to this heading">#</a></h3>
+<p>You can save and load surrogate models to/from dictionary objects using the <code class="docutils literal notranslate"><span class="pre">save_state()</span></code> and <code class="docutils literal notranslate"><span class="pre">load_state()</span></code> methods,
+which enable saving the trained model to json files and reload for future usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># Save model state as dictionary to json file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;surrogate.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">surrogate_dict</span> <span class="o">=</span> <span class="n">surrogate</span><span class="o">.</span><span class="n">save_state</span><span class="p">()</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">surrogate_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Load model state dictionary from json file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;surrogate.json&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">surrogate_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">surrogate_reload</span> <span class="o">=</span> <span class="n">SurrogateBoTorch</span><span class="o">.</span><span class="n">load_state</span><span class="p">(</span><span class="n">surrogate_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="model-evaluation">
+<h3>5.2 Model Evaluation<a class="headerlink" href="#model-evaluation" title="Link to this heading">#</a></h3>
+<p>You can evaluate the performance of a surrogate model using the <code class="docutils literal notranslate"><span class="pre">score()</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y_new</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>
+<span class="n">y_new_transformed</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">transform_f</span><span class="p">(</span><span class="n">y_new</span><span class="p">,</span> <span class="n">fit</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">loss</span><span class="p">,</span> <span class="n">r2_score</span> <span class="o">=</span> <span class="n">surrogate</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_new</span><span class="p">,</span> <span class="n">y_new_transformed</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This concludes the user guide for the <code class="docutils literal notranslate"><span class="pre">obsidian.surrogates</span></code> submodule. For more detailed information, please refer to the source code and docstrings in the individual files.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="3_Data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Data Structure</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="5_AcquisitionFunction.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Acquisition Function</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">1. Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-syntax">2. Basic Syntax</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-parameter-space">Define the parameter space:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simulate-training-data">Simulate training data:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-surrogate-model-using-the-default-gp-model-and-fit-the-model-to-the-training-data">Create a surrogate model (using the default ‘GP’ model), and fit the model to the training  data:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-new-input-experimental-conditions-and-make-predictions">Generate new input experimental conditions and make predictions:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#customization-options">3. Customization Options</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#available-surrogate-models">3.1 Available Surrogate Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hyperparameters">3.2 Hyperparameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-gp-models">3.3 Custom GP Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-neural-network-model">3.4 Custom Neural Network Model</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-examples">4. Additional Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-a-mixed-gp-for-categorical-and-continuous-variables">4.1 Using a Mixed GP for categorical and continuous variables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-a-dnn-surrogate">4.2 Using a DNN surrogate</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">5. Advanced Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-and-loading-models">5.1 Saving and Loading Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-evaluation">5.2 Model Evaluation</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/wiki/4_SurrogateModel.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,901 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Acquisition Function &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'wiki/5_AcquisitionFunction';</script>
+    <link rel="icon" href="../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorials" href="../stubs/tutorials.html" />
+    <link rel="prev" title="Surrogate Model" href="4_SurrogateModel.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_APO_Workflow_and_CodeStructure.html">Algorithmic Process Optimization (APO) Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_Analysis_and_Visualization.html">Additional Analysis and Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_Data.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_SurrogateModel.html">Surrogate Model</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Acquisition Function</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../stubs/wiki.html" class="nav-link">Wiki</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Acquisition Function</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="acquisition-function">
+<h1>Acquisition Function<a class="headerlink" href="#acquisition-function" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2>1. Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>The <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/acquisition"><code class="docutils literal notranslate"><span class="pre">obsidian.acquisition</span></code></a> submodule is a crucial component of the Obsidian APO library. It provides acquisition functions that guide the optimization process by determining which points in the parameter space should be evaluated next. These acquisition functions balance exploration of uncertain areas and exploitation of promising regions, which is key to efficient optimization.</p>
+</section>
+<section id="usage">
+<h2>2. Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
+<section id="available-acquisition-functions">
+<h3>2.1 Available Acquisition Functions<a class="headerlink" href="#available-acquisition-functions" title="Link to this heading">#</a></h3>
+<p>The acquisition submodule offers a range of acquisition functions, including standard <code class="docutils literal notranslate"><span class="pre">BoTorch</span></code> acquisition functions and custom implementations.
+Below, you will find various options for the acquisition argument, along with a brief description for each.</p>
+<section id="standard-acquisition-functions-from-botorch">
+<h4>Standard Acquisition Functions from BoTorch<a class="headerlink" href="#standard-acquisition-functions-from-botorch" title="Link to this heading">#</a></h4>
+<p><em>Single-Objective Optimization:</em></p>
+<ul class="simple">
+<li><p>EI: Expected Improvement</p></li>
+<li><p>NEI: Noisy Expected Improvement</p></li>
+<li><p>PI: Probability of Improvement</p></li>
+<li><p>UCB: Upper Confidence Bound</p></li>
+<li><p>SR: Simple Regret</p></li>
+<li><p>NIPV: Integrated Negative Posterior Variance</p></li>
+</ul>
+<p><em>Multi-Objective Optimization:</em></p>
+<ul class="simple">
+<li><p>EHVI: Expected Hypervolume Improvement</p></li>
+<li><p>NEHVI: Noisy Expected Hypervolume Improvement</p></li>
+<li><p>NParEGO: Random augmented chebyshev scalarization with Noisy Expected Improvement</p></li>
+</ul>
+</section>
+<section id="custom-acquisition-functions">
+<h4>Custom Acquisition Functions<a class="headerlink" href="#custom-acquisition-functions" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Mean: Seeks to optimize the maximum value of the posterior mean</p></li>
+<li><p>SF: Space filling, aims to optimize the maximum value of the minimum distance between a point and the training data</p></li>
+</ul>
+</section>
+<section id="baseline-no-acquisition-function">
+<h4>Baseline: No Acquisition Function<a class="headerlink" href="#baseline-no-acquisition-function" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>RS: Random sampling from the parameter space</p></li>
+</ul>
+</section>
+</section>
+<section id="basic-syntax">
+<h3>2.2 Basic Syntax<a class="headerlink" href="#basic-syntax" title="Link to this heading">#</a></h3>
+<p>Typically, users don’t need to interact with acquisition functions directly.
+The <code class="docutils literal notranslate"><span class="pre">BayesianOptimizer</span></code> class handles the selection and use of acquisition functions.
+The acquisition functions, as well as their hyperparameters, could be specified as an input argument when calling the <code class="docutils literal notranslate"><span class="pre">suggest</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># DO NOT RUN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.optimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianOptimizer</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">BayesianOptimizer</span><span class="p">(</span><span class="n">X_space</span><span class="o">=</span><span class="n">param_space</span><span class="p">)</span>
+
+<span class="c1"># Use one acquisition function EI per iteration</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;EI&#39;</span><span class="p">])</span>
+
+<span class="c1"># Use two acquisition functions EI and UCB per iteration</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;EI&#39;</span><span class="p">,</span><span class="s1">&#39;UCB&#39;</span><span class="p">])</span>
+
+<span class="c1"># Use two acquisition functions EI and UCB per iteration, while specifying hyperparameters for UCB</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;EI&#39;</span><span class="p">,{</span><span class="s1">&#39;UCB&#39;</span><span class="p">:{</span><span class="s1">&#39;beta&#39;</span><span class="p">:</span><span class="mf">0.1</span><span class="p">}}])</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">acquisition</span></code> parameter should be always a list, containing either string or dictionary elements. When multiple elements are present in the list, the <code class="docutils literal notranslate"><span class="pre">suggest</span></code> function will propose new candidates sequentially using each acquisition function.</p>
+<ul class="simple">
+<li><p>If using the default hyperparameters for an acquisition function, specify a string element using the name of the acquisition function (e.g., ‘EI’ for Expected Improvement).</p></li>
+<li><p>If specifying custom hyperparameters for an acquisition function, use a dictionary element where the key is the acquisition function name and the value is a nested dictionary storing its hyperparameters (e.g., {‘UCB’: {‘beta’: 0.1}} for Upper Confidence Bound with a specified beta parameter).</p></li>
+</ul>
+</section>
+</section>
+<section id="single-objective-optimizatio-acquisition-functions">
+<h2>3. Single-Objective Optimizatio Acquisition Functions<a class="headerlink" href="#single-objective-optimizatio-acquisition-functions" title="Link to this heading">#</a></h2>
+<section id="expected-improvement-ei">
+<h3>Expected Improvement (EI)<a class="headerlink" href="#expected-improvement-ei" title="Link to this heading">#</a></h3>
+<p>EI calculates the expected amount by which we will improve upon the current best observed value.</p>
+<p>Mathematical formulation:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+EI(x) = E[max(\hat{f}(x) - y_{best}, 0)]
+\end{equation*}\]</div>
+<p>where <span class="math notranslate nohighlight">\(y_{best}\)</span> is the current best observed value.
+The expression <span class="math notranslate nohighlight">\(max(\hat{f}(x) - y_{best}\)</span> captures the potential improvement over the current best observed value, and the expectation E[ ] calculates the average improvement over the posterior distribution of the surrogate model predictions.</p>
+<p><em>Optional hyperparameters:</em></p>
+<ul>
+<li><p>inflate: Increase the current best value <span class="math notranslate nohighlight">\(y_{best}\)</span> to <span class="math notranslate nohighlight">\((1+inflate)*y_{best}\)</span>, enabling a more flexible exploration-exploitation trade-off:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+EI(x) = E[max(\hat{f}(x) - (1+inflate)*y_{best}, 0)]
+\end{equation*}\]</div>
+<p>The default value is 0 (no inflation). Recommended values: small numberic number 0~0.1</p>
+</li>
+</ul>
+<p><strong>Example usage:</strong></p>
+<ul>
+<li><p>Default:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.optimizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianOptimizer</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">BayesianOptimizer</span><span class="p">(</span><span class="n">X_space</span><span class="o">=</span><span class="n">param_space</span><span class="p">)</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;EI&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+<li><p>With all available hyperparameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;EI&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;inflate&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">}}])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="noisy-expected-improvement-nei">
+<h3>Noisy Expected Improvement (NEI)<a class="headerlink" href="#noisy-expected-improvement-nei" title="Link to this heading">#</a></h3>
+<p>NEI is a variant of EI that accounts for noise in the observations, making it more suitable for real-world problems with measurement uncertainty. It allows for more robust decision-making in selecting the next point for evaluation.</p>
+<p>Currently NEI doesn’t accept additional hyperparameters.</p>
+<p><strong>Example usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;NEI&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="probability-of-improvement-pi">
+<h3>Probability of Improvement (PI)<a class="headerlink" href="#probability-of-improvement-pi" title="Link to this heading">#</a></h3>
+<p>PI is designed to aid in the efficient selection of candidate points by quantifying the probability of improving upon the current best observed value.
+Different from EI, which measures the expected amount of improvement by integrating over the posterior distribution, PI directly evaluates the probability of outperforming the best value, emphasizing the likelihood of improvement rather than the magnitude of improvement.</p>
+<p>Mathematical formulation:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+PI(x) = P(\hat{f}(x) &gt; y_{best})
+\end{equation*}\]</div>
+<p>where <span class="math notranslate nohighlight">\(y_{best}\)</span> is the current best observed value and the <span class="math notranslate nohighlight">\(\hat{f}\)</span> is the trained surrogate function.</p>
+<p><em>Optional hyperparameters:</em></p>
+<ul>
+<li><p>inflate: Increase the current best value <span class="math notranslate nohighlight">\(y_{best}\)</span> to <span class="math notranslate nohighlight">\((1+inflate)*y_{best}\)</span>, enabling a more flexible exploration-exploitation trade-off:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+PI(x) = P(\hat{f}(x) &gt; (1+inflate)*y_{best})
+\end{equation*}\]</div>
+<p>The default value is 0 (no inflation). Recommended values: small numberic number 0~0.1</p>
+</li>
+</ul>
+<p><strong>Example usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use the default inflate = 0</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;PI&#39;</span><span class="p">])</span>
+
+<span class="c1"># Adjust the hyperparameter inflate</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;PI&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;inflate&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">}}])</span>
+</pre></div>
+</div>
+</section>
+<section id="upper-confidence-bound-ucb">
+<h3>Upper Confidence Bound (UCB)<a class="headerlink" href="#upper-confidence-bound-ucb" title="Link to this heading">#</a></h3>
+<p>UCB balances exploration and exploitation by selecting points with high predicted values or high uncertainty.</p>
+<p>Mathematical formulation:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+UCB(x) = \mu(x) + \beta * \sigma(x) 
+\end{equation*}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu(x)\)</span> is the predicted mean at the candidate point <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(\sigma(x)\)</span> is the predicted standard deviation which is associated with uncertainty, and <span class="math notranslate nohighlight">\(\beta\)</span> is a parameter that controls the exploration-exploitation trade-off.</p>
+<p><em>Optional hyperparameters:</em></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>: By default <span class="math notranslate nohighlight">\(\beta = 1\)</span>. Recommended value range: 1~3</p></li>
+</ul>
+<p><strong>Example usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use the default beta = 1</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;UCB&#39;</span><span class="p">])</span>
+
+<span class="c1"># Adjust the hyperparameter beta</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[{</span><span class="s1">&#39;UCB&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}}])</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="multi-objective-optimization-acquisition-functions">
+<h2>4. Multi-Objective Optimization Acquisition Functions<a class="headerlink" href="#multi-objective-optimization-acquisition-functions" title="Link to this heading">#</a></h2>
+<section id="hypervolume-improvement">
+<h3>Hypervolume Improvement<a class="headerlink" href="#hypervolume-improvement" title="Link to this heading">#</a></h3>
+<p>One of the most well-known and widely used acquisition functions for multi-objective optimization is the Hypervolume Improvement-based acquisition functions.
+The Hypervolume is a measure of the covered area in the objective space that is dominated by a given Pareto front; therefore, it is often used to quantify the quality of a Pareto front approximation. (See also Section <a class="reference internal" href="2_Analysis_and_Visualization.html"><span class="std std-doc">Additional Analysis</span></a>)</p>
+<p>There are two available options in <code class="docutils literal notranslate"><span class="pre">obsidian</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Expected Hypervolume Improvement (EHVI)</strong></p></li>
+<li><p><strong>Noisy Expected Hypervolume Improvement (NEHVI)</strong></p></li>
+</ul>
+<p>The EHVI and NEHVI acquisition functions aim to select the next set of input points that would maximize the hypervolume of the Pareto front. They differ in the consideration of noise in the objective function evaluations, with NEHVI explicitly accounting for noisy observations while EHVI assumes noise-free evaluations.</p>
+<p>NEHVI enables more robust optimization in the presence of noisy observations, improving the reliability of the optimization process. However, the incorporation of noise modeling in NEHVI may lead to increased computational complexity, as it often requires a larger number of Monte Carlo samples to accurately capture the noise characteristics, potentially making it more computationally intensive than EHVI in scenarios with significant noise.</p>
+<p><em>Hyperparameters:</em></p>
+<ul class="simple">
+<li><p>ref_point: The reference point for computing the hypervolume. Default value for each dimension is the minimum value minus 10% of the range.</p></li>
+</ul>
+<p><strong>Example usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using default values for ref_point:</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;EHVI&#39;</span><span class="p">])</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;NEHVI&#39;</span><span class="p">])</span>
+
+<span class="c1"># Custom ref_point, assuming there are two outputs</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;EHVI&#39;</span><span class="p">:{</span><span class="s1">&#39;ref_point&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">40</span><span class="p">]}}])</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;NEHVI&#39;</span><span class="p">:{</span><span class="s1">&#39;ref_point&#39;</span><span class="p">:[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">]}}])</span>
+</pre></div>
+</div>
+</section>
+<section id="weighted-response">
+<h3>Weighted Response<a class="headerlink" href="#weighted-response" title="Link to this heading">#</a></h3>
+<p>Another widely used approach is aggregating multiple outcomes into a single objective function, which is usually a weighted sum of the individual outcomes plus some regularization or penalty terms.</p>
+<ul>
+<li><p><strong>Random augmented chebyshev scalarization with Noisy Expected Improvement (NParEGO)</strong></p>
+<p>The mathematical formulation of augmented Chebyshev scalarization [<a class="reference external" href="https://github.com/pytorch/botorch/blob/main/botorch/utils/multi_objective/scalarization.py">ref</a>]:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+objective = \max_j (w_j * y^j)+ \alpha * \sum_j(w_j * y^j)
+\end{equation*}\]</div>
+<p>where the constant <span class="math notranslate nohighlight">\(\alpha=0.05\)</span>, and the weights <span class="math notranslate nohighlight">\(\{w_j\}_{1\leq j\leq J}\)</span> are samples from the unit simplex by default.</p>
+</li>
+</ul>
+<p><em>Optional hyperparameters:</em></p>
+<ul class="simple">
+<li><p>scalarization_weights: Default value is ‘None’, then random weights will be applied to search for global solution set on pareto front.</p></li>
+</ul>
+<p><strong>Example usage:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Default, random weights</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NParEGO&#39;</span><span class="p">])</span>
+<span class="c1"># Fixed weights, assuming there are two outputs</span>
+<span class="n">X_suggest</span><span class="p">,</span> <span class="n">eval_suggest</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">suggest</span><span class="p">(</span><span class="n">acquisition</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;NParEGO&#39;</span><span class="p">:{</span><span class="s1">&#39;scalarization_weights&#39;</span><span class="p">:[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]}}])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Additional scalarization options for multi-objective optimization: Utilize various scalarization functions defined in <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/blob/main/obsidian/objectives/scalarize.py">obsidian.objectives.scalarize</a> to combine multiple objectives into a single scalar value, then various single-objective optimization acquisition functions could be applied.</p></li>
+</ul>
+</section>
+</section>
+<section id="advanced-usage">
+<h2>5. Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">#</a></h2>
+<section id="id1">
+<h3>Custom Acquisition Functions<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>If you need to implement a custom acquisition function, you can extend the <code class="docutils literal notranslate"><span class="pre">MCAcquisitionFunction</span></code> class from BoTorch:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCAcquisitionFunction</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomAcquisition</span><span class="p">(</span><span class="n">MCAcquisitionFunction</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">posterior</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">mean</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">variance</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">mean</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">std</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Example custom acquisition logic</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="comparing-acquisition-functions">
+<h2>6. Comparing Acquisition Functions<a class="headerlink" href="#comparing-acquisition-functions" title="Link to this heading">#</a></h2>
+<p>Different acquisition functions have different strengths:</p>
+<ul class="simple">
+<li><p>EI and PI are good for exploiting known good regions but may underexplore.</p></li>
+<li><p>UCB provides a tunable exploration-exploitation trade-off.</p></li>
+<li><p>NEI and NEHVI are robust to noisy observations.</p></li>
+<li><p>qMean is purely exploitative and can be useful in the final stages of optimization.</p></li>
+<li><p>qSpaceFill is purely explorative and can be useful for initial space exploration.</p></li>
+<li><p>EHVI is advantageous in noise-free or low-noise settings due to its computational efficiency, while NEHVI is better suited for scenarios with significant noise, offering improved robustness at the cost of potentially higher computational demands.</p></li>
+</ul>
+</section>
+<section id="best-practices">
+<h2>7. Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Choose appropriate acquisition functions based on your problem characteristics (e.g., noise level, number of objectives).</p></li>
+<li><p>For noisy problems, consider using noise-aware acquisition functions like NEI or NEHVI.</p></li>
+<li><p>Experiment with different acquisition functions to find the best performance for your specific problem.</p></li>
+<li><p>When using UCB, carefully tune the beta parameter to balance exploration and exploitation.</p></li>
+<li><p>For multi-objective problems, EHVI and NEHVI are often good choices.</p></li>
+<li><p>Consider using a sequence of acquisition functions, starting with more exploratory ones and moving to more exploitative ones as the optimization progresses.</p></li>
+</ol>
+</section>
+<section id="common-pitfalls">
+<h2>8. Common Pitfalls<a class="headerlink" href="#common-pitfalls" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Using EI or PI in noisy problems, which can lead to overexploitation of noisy observations.</p></li>
+<li><p>Setting UCB’s beta parameter too high (over-exploration) or too low (over-exploitation).</p></li>
+<li><p>Using single-objective acquisition functions for multi-objective problems.</p></li>
+<li><p>Not accounting for constraints when selecting acquisition functions.</p></li>
+</ol>
+<p>This concludes the user guide for the <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/acquisition"><code class="docutils literal notranslate"><span class="pre">obsidian.acquisition</span></code></a> submodule. For more detailed information, please refer to the source code and docstrings in the individual files.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="4_SurrogateModel.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Surrogate Model</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../stubs/tutorials.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tutorials</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">1. Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">2. Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#available-acquisition-functions">2.1 Available Acquisition Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-acquisition-functions-from-botorch">Standard Acquisition Functions from BoTorch</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-acquisition-functions">Custom Acquisition Functions</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline-no-acquisition-function">Baseline: No Acquisition Function</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-syntax">2.2 Basic Syntax</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#single-objective-optimizatio-acquisition-functions">3. Single-Objective Optimizatio Acquisition Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-improvement-ei">Expected Improvement (EI)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#noisy-expected-improvement-nei">Noisy Expected Improvement (NEI)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-of-improvement-pi">Probability of Improvement (PI)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upper-confidence-bound-ucb">Upper Confidence Bound (UCB)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-objective-optimization-acquisition-functions">4. Multi-Objective Optimization Acquisition Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hypervolume-improvement">Hypervolume Improvement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weighted-response">Weighted Response</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">5. Advanced Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Custom Acquisition Functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-acquisition-functions">6. Comparing Acquisition Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">7. Best Practices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-pitfalls">8. Common Pitfalls</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/wiki/5_AcquisitionFunction.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

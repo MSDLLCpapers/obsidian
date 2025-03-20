@@ -1,0 +1,23 @@
+optithon
+========
+
+.. automodule:: obsidian.experiment.benchmark.optithon
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~Km_func
+      ~OT_simulator
+      ~Vm_func
+      ~kI_func
+      ~response_1
+      ~response_2
+   
+
+
+
+

@@ -1,0 +1,40 @@
+ParamSpace
+==========
+
+.. currentmodule:: obsidian.parameters.param_space
+
+.. autoclass:: ParamSpace
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ParamSpace.__init__
+      ~ParamSpace.clear_constraints
+      ~ParamSpace.constrain_inputs
+      ~ParamSpace.decode
+      ~ParamSpace.encode
+      ~ParamSpace.load_state
+      ~ParamSpace.map_inv_transform
+      ~ParamSpace.map_transform
+      ~ParamSpace.mean
+      ~ParamSpace.open_search
+      ~ParamSpace.save_state
+      ~ParamSpace.unit_demap
+      ~ParamSpace.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ParamSpace.search_space
+   
+   

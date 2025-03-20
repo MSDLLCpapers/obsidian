@@ -1,0 +1,924 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>obsidian.parameters.param_space &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/obsidian/parameters/param_space';</script>
+    <link rel="icon" href="../../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">obsidian.par...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for obsidian.parameters.param_space</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A collection of parameters jointly defining an operating or optimization space&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">IParamSpace</span><span class="p">,</span>
+    <span class="n">Parameter</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.continuous</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Param_Continuous</span><span class="p">,</span>
+    <span class="n">Param_Observational</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.discrete</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Param_Categorical</span><span class="p">,</span>
+    <span class="n">Param_Ordinal</span><span class="p">,</span>
+    <span class="n">Param_Discrete</span><span class="p">,</span>
+    <span class="n">Param_Discrete_Numeric</span><span class="p">,</span>
+    <span class="n">Task</span><span class="p">,</span>
+    <span class="n">CAT_SEP</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">param_class_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.constraints</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Input_Constraint</span><span class="p">,</span>
+    <span class="n">Linear_Constraint</span><span class="p">,</span>
+    <span class="n">Nonlinear_Constraint</span><span class="p">,</span>
+    <span class="n">const_class_dict</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnsupportedError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tensordict_to_dict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="ParamSpace">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParamSpace</span><span class="p">(</span><span class="n">IParamSpace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class designed to define the parameter space in which an optimization</span>
+<span class="sd">    can be conducted.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        params (tuple[Parameter]): A tuple of Parameter types defining the parameter space.</span>
+<span class="sd">        X_names (tuple[str]): A tuple of the names of the parameters.</span>
+<span class="sd">        X_cont (list[str]): A list of the names of the continuous parameters.</span>
+<span class="sd">        X_obs (list[str]): A list of the names of the observational parameters.</span>
+<span class="sd">        X_discrete (dict[str, list[str]]): A dictionary mapping the names of the discrete parameters to their categories.</span>
+<span class="sd">        X_task (dict[str, list[str]]): A dictionary mapping the names of the task parameters to their categories.</span>
+<span class="sd">        X_min (torch.Tensor): A tensor containing the minimum values of the parameters.</span>
+<span class="sd">        X_max (torch.Tensor): A tensor containing the maximum values of the parameters.</span>
+<span class="sd">        X_range (torch.Tensor): A tensor containing the range of the parameters.</span>
+<span class="sd">        X_static (list[str]): A list of the names of the static parameters.</span>
+<span class="sd">        X_vary (list[str]): A list of the names of the varying parameters.</span>
+<span class="sd">        n_dim (int): The number of dimensions in the parameter space.</span>
+<span class="sd">        n_tdim (int): The total number of dimensions in the parameter space after transformation.</span>
+<span class="sd">        t_map (dict): A dictionary mapping parameter indices to transformed indices.</span>
+<span class="sd">        tinv_map (dict): A dictionary mapping transformed indices to parameter indices.</span>
+<span class="sd">        X_discrete_idx (list[int]): A list of the indices of the discrete parameters.</span>
+<span class="sd">        X_t_discrete_idx (list[int]): A list of the indices of the transformed discrete parameters.</span>
+<span class="sd">        X_t_cat_idx (list[int]): A list of the indices of the transformed categorical parameters.</span>
+<span class="sd">        X_t_task_idx (int): The index of the transformed task parameter.</span>
+<span class="sd">        search_space (pd.DataFrame): The allowable search space for future optimization.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the X_names are not unique.</span>
+<span class="sd">        UnsupportedError: If there is more than one task parameter.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ParamSpace.__init__">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Parameter</span><span class="p">]):</span>
+        
+        <span class="c1"># Convert to immutable dtype to presever order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_names</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_names</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;X_names must be unique.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">CAT_SEP</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_names</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;X_names cannot contain &#39;</span><span class="si">{</span><span class="n">CAT_SEP</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Save as attributes key types that affect usage behavior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Continuous</span><span class="p">)</span>
+                       <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Observational</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_obs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Observational</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_discrete</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Discrete</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_task</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Task</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_task</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnsupportedError</span><span class="p">(</span><span class="s2">&quot;Only one task parameter is allowed.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Locally calculate other types for counting</span>
+
+        <span class="n">X_cat</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Categorical</span><span class="p">)]</span>
+        <span class="n">X_ord</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Ordinal</span><span class="p">)]</span>
+        <span class="n">X_disc_num</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Discrete_Numeric</span><span class="p">)]</span>
+        
+        <span class="c1"># Extract ranges for scaling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_min</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">min</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_max</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">max</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_min</span>
+
+        <span class="c1"># Extract where variables are changing or are fixed/observational</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_static</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Param_Observational</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_vary</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_names</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_static</span><span class="p">]</span>
+
+        <span class="c1"># Extract number of dimensions (raw input and encoded)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_names</span><span class="p">)</span>
+        <span class="c1"># Total number of dimensions after transform</span>
+        <span class="c1"># Numerical + Observational + Unique Categories + Ordinal + Discrete_Numeric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_tdim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_cont</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_obs</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">categories</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X_cat</span><span class="p">])</span>
+                          <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_ord</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_disc_num</span><span class="p">))</span>
+        
+        <span class="c1"># Assign the inv/transform maps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_transform</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tinv_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_inv_transform</span><span class="p">()</span>
+
+        <span class="c1"># Save the locations of discrete variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_discrete_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_discrete</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_t_discrete_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">i_t</span> <span class="k">for</span> <span class="n">i_t</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tinv_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_discrete</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X_t_cat_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">i_t</span> <span class="k">for</span> <span class="n">i_t</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tinv_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">X_cat</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_task</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_t_task_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">i_t</span> <span class="k">for</span> <span class="n">i_t</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tinv_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_task</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_t_task_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="c1"># Set up storage for constraints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_constraints</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nonlinear_constraints</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="ParamSpace.map_transform">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.map_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maps the parameter indices to transformed indices based on the parameter types.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary mapping parameter indices to transformed indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_i</span><span class="p">,</span> <span class="n">Param_Categorical</span><span class="p">):</span>
+                <span class="n">t_map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">count</span> <span class="o">+</span> <span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">param_i</span><span class="o">.</span><span class="n">categories</span><span class="p">))]</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_i</span><span class="o">.</span><span class="n">categories</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">t_map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">t_map</span></div>
+
+    
+<div class="viewcode-block" id="ParamSpace.map_inv_transform">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.map_inv_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map_inv_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maps the inverse of the transformed dictionary.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary where the keys are the original values and the values are the original keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">map_transform</span><span class="p">()</span>
+        <span class="n">tinv_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">t_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="n">tinv_map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tinv_map</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+
+        <span class="k">return</span> <span class="n">tinv_map</span></div>
+
+    
+    <span class="c1"># Establish a handler method to transform X based on type</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                   <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                   <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transforms the input DataFrame `X` based on the specified `type`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X (pd.DataFrame): The input DataFrame to be transformed.</span>
+<span class="sd">            type (str): The type of transformation to be applied.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: The transformed DataFrame.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If an unknown column is passed in `X`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
+        <span class="c1"># Check for column match, but consider that categorical OH encoding will lead to Parameter N_i type names</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">CAT_SEP</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_names</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Unknown column passed in X&#39;</span><span class="p">)</span>
+        <span class="n">X_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">param_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unit_map&#39;</span><span class="p">:</span> <span class="n">param_i</span><span class="o">.</span><span class="n">unit_map</span><span class="p">,</span>
+                       <span class="s1">&#39;unit_demap&#39;</span><span class="p">:</span> <span class="n">param_i</span><span class="o">.</span><span class="n">unit_demap</span><span class="p">,</span>
+                       <span class="s1">&#39;encode&#39;</span><span class="p">:</span> <span class="n">param_i</span><span class="o">.</span><span class="n">encode</span><span class="p">,</span>
+                       <span class="s1">&#39;decode&#39;</span><span class="p">:</span> <span class="n">param_i</span><span class="o">.</span><span class="n">decode</span><span class="p">}</span>
+            <span class="c1"># Include all matches, including OH columns (e.g. Parameter N_i)</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">param_i</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+            <span class="c1"># Skip if one of the possible parameters is excluded from the transform operation</span>
+            <span class="k">if</span> <span class="n">cols</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="n">X_t_i</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">methods</span><span class="p">[</span><span class="nb">type</span><span class="p">](</span><span class="n">X</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+                <span class="n">X_t_i</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">param_i</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_i</span><span class="p">,</span> <span class="n">Param_Categorical</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;encode&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">X_t_i</span><span class="o">.</span><span class="n">columns</span>
+                <span class="n">X_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_t</span><span class="p">,</span> <span class="n">X_t_i</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;encode&#39;</span><span class="p">,</span> <span class="s1">&#39;unit_map&#39;</span><span class="p">]:</span>
+            <span class="n">X_t</span> <span class="o">=</span> <span class="n">X_t</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">)</span>  <span class="c1"># Do not send object dtypes for these transforms</span>
+
+        <span class="k">return</span> <span class="n">X_t</span>
+
+    <span class="c1"># Define transformation methods using a handler method and lambdas; more readable on outer layer</span>
+<div class="viewcode-block" id="ParamSpace.unit_map">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.unit_map">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unit_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map from measured to 0,1 space&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;unit_map&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ParamSpace.unit_demap">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.unit_demap">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unit_demap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map from 0,1 space to measured space&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;unit_demap&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ParamSpace.encode">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.encode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode parameter to a format that can be used for training&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;encode&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ParamSpace.decode">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.decode">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decode parameter from transformed space&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;decode&#39;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the search space for the parameter space.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: A dataframe containing the search space for the parameter space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># Establish the boundaries in real space</span>
+        <span class="n">X_search_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="c1"># For continuous, encode the continuous bounds</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Param_Continuous</span><span class="p">):</span>
+                <span class="n">cont_bounds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">param</span><span class="o">.</span><span class="n">search_min</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">search_max</span><span class="p">]),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">X_search_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_search_t</span><span class="p">,</span> <span class="n">cont_bounds</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                
+            <span class="c1"># For discrete, encode the available categories, then log the min-max of encoded columns</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Param_Discrete</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="p">(</span><span class="n">Param_Ordinal</span><span class="p">,</span> <span class="n">Param_Discrete_Numeric</span><span class="p">))):</span>
+                <span class="c1"># Discrete parameter bounds aren&#39;t actually handled here; they are handled in optimizer._fixed_features())</span>
+                <span class="n">cat_e</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">search_categories</span><span class="p">)</span>
+                <span class="n">disc_bounds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">cat_e</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">cat_e</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">]),</span>
+                                           <span class="n">columns</span><span class="o">=</span><span class="n">cat_e</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="n">X_search_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_search_t</span><span class="p">,</span> <span class="n">disc_bounds</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="p">(</span><span class="n">Param_Ordinal</span><span class="p">,</span> <span class="n">Param_Discrete_Numeric</span><span class="p">)):</span>
+                <span class="n">cat_e</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">search_categories</span><span class="p">)</span>
+                <span class="n">cont_bounds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">cat_e</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">cat_e</span><span class="p">)],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+                <span class="n">X_search_t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_search_t</span><span class="p">,</span> <span class="n">cont_bounds</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">X_search_t</span>
+
+<div class="viewcode-block" id="ParamSpace.open_search">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.open_search">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_search</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the search space to the parameter space&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">open_search</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="ParamSpace.mean">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.mean">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the mean values for each parameter in the parameter space.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: A DataFrame containing the mean values for each parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">param_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_i</span><span class="p">,</span> <span class="n">Param_Continuous</span><span class="p">):</span>  <span class="c1"># Mean of continuous</span>
+                <span class="n">row</span><span class="p">[</span><span class="n">param_i</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_i</span><span class="o">.</span><span class="n">unit_demap</span><span class="p">([</span><span class="mf">0.5</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_i</span><span class="p">,</span> <span class="n">Param_Discrete</span><span class="p">):</span>  <span class="c1"># First of discrete</span>
+                <span class="n">row</span><span class="p">[</span><span class="n">param_i</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_i</span><span class="o">.</span><span class="n">categories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_mean</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">row</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">df_mean</span></div>
+
+
+<div class="viewcode-block" id="ParamSpace.constrain_inputs">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.constrain_inputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">constrain_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">constraint</span><span class="p">:</span> <span class="n">Input_Constraint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constrains the input space based on the specified equality, inequality, or nonlinear constraint.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            constraint (Input_Constraint): The constraint to be applied to the input space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">Linear_Constraint</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linear_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">Nonlinear_Constraint</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nonlinear_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+        
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="ParamSpace.clear_constraints">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.clear_constraints">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clears all constraints from the input space.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_constraints</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nonlinear_constraints</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="ParamSpace.save_state">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.save_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the state of the ParamSpace object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary containing the state of the ParamSpace object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">obj_dict</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                    <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">save_state</span><span class="p">()}</span>
+            
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;linear_constraints&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">obj_dict</span><span class="p">[</span><span class="s1">&#39;linear_constraints&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="n">const</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                               <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">tensordict_to_dict</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())}</span>
+                                              <span class="k">for</span> <span class="n">const</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_constraints</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;nonlinear_constraints&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">obj_dict</span><span class="p">[</span><span class="s1">&#39;nonlinear_constraints&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="n">const</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                                  <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">tensordict_to_dict</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())}</span>
+                                                 <span class="k">for</span> <span class="n">const</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nonlinear_constraints</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">obj_dict</span></div>
+
+    
+<div class="viewcode-block" id="ParamSpace.load_state">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.parameters.param_space.ParamSpace.html#obsidian.parameters.param_space.ParamSpace.load_state">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_state</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                   <span class="n">obj_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the state of the ParamSpace object from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj_dict (dict): A dictionary containing the state of the ParamSpace object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ParamSpace: A new ParamSpace object with the loaded state.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">param_dict</span> <span class="ow">in</span> <span class="n">obj_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;constraint&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">param</span><span class="p">:</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">param_class_dict</span><span class="p">[</span><span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">load_state</span><span class="p">(</span><span class="n">param_dict</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">])</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+        <span class="n">new_X_space</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;linear_constraints&#39;</span> <span class="ow">in</span> <span class="n">obj_dict</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">const_dict</span> <span class="ow">in</span> <span class="n">obj_dict</span><span class="p">[</span><span class="s1">&#39;linear_constraints&#39;</span><span class="p">]:</span>
+                <span class="n">const</span> <span class="o">=</span> <span class="n">const_class_dict</span><span class="p">[</span><span class="n">const_dict</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]](</span><span class="n">new_X_space</span><span class="p">,</span> <span class="o">**</span><span class="n">const_dict</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">])</span>
+                <span class="n">new_X_space</span><span class="o">.</span><span class="n">constrain_inputs</span><span class="p">(</span><span class="n">const</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;nonlinear_constraints&#39;</span> <span class="ow">in</span> <span class="n">obj_dict</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">const_dict</span> <span class="ow">in</span> <span class="n">obj_dict</span><span class="p">[</span><span class="s1">&#39;nonlinear_constraints&#39;</span><span class="p">]:</span>
+                <span class="n">const</span> <span class="o">=</span> <span class="n">const_class_dict</span><span class="p">[</span><span class="n">const_dict</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]](</span><span class="n">new_X_space</span><span class="p">,</span> <span class="o">**</span><span class="n">const_dict</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">])</span>
+                <span class="n">new_X_space</span><span class="o">.</span><span class="n">constrain_inputs</span><span class="p">(</span><span class="n">const</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_X_space</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

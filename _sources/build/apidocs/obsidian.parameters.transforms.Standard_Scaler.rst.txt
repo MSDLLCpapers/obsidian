@@ -1,0 +1,24 @@
+Standard\_Scaler
+================
+
+.. currentmodule:: obsidian.parameters.transforms
+
+.. autoclass:: Standard_Scaler
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Standard_Scaler.__init__
+      ~Standard_Scaler.forward
+      ~Standard_Scaler.inverse
+   
+   
+
+   
+   
+   

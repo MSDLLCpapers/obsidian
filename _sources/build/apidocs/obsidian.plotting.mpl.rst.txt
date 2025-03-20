@@ -1,0 +1,17 @@
+mpl
+===
+
+.. automodule:: obsidian.plotting.mpl
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+   
+      ~plot_interactions
+      ~plot_ofat_ranges
+   
+
+
+

@@ -1,0 +1,1009 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>botorch.acquisition.multi_objective.logei &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/botorch/acquisition/multi_objective/logei';</script>
+    <link rel="icon" href="../../../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">botorch.acqu...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for botorch.acquisition.multi_objective.logei</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Meta Platforms, Inc. and affiliates.</span>
+<span class="c1">#</span>
+<span class="c1"># This source code is licensed under the MIT license found in the</span>
+<span class="c1"># LICENSE file in the root directory of this source tree.</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Multi-objective variants of the LogEI family of acquisition functions, see</span>
+<span class="sd">[Ament2023logei]_ for details.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.logei</span><span class="w"> </span><span class="kn">import</span> <span class="n">TAU_MAX</span><span class="p">,</span> <span class="n">TAU_RELU</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.multi_objective</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiObjectiveMCAcquisitionFunction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.multi_objective.objective</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCMultiOutputObjective</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.models.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.sampling.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCSampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.multi_objective.box_decompositions.non_dominated</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NondominatedPartitioning</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.multi_objective.hypervolume</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NoisyExpectedHypervolumeMixin</span><span class="p">,</span>
+    <span class="n">SubsetIndexCachingMixin</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.objective</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_smoothed_feasibility_indicator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.safe_math</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">fatmin</span><span class="p">,</span>
+    <span class="n">log_fatplus</span><span class="p">,</span>
+    <span class="n">log_softplus</span><span class="p">,</span>
+    <span class="n">logdiffexp</span><span class="p">,</span>
+    <span class="n">logmeanexp</span><span class="p">,</span>
+    <span class="n">logplusexp</span><span class="p">,</span>
+    <span class="n">logsumexp</span><span class="p">,</span>
+    <span class="n">smooth_amin</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">concatenate_pending_points</span><span class="p">,</span>
+    <span class="n">is_ensemble</span><span class="p">,</span>
+    <span class="n">match_batch_shape</span><span class="p">,</span>
+    <span class="n">t_batch_mode_transform</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
+
+
+<div class="viewcode-block" id="qLogExpectedHypervolumeImprovement">
+<a class="viewcode-back" href="../../../../build/apidocs/obsidian.acquisition.botorch.html#obsidian.acquisition.botorch.qLogExpectedHypervolumeImprovement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qLogExpectedHypervolumeImprovement</span><span class="p">(</span>
+    <span class="n">MultiObjectiveMCAcquisitionFunction</span><span class="p">,</span> <span class="n">SubsetIndexCachingMixin</span>
+<span class="p">):</span>
+
+    <span class="n">_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">ref_point</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">],</span>
+        <span class="n">partitioning</span><span class="p">:</span> <span class="n">NondominatedPartitioning</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCSampler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objective</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCMultiOutputObjective</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constraints</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">,</span>
+        <span class="n">fat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">tau_relu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_RELU</span><span class="p">,</span>
+        <span class="n">tau_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_MAX</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Parallel Log Expected Hypervolume Improvement supporting m&gt;=2 outcomes.</span>
+
+<span class="sd">        See [Ament2023logei]_ for details and the methodology behind the LogEI family of</span>
+<span class="sd">        acquisition function. Line-by-line differences to the original differentiable</span>
+<span class="sd">        expected hypervolume formulation of [Daulton2020qehvi]_ are described via inline</span>
+<span class="sd">        comments in `forward`.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; model = SingleTaskGP(train_X, train_Y)</span>
+<span class="sd">            &gt;&gt;&gt; ref_point = [0.0, 0.0]</span>
+<span class="sd">            &gt;&gt;&gt; acq = qLogExpectedHypervolumeImprovement(model, ref_point, partitioning)</span>
+<span class="sd">            &gt;&gt;&gt; value = acq(test_X)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: A fitted model.</span>
+<span class="sd">            ref_point: A list or tensor with `m` elements representing the reference</span>
+<span class="sd">                point (in the outcome space) w.r.t. to which compute the hypervolume.</span>
+<span class="sd">                This is a reference point for the objective values (i.e. after</span>
+<span class="sd">                applying`objective` to the samples).</span>
+<span class="sd">            partitioning: A `NondominatedPartitioning` module that provides the non-</span>
+<span class="sd">                dominated front and a partitioning of the non-dominated space in hyper-</span>
+<span class="sd">                rectangles. If constraints are present, this partitioning must only</span>
+<span class="sd">                include feasible points.</span>
+<span class="sd">            sampler: The sampler used to draw base samples. If not given,</span>
+<span class="sd">                a sampler is generated using `get_sampler`.</span>
+<span class="sd">            objective: The MCMultiOutputObjective under which the samples are evaluated.</span>
+<span class="sd">                Defaults to `IdentityMultiOutputObjective()`.</span>
+<span class="sd">            constraints: A list of callables, each mapping a Tensor of dimension</span>
+<span class="sd">                `sample_shape x batch-shape x q x m` to a Tensor of dimension</span>
+<span class="sd">                `sample_shape x batch-shape x q`, where negative values imply</span>
+<span class="sd">                feasibility. The acquisition function will compute expected feasible</span>
+<span class="sd">                hypervolume.</span>
+<span class="sd">            X_pending: A `batch_shape x m x d`-dim Tensor of `m` design points that have</span>
+<span class="sd">                points that have been submitted for function evaluation but have not yet</span>
+<span class="sd">                been evaluated. Concatenated into `X` upon forward call. Copied and set</span>
+<span class="sd">                to have no gradient.</span>
+<span class="sd">            eta: The temperature parameter for the sigmoid function used for the</span>
+<span class="sd">                differentiable approximation of the constraints. In case of a float the</span>
+<span class="sd">                same eta is used for every constraint in constraints. In case of a</span>
+<span class="sd">                tensor the length of the tensor must match the number of provided</span>
+<span class="sd">                constraints. The i-th constraint is then estimated with the i-th</span>
+<span class="sd">                eta value.</span>
+<span class="sd">            fat: Toggles the logarithmic / linear asymptotic behavior of the smooth</span>
+<span class="sd">                approximation to the ReLU and the maximum.</span>
+<span class="sd">            tau_relu: Temperature parameter controlling the sharpness of the</span>
+<span class="sd">                approximation to the ReLU over the `q` candidate points. For further</span>
+<span class="sd">                details, see the comments above the definition of `TAU_RELU`.</span>
+<span class="sd">            tau_max: Temperature parameter controlling the sharpness of the</span>
+<span class="sd">                approximation to the `max` operator over the `q` candidate points.</span>
+<span class="sd">                For further details, see the comments above the definition of `TAU_MAX`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_point</span><span class="p">)</span> <span class="o">!=</span> <span class="n">partitioning</span><span class="o">.</span><span class="n">num_outcomes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The dimensionality of the reference point must match the number of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;outcomes. Got ref_point with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_point</span><span class="p">)</span><span class="si">}</span><span class="s2"> elements, but expected &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">partitioning</span><span class="o">.</span><span class="n">num_outcomes</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">ref_point</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span>
+            <span class="n">ref_point</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">partitioning</span><span class="o">.</span><span class="n">pareto_Y</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">partitioning</span><span class="o">.</span><span class="n">pareto_Y</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+            <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;ref_point&quot;</span><span class="p">,</span> <span class="n">ref_point</span><span class="p">)</span>
+        <span class="n">cell_bounds</span> <span class="o">=</span> <span class="n">partitioning</span><span class="o">.</span><span class="n">get_hypercell_bounds</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;cell_lower_bounds&quot;</span><span class="p">,</span> <span class="n">cell_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;cell_upper_bounds&quot;</span><span class="p">,</span> <span class="n">cell_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">SubsetIndexCachingMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_relu</span> <span class="o">=</span> <span class="n">tau_relu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_max</span> <span class="o">=</span> <span class="n">tau_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fat</span> <span class="o">=</span> <span class="n">fat</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_log_qehvi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the expected (feasible) hypervolume improvement given MC samples.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            samples: A `sample_shape x batch_shape x q&#39; x m`-dim tensor of samples.</span>
+<span class="sd">            X: A `batch_shape x q x d`-dim tensor of inputs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `batch_shape x (model_batch_shape)`-dim tensor of expected hypervolume</span>
+<span class="sd">            improvement for each batch.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Note that the objective may subset the outcomes (e.g. this will usually happen</span>
+        <span class="c1"># if there are constraints present).</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>  <span class="c1"># mc_samples x batch_shape x q x m</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log_feas_weights</span> <span class="o">=</span> <span class="n">compute_smoothed_feasibility_indicator</span><span class="p">(</span>
+                <span class="n">constraints</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">,</span>
+                <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+                <span class="n">eta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span>
+                <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ref_point</span><span class="o">.</span><span class="n">device</span>
+        <span class="n">q_subset_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_q_subset_indices</span><span class="p">(</span><span class="n">q_out</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">batch_shape</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># mc_samples x batch_shape</span>
+        <span class="c1"># areas tensor is `mc_samples x batch_shape x num_cells x 2`-dim</span>
+        <span class="n">log_areas_per_segment</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+            <span class="n">size</span><span class="o">=</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">batch_shape</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cell_lower_bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># num_cells</span>
+                <span class="mi">2</span><span class="p">,</span>  <span class="c1"># for even and odd terms</span>
+            <span class="p">),</span>
+            <span class="n">fill_value</span><span class="o">=-</span><span class="n">torch</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">cell_batch_ndim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_lower_bounds</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">2</span>
+        <span class="c1"># conditionally adding mc_samples dim if cell_batch_ndim &gt; 0</span>
+        <span class="c1"># adding ones to shape equal in number to to batch_shape_ndim - cell_batch_ndim</span>
+        <span class="c1"># adding cell_bounds batch shape w/o 1st dimension</span>
+        <span class="n">sample_batch_view_shape</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">batch_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cell_batch_ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="o">*</span><span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch_shape</span><span class="p">)</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">cell_batch_ndim</span><span class="p">,</span> <span class="mi">1</span><span class="p">))],</span>
+                <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_lower_bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">view_shape</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">*</span><span class="n">sample_batch_view_shape</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cell_upper_bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>  <span class="c1"># num_cells</span>
+            <span class="mi">1</span><span class="p">,</span>  <span class="c1"># adding for q_choose_i dimension</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cell_upper_bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>  <span class="c1"># num_objectives</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_out</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># TODO: we could use batches to compute (q choose i) and (q choose q-i)</span>
+            <span class="c1"># simultaneously since subsets of size i and q-i have the same number of</span>
+            <span class="c1"># elements. This would decrease the number of iterations, but increase</span>
+            <span class="c1"># memory usage.</span>
+            <span class="n">q_choose_i</span> <span class="o">=</span> <span class="n">q_subset_indices</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;q_choose_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>  <span class="c1"># q_choose_i x i</span>
+            <span class="c1"># this tensor is mc_samples x batch_shape x i x q_choose_i x m</span>
+            <span class="n">obj_subsets</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">q_choose_i</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">obj_subsets</span> <span class="o">=</span> <span class="n">obj_subsets</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">q_choose_i</span><span class="o">.</span><span class="n">shape</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="p">)</span>  <span class="c1"># mc_samples x batch_shape x q_choose_i x i x m</span>
+
+            <span class="c1"># NOTE: the order of operations in non-log _compute_qehvi is 3), 1), 2).</span>
+            <span class="c1"># since 3) moved above 1), _log_improvement adds another Tensor dimension</span>
+            <span class="c1"># that keeps track of num_cells.</span>
+
+            <span class="c1"># 1) computes log smoothed improvement over the cell lower bounds.</span>
+            <span class="c1"># mc_samples x batch_shape x num_cells x q_choose_i x i x m</span>
+            <span class="n">log_improvement_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_improvement</span><span class="p">(</span><span class="n">obj_subsets</span><span class="p">,</span> <span class="n">view_shape</span><span class="p">)</span>
+
+            <span class="c1"># 2) take the minimum log improvement over all i subsets.</span>
+            <span class="c1"># since all hyperrectangles share one vertex, the opposite vertex of the</span>
+            <span class="c1"># overlap is given by the component-wise minimum.</span>
+            <span class="c1"># negative of maximum of negative log_improvement is approximation to min.</span>
+            <span class="n">log_improvement_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_smooth_min</span><span class="p">(</span>
+                <span class="n">log_improvement_i</span><span class="p">,</span>
+                <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># mc_samples x batch_shape x num_cells x q_choose_i x m</span>
+
+            <span class="c1"># 3) compute the log lengths of the cells&#39; sides.</span>
+            <span class="c1"># mc_samples x batch_shape x num_cells x q_choose_i x m</span>
+            <span class="n">log_lengths_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_cell_lengths</span><span class="p">(</span><span class="n">log_improvement_i</span><span class="p">,</span> <span class="n">view_shape</span><span class="p">)</span>
+
+            <span class="c1"># 4) take product over hyperrectangle side lengths to compute area (m-dim).</span>
+            <span class="c1"># after, log_areas_i is mc_samples x batch_shape x num_cells x q_choose_i</span>
+            <span class="n">log_areas_i</span> <span class="o">=</span> <span class="n">log_lengths_i</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># areas_i = lengths_i.prod(dim=-1)</span>
+
+            <span class="c1"># 5) if constraints are present, apply a differentiable approximation of</span>
+            <span class="c1"># the indicator function.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">log_feas_subsets</span> <span class="o">=</span> <span class="n">log_feas_weights</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span>
+                    <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">q_choose_i</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">log_feas_weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">q_choose_i</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="n">log_areas_i</span> <span class="o">=</span> <span class="n">log_areas_i</span> <span class="o">+</span> <span class="n">log_feas_subsets</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># 6) sum over all subsets of size i, i.e. reduce over q_choose_i-dim</span>
+            <span class="c1"># after, log_areas_i is mc_samples x batch_shape x num_cells</span>
+            <span class="n">log_areas_i</span> <span class="o">=</span> <span class="n">logsumexp</span><span class="p">(</span><span class="n">log_areas_i</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># areas_i.sum(dim=-1)</span>
+
+            <span class="c1"># 7) Using the inclusion-exclusion principle, set the sign to be positive</span>
+            <span class="c1"># for subsets of odd sizes and negative for subsets of even size</span>
+            <span class="c1"># in non-log space: areas_per_segment += (-1) ** (i + 1) * areas_i,</span>
+            <span class="c1"># but here in log space, we need to keep track of sign:</span>
+            <span class="n">log_areas_per_segment</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">logplusexp</span><span class="p">(</span>
+                <span class="n">log_areas_per_segment</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span><span class="p">],</span>
+                <span class="n">log_areas_i</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># 8) subtract even from odd log area terms</span>
+        <span class="n">log_areas_per_segment</span> <span class="o">=</span> <span class="n">logdiffexp</span><span class="p">(</span>
+            <span class="n">log_a</span><span class="o">=</span><span class="n">log_areas_per_segment</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">log_b</span><span class="o">=</span><span class="n">log_areas_per_segment</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 9) sum over segments (n_cells-dim) and average over MC samples</span>
+        <span class="k">return</span> <span class="n">logmeanexp</span><span class="p">(</span><span class="n">logsumexp</span><span class="p">(</span><span class="n">log_areas_per_segment</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_improvement</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">obj_subsets</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">view_shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># smooth out the clamp and take the log (previous step 3)</span>
+        <span class="c1"># subtract cell lower bounds, clamp min at zero, but first</span>
+        <span class="c1"># make obj_subsets broadcastable with cell bounds:</span>
+        <span class="c1"># mc_samples x batch_shape x (num_cells = 1) x q_choose_i x i x m</span>
+        <span class="n">obj_subsets</span> <span class="o">=</span> <span class="n">obj_subsets</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+        <span class="c1"># making cell bounds broadcastable with obj_subsets:</span>
+        <span class="c1"># (mc_samples = 1) x (batch_shape = 1) x num_cells x 1 x (i = 1) x m</span>
+        <span class="n">cell_lower_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_lower_bounds</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">view_shape</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">obj_subsets</span> <span class="o">-</span> <span class="n">cell_lower_bounds</span>
+        <span class="n">log_Zi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_smooth_relu</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">log_Zi</span>  <span class="c1"># mc_samples x batch_shape x num_cells x q_choose_i x i x m</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_cell_lengths</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">log_improvement_i</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">view_shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">cell_upper_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_upper_bounds</span><span class="o">.</span><span class="n">clamp_max</span><span class="p">(</span>
+            <span class="mf">1e10</span> <span class="k">if</span> <span class="n">log_improvement_i</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">double</span> <span class="k">else</span> <span class="mf">1e8</span>
+        <span class="p">)</span>  <span class="c1"># num_cells x num_objectives</span>
+        <span class="c1"># add batch-dim to compute area for each segment (pseudo-pareto-vertex)</span>
+        <span class="n">log_cell_lengths</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">cell_upper_bounds</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_lower_bounds</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">view_shape</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># (mc_samples = 1) x (batch_shape = 1) x n_cells x (q_choose_i = 1) x m</span>
+        <span class="c1"># mc_samples x batch_shape x num_cells x q_choose_i x m</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_smooth_minimum</span><span class="p">(</span>
+            <span class="n">log_improvement_i</span><span class="p">,</span>
+            <span class="n">log_cell_lengths</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_smooth_relu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">log_fatplus</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fat</span> <span class="k">else</span> <span class="n">log_softplus</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau_relu</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_smooth_min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">keepdim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">fatmin</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fat</span> <span class="k">else</span> <span class="n">smooth_amin</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau_max</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_smooth_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">XY</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">broadcast_tensors</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_smooth_min</span><span class="p">(</span><span class="n">XY</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="qLogExpectedHypervolumeImprovement.forward">
+<a class="viewcode-back" href="../../../../build/apidocs/obsidian.acquisition.botorch.html#obsidian.acquisition.botorch.qLogExpectedHypervolumeImprovement.forward">[docs]</a>
+    <span class="nd">@concatenate_pending_points</span>
+    <span class="nd">@t_batch_mode_transform</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">posterior</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_posterior_samples</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_log_qehvi</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="qLogNoisyExpectedHypervolumeImprovement">
+<a class="viewcode-back" href="../../../../build/apidocs/obsidian.acquisition.botorch.html#obsidian.acquisition.botorch.qLogNoisyExpectedHypervolumeImprovement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qLogNoisyExpectedHypervolumeImprovement</span><span class="p">(</span>
+    <span class="n">NoisyExpectedHypervolumeMixin</span><span class="p">,</span>
+    <span class="n">qLogExpectedHypervolumeImprovement</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="n">_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">ref_point</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">],</span>
+        <span class="n">X_baseline</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCSampler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objective</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCMultiOutputObjective</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constraints</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eta</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">prune_baseline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">cache_pending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">max_iep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">incremental_nehvi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cache_root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">tau_relu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_RELU</span><span class="p">,</span>
+        <span class="n">tau_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>  <span class="c1"># TAU_MAX,</span>
+        <span class="n">fat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">marginalize_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        q-Log Noisy Expected Hypervolume Improvement supporting m&gt;=2 outcomes.</span>
+
+<span class="sd">        Based on the differentiable hypervolume formulation of [Daulton2021nehvi]_.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; model = SingleTaskGP(train_X, train_Y)</span>
+<span class="sd">            &gt;&gt;&gt; ref_point = [0.0, 0.0]</span>
+<span class="sd">            &gt;&gt;&gt; qNEHVI = qNoisyExpectedHypervolumeImprovement(model, ref_point, train_X)</span>
+<span class="sd">            &gt;&gt;&gt; qnehvi = qNEHVI(test_X)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: A fitted model.</span>
+<span class="sd">            ref_point: A list or tensor with `m` elements representing the reference</span>
+<span class="sd">                point (in the outcome space) w.r.t. to which compute the hypervolume.</span>
+<span class="sd">                This is a reference point for the objective values (i.e. after</span>
+<span class="sd">                applying `objective` to the samples).</span>
+<span class="sd">            X_baseline: A `r x d`-dim Tensor of `r` design points that have already</span>
+<span class="sd">                been observed. These points are considered as potential approximate</span>
+<span class="sd">                pareto-optimal design points.</span>
+<span class="sd">            sampler: The sampler used to draw base samples. If not given,</span>
+<span class="sd">                a sampler is generated using `get_sampler`.</span>
+<span class="sd">                Note: a pareto front is created for each mc sample, which can be</span>
+<span class="sd">                computationally intensive for `m` &gt; 2.</span>
+<span class="sd">            objective: The MCMultiOutputObjective under which the samples are</span>
+<span class="sd">                evaluated. Defaults to `IdentityMultiOutputObjective()`.</span>
+<span class="sd">            constraints: A list of callables, each mapping a Tensor of dimension</span>
+<span class="sd">                `sample_shape x batch-shape x q x m` to a Tensor of dimension</span>
+<span class="sd">                `sample_shape x batch-shape x q`, where negative values imply</span>
+<span class="sd">                feasibility. The acquisition function will compute expected feasible</span>
+<span class="sd">                hypervolume.</span>
+<span class="sd">            X_pending: A `batch_shape x m x d`-dim Tensor of `m` design points that</span>
+<span class="sd">                have points that have been submitted for function evaluation, but</span>
+<span class="sd">                have not yet been evaluated.</span>
+<span class="sd">            eta: The temperature parameter for the sigmoid function used for the</span>
+<span class="sd">                differentiable approximation of the constraints. In case of a float the</span>
+<span class="sd">                same `eta` is used for every constraint in constraints. In case of a</span>
+<span class="sd">                tensor the length of the tensor must match the number of provided</span>
+<span class="sd">                constraints. The i-th constraint is then estimated with the i-th</span>
+<span class="sd">                `eta` value.</span>
+<span class="sd">            prune_baseline: If True, remove points in `X_baseline` that are</span>
+<span class="sd">                highly unlikely to be the pareto optimal and better than the</span>
+<span class="sd">                reference point. This can significantly improve computation time and</span>
+<span class="sd">                is generally recommended. In order to customize pruning parameters,</span>
+<span class="sd">                instead manually call `prune_inferior_points_multi_objective` on</span>
+<span class="sd">                `X_baseline` before instantiating the acquisition function.</span>
+<span class="sd">            alpha: The hyperparameter controlling the approximate non-dominated</span>
+<span class="sd">                partitioning. The default value of 0.0 means an exact partitioning</span>
+<span class="sd">                is used. As the number of objectives `m` increases, consider increasing</span>
+<span class="sd">                this parameter in order to limit computational complexity.</span>
+<span class="sd">            cache_pending: A boolean indicating whether to use cached box</span>
+<span class="sd">                decompositions (CBD) for handling pending points. This is</span>
+<span class="sd">                generally recommended.</span>
+<span class="sd">            max_iep: The maximum number of pending points before the box</span>
+<span class="sd">                decompositions will be recomputed.</span>
+<span class="sd">            incremental_nehvi: A boolean indicating whether to compute the</span>
+<span class="sd">                incremental NEHVI from the `i`th point where `i=1, ..., q`</span>
+<span class="sd">                under sequential greedy optimization, or the full qNEHVI over</span>
+<span class="sd">                `q` points.</span>
+<span class="sd">            cache_root: A boolean indicating whether to cache the root</span>
+<span class="sd">                decomposition over `X_baseline` and use low-rank updates.</span>
+<span class="sd">            marginalize_dim: A batch dimension that should be marginalized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">MultiObjectiveMCAcquisitionFunction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+            <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">SubsetIndexCachingMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">NoisyExpectedHypervolumeMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">ref_point</span><span class="o">=</span><span class="n">ref_point</span><span class="p">,</span>
+            <span class="n">X_baseline</span><span class="o">=</span><span class="n">X_baseline</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+            <span class="n">prune_baseline</span><span class="o">=</span><span class="n">prune_baseline</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="n">cache_pending</span><span class="o">=</span><span class="n">cache_pending</span><span class="p">,</span>
+            <span class="n">max_iep</span><span class="o">=</span><span class="n">max_iep</span><span class="p">,</span>
+            <span class="n">incremental_nehvi</span><span class="o">=</span><span class="n">incremental_nehvi</span><span class="p">,</span>
+            <span class="n">cache_root</span><span class="o">=</span><span class="n">cache_root</span><span class="p">,</span>
+            <span class="n">marginalize_dim</span><span class="o">=</span><span class="n">marginalize_dim</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># parameters that are used by qLogEHVI</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_relu</span> <span class="o">=</span> <span class="n">tau_relu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_max</span> <span class="o">=</span> <span class="n">tau_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fat</span> <span class="o">=</span> <span class="n">fat</span>
+
+<div class="viewcode-block" id="qLogNoisyExpectedHypervolumeImprovement.forward">
+<a class="viewcode-back" href="../../../../build/apidocs/obsidian.acquisition.botorch.html#obsidian.acquisition.botorch.qLogNoisyExpectedHypervolumeImprovement.forward">[docs]</a>
+    <span class="nd">@concatenate_pending_points</span>
+    <span class="nd">@t_batch_mode_transform</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">X_full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">match_batch_shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_baseline</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="n">X</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># NOTE: To ensure that we correctly sample `f(X)` from the joint distribution</span>
+        <span class="c1"># `f((X_baseline, X)) ~ P(f | D)`, it is critical to compute the joint posterior</span>
+        <span class="c1"># over X *and* X_baseline -- which also contains pending points whenever there</span>
+        <span class="c1"># are any --  since the baseline and pending values `f(X_baseline)` are</span>
+        <span class="c1"># generally pre-computed and cached before the `forward` call, see the docs of</span>
+        <span class="c1"># `cache_pending` for details.</span>
+        <span class="c1"># TODO: Improve the efficiency by not re-computing the X_baseline-X_baseline</span>
+        <span class="c1"># covariance matrix, but only the covariance of</span>
+        <span class="c1"># 1) X and X, and</span>
+        <span class="c1"># 2) X and X_baseline.</span>
+        <span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">posterior</span><span class="p">(</span><span class="n">X_full</span><span class="p">)</span>
+        <span class="c1"># Account for possible one-to-many transform and the model batch dimensions in</span>
+        <span class="c1"># ensemble models.</span>
+        <span class="n">event_shape_lag</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">is_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span> <span class="k">else</span> <span class="mi">2</span>
+        <span class="n">n_w</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">posterior</span><span class="o">.</span><span class="n">_extended_shape</span><span class="p">()[</span><span class="n">X_full</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">-</span> <span class="n">event_shape_lag</span><span class="p">]</span>
+            <span class="o">//</span> <span class="n">X_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">q_in</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_sampler</span><span class="p">(</span><span class="n">q_in</span><span class="o">=</span><span class="n">q_in</span><span class="p">,</span> <span class="n">posterior</span><span class="o">=</span><span class="n">posterior</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_f_X_samples</span><span class="p">(</span><span class="n">posterior</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span> <span class="n">q_in</span><span class="o">=</span><span class="n">q_in</span><span class="p">)</span>
+        <span class="c1"># Add previous nehvi from pending points.</span>
+        <span class="n">nehvi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_log_qehvi</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">incremental_nehvi</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">nehvi</span>
+        <span class="k">return</span> <span class="n">logplusexp</span><span class="p">(</span><span class="n">nehvi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev_nehvi</span><span class="o">.</span><span class="n">log</span><span class="p">())</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

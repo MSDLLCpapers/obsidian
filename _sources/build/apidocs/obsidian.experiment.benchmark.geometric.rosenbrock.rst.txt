@@ -1,0 +1,6 @@
+rosenbrock
+==========
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: rosenbrock

@@ -1,0 +1,749 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Additional Analysis and Visualization &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'wiki/2_Analysis_and_Visualization';</script>
+    <link rel="icon" href="../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data Structure" href="3_Data.html" />
+    <link rel="prev" title="Algorithmic Process Optimization (APO) Workflow" href="1_APO_Workflow_and_CodeStructure.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="1_APO_Workflow_and_CodeStructure.html">Algorithmic Process Optimization (APO) Workflow</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Additional Analysis and Visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_Data.html">Data Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_SurrogateModel.html">Surrogate Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_AcquisitionFunction.html">Acquisition Function</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../stubs/wiki.html" class="nav-link">Wiki</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Additional...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="additional-analysis-and-visualization">
+<h1>Additional Analysis and Visualization<a class="headerlink" href="#additional-analysis-and-visualization" title="Link to this heading">#</a></h1>
+<p><img alt="APO Workflow" src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/APO_workflow.png?raw=true" /></p>
+<p>This section introduces some additional components, such as retrospective analysis and visualization methods, that are not essential steps in a Algorithmic Process Optimization (APO) algorithm but are valuable in real-world applications for several reasons.</p>
+<ul class="simple">
+<li><p>The technical details involved in APO algorithms, such as surrogate models and acquisition functions, may seem complicated to users with non-quantitative background. As a result, the entire workflow of suggesting new experimental conditions may appear to be a black box for users, which hampers the adoption of this this powerful process optimization technique. Various performance metrics and model interpretation methods help to bridge this gap by providing users with a better intuitive understanding of the underlying algorithms and revealing the decision-making processes involved.</p></li>
+<li><p>The variable importance analysis and/or model interpretation tools can provide critical insights into the optimization process, aiding in a deeper understanding of the variables that influenced the selection of optimal solution and the relationships between input variables, which could be confirmed with additional experiments or scientific domain experts.</p></li>
+<li><p>Providing prediction uncertainty metrics along with the suggested candidates empowers practitioners to make informed decisions and establish realistic expectations of the surrogate model’s predictive performance and potential biases.</p></li>
+</ul>
+<p>Please refer to submodule <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/campaign"><code class="docutils literal notranslate"><span class="pre">campaign</span></code></a> for more details of analysis,
+and submodule <a class="reference external" href="https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/plotting"><code class="docutils literal notranslate"><span class="pre">plotting</span></code></a> folder for visualization utilities.</p>
+<hr class="docutils" />
+<section id="post-hoc-data-analysis">
+<h2>Post-hoc Data Analysis<a class="headerlink" href="#post-hoc-data-analysis" title="Link to this heading">#</a></h2>
+<p>To simplify the description, assuming the preferred direction of any response variable is maximizing, and there are <span class="math notranslate nohighlight">\(N\)</span> data points collected for <span class="math notranslate nohighlight">\(J\)</span> experimental outcomes: <span class="math notranslate nohighlight">\(\{ (X_i,Y_i) \}_{i=1}^N\)</span>.</p>
+<p>If there are multiple experimental outcomes (<span class="math notranslate nohighlight">\(J \geq 1\)</span>), the <span class="math notranslate nohighlight">\(j^{th}\)</span> outcome in vector <span class="math notranslate nohighlight">\(Y_i\)</span> is denoted as <span class="math notranslate nohighlight">\(Y_i^{j}\)</span>.</p>
+<section id="evaluating-the-measured-experimental-conditions">
+<h3>Evaluating the Measured Experimental Conditions<a class="headerlink" href="#evaluating-the-measured-experimental-conditions" title="Link to this heading">#</a></h3>
+<p>A direct assessment of input features is assigning a binary indicator (True/False) to identify the best performer <span class="math notranslate nohighlight">\(X_{opt}\)</span> or an opimal solution set <span class="math notranslate nohighlight">\(\chi_{opt}\)</span>.</p>
+<ul>
+<li><p>Single-objective optimization: The best performer is the one (or more) inputs that achieve the optimal value of measured experimental outcome.</p>
+<div class="math notranslate nohighlight">
+\[    X_{opt} = \underset{X_i, 1\leq i\leq N}{\text{argmax }} Y(X_i)\]</div>
+</li>
+<li><p>Multi-objective optimization:</p>
+<ul>
+<li><p>In some simple cases when the multiple responses <span class="math notranslate nohighlight">\(Y^j (1 \leq j \leq J)\)</span> are correlated, there may exist some best performer <span class="math notranslate nohighlight">\(X_{opt}\)</span> for all responses simutaneously:</p>
+<div class="math notranslate nohighlight">
+\[    X_{opt} = \underset{1 \leq j \leq J}{\cap} \underset{X_i, 1\leq i\leq N}{\text{argmax }} Y^j(X_i) \]</div>
+</li>
+<li><p>In most cases, there is trade-off between multiple responses and they cannot be optimized together. The <strong>Pareto Front</strong> (<span class="math notranslate nohighlight">\(PF_Y\)</span>) is the set of compromise solution, or nondominated solution, which are better than others in terms that improvement in any response <span class="math notranslate nohighlight">\(Y_s\)</span> comes only at the expense of making at least another response <span class="math notranslate nohighlight">\(\{ Y_t \}_{t\neq s}\)</span> worse:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+    PF_Y = \{Y_i, i \in [1,N]: \{Y_w, w \in [1,N], w\neq i: Y_w^j &gt; Y_i^j, \forall j \in [1,J] \} = \emptyset \}
+\end{align*}\]</div>
+<p>And the optimal solution set in feature space or Pareto optimal designs is the set:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{gather*}
+    \chi_{opt} = \{X_i, 1\leq i\leq N: Y_i \in PF_Y\}
+\end{gather*}\]</div>
+</li>
+</ul>
+</li>
+</ul>
+<p>After multiple iterations, as the recommened candidates converge towards the best-performing or optimal solution set, multiple data points would exhibit near optimal measurements.
+However, due to the presence of experimental errors in measuring <span class="math notranslate nohighlight">\(Y\)</span>, the aforementioned best performer set may not accurately optimize the unknown function <span class="math notranslate nohighlight">\(f(X)\)</span>. Furthermore, minor deviations in the design space may not have a significant impact on the outcome values. Consequently, we are interested in expanding the the optimal set to include data points within its close neighborhood.</p>
+<p>For single-objective optimization, the distance between the <span class="math notranslate nohighlight">\(i^{th}\)</span> outcome to the best performer <span class="math notranslate nohighlight">\(\underset{1\leq i' \leq N}{\max Y_{i'}\}-Y_i\)</span> can be used to rank the data points.
+For multi-objective optimization, the evaluation is subjective to user preference. Here are several common options to assign continuous score for each data point:</p>
+<ul class="simple">
+<li><p>Its distance to the pareto front <span class="math notranslate nohighlight">\(dist(Y_i, PF_Y)\)</span>. Various distrance metrics could be explored.</p></li>
+<li><p>Its distance to an <strong>utopian point</strong> <span class="math notranslate nohighlight">\(Y_U\)</span>, which is the desirable experimental outcome(s) specify by the user and doesn’t need to be feasible.</p></li>
+<li><p>A weighted average across multiple outcomes <span class="math notranslate nohighlight">\(\sum_{1\leq j \leq J} w^j * Y_i^j\)</span> (weights are normalized: <span class="math notranslate nohighlight">\(\sum_{1\leq j \leq J} w^j = 1, \forall w_j \geq 0\)</span>), where the weights <span class="math notranslate nohighlight">\(\{w^j\}_{1\leq j \leq J}\)</span> are proportional to the subjective importance of each outcome. In this retrospective analysis, the weights could be different from the weights or formula used in defining the optimization objective.</p></li>
+</ul>
+</section>
+<section id="the-overall-optimization-performance-metrics">
+<h3>The Overall Optimization Performance Metrics<a class="headerlink" href="#the-overall-optimization-performance-metrics" title="Link to this heading">#</a></h3>
+<p>To monitor the progress of APO workflow, we need to define a scalar evaluation metric to summarize performance over all the <span class="math notranslate nohighlight">\(N\)</span> data points.</p>
+<ul>
+<li><p>Single-objective optimization: The optimal value (either max or min, depends on target specification) of measured experimental outcome.</p></li>
+<li><p>Multi-objective optimization:</p>
+<ul>
+<li><p>Hypervolume: First define a <strong>reference point</strong> <span class="math notranslate nohighlight">\(r_Y\)</span> in the outcome space that serves as a baseline for evaluating the quality of measured outcomes, i.e. it defines the minimum acceptable value for each outcome. The reference point is often set as the lower bounds for each response. The hypervolume indicator metric <span class="math notranslate nohighlight">\(HV\)</span> is the volume of the space enclosed between the reference point <span class="math notranslate nohighlight">\(r_Y\)</span> and the Pareto front <span class="math notranslate nohighlight">\(PF_Y\)</span>. It access the quality of a pareto front solution set: the larger the better. The space can be computed as the union of hyperrectangles bounded by each point in <span class="math notranslate nohighlight">\(PF_Y\)</span> and <span class="math notranslate nohighlight">\(r_Y\)</span> as vertices:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+    HV(\{Y_i\}_{i=1}^N, r_Y) = HV(PF_Y, r_Y) = Volume(\underset{y \in PF_Y}{\cup} [y,r_Y])
+\end{equation*}\]</div>
+</li>
+<li><p>Maximum weighted outcome: The maximum weighted outcomes <span class="math notranslate nohighlight">\(\underset{1\leq i \leq N}{\text{max }} \sum_{1\leq j \leq J} w^j * Y_i^j\)</span></p></li>
+<li><p>Minimum distance to the utopian point: <span class="math notranslate nohighlight">\(\underset{1\leq i \leq N}{\text{min }} dist(Y_i,Y_U)\)</span></p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="surrogate-model-interpretation">
+<h2>Surrogate Model Interpretation<a class="headerlink" href="#surrogate-model-interpretation" title="Link to this heading">#</a></h2>
+<p>In this session, we assume the input feature <span class="math notranslate nohighlight">\(X\)</span> is a <span class="math notranslate nohighlight">\(K\)</span>-dimensional vector <span class="math notranslate nohighlight">\((X_1, X_2, ..., X_K)\)</span>, and all the model explanation techniques are applied to each surrogate model outcome individually.</p>
+<section id="shap-shapley-additive-explanations">
+<h3>SHAP (SHapley Additive exPlanations)<a class="headerlink" href="#shap-shapley-additive-explanations" title="Link to this heading">#</a></h3>
+<p>We use the Kernel SHAP algorithm to estimate the Shapley values, which is a feature attribution method that quantifies the contribution of each feature towards the surrogate model’s prediction for any input data, providing insights into variable importance and model explanation.</p>
+<p>The Shapley value is a concept from game theory that aims to fairly allocate the total gains among the players in a coalitional game. In the original definition of the Shapley value, the contribution of each player is the difference in gains when including or excluding this player, averaged over all possible permutations of players. Let <span class="math notranslate nohighlight">\(v(S)\)</span> be the gain of any player subset <span class="math notranslate nohighlight">\(S\)</span>, the Shapley value <span class="math notranslate nohighlight">\(\varphi_k(v)\)</span> for the <span class="math notranslate nohighlight">\(k^{th}\)</span> player is defined as:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\varphi_k(v) = \frac{1}{K!} \sum_{S \subseteq K \setminus {k}} |S|! \times (K-|S|-1)! \times \big(v(S \cup \{k\}) - v(S)\big)
+\end{equation*}\]</div>
+<p>It can be used to explain the outputs of a machine learning model, where the input features are considered as the players and model prediction is interpreted as the total gains achieved through the collaborative effort of these features.</p>
+<p>Calculating the exact Shapley values is not feasible due to the large number of <span class="math notranslate nohighlight">\(2^K\)</span> possible subsets and the need to train a new prediction model for each possible subset of features for obtaining <span class="math notranslate nohighlight">\(v(S)\)</span>.
+The Kernel SHAP algorithm implemented in <a class="reference external" href="https://github.com/shap/shap">SHAP</a> package provides a model-agnostic and computationally efficient approach to estimate Shapley values.</p>
+</section>
+<section id="partial-dependence-plot">
+<h3>Partial Dependence Plot<a class="headerlink" href="#partial-dependence-plot" title="Link to this heading">#</a></h3>
+<p>Partial Dependence Plot (PDP) is a powerful visualization tool used in the interpretation and explanation of complex machine learning models.
+It helps to visualize the relationship between a specific feature and the target variable while holding all other features constant.
+PDPs are particularly valuable when working with sophisticated models like deep neural networks, random forests, and gradient boosting machines, which are often considered “black boxes” due to their complexity.
+By isolating the effect of a single feature, PDPs can reveal whether the relationship with the target variable is linear, monotonic, or more intricate.
+They also have the ability to uncover interactions between features, providing deeper insights into the model’s behavior.
+One of the key advantages of PDP is their relative ease of computation and interpretation, making them an effective means of communicating model insights to both technical and non-technical audiences.
+This versatility has made PDPs an essential technique in the field of explainable AI (XAI), allowing stakeholders to gain trust in and understanding of complex predictive models across various domains.</p>
+</section>
+<section id="individual-conditional-expectation">
+<h3>Individual Conditional Expectation<a class="headerlink" href="#individual-conditional-expectation" title="Link to this heading">#</a></h3>
+<p>Individual Conditional Expectation (ICE) plots serve as a powerful complement to Partial Dependence Plots (PDPs), offering a granular, instance-level perspective that reveals how predictions change for individual data points as a feature value varies, thereby uncovering heterogeneous effects and non-linear relationships that might be obscured in the aggregate view provided by PDPs.
+While Partial Dependence Plots (PDPs) provide a global view of a feature’s impact on model predictions, ICE plots offer a more granular, instance-level perspective.
+These plots illustrate how the prediction for a specific data point changes as the value of a particular feature is varied, while keeping all other features constant.
+This approach allows us to observe the model’s behavior at a local level, providing crucial insights into how the model makes predictions for individual instances.
+ICE plots are particularly valuable when dealing with complex, non-linear relationships or when there are significant interactions between features that might be obscured in aggregate visualizations.
+By displaying a separate line for each instance in the dataset, ICE plots can reveal heterogeneity in feature effects that might be averaged out in PDPs.
+This makes them especially useful for identifying subgroups within the data that may be affected differently by changes in a feature.</p>
+</section>
+<section id="sensitivity-analysis">
+<h3>Sensitivity Analysis<a class="headerlink" href="#sensitivity-analysis" title="Link to this heading">#</a></h3>
+<p>Sensitivity analysis around the optimal solution, particularly after the suggestions have stabilized over several iterations, serves as a critical step in validating and understanding the robustness of the identified solution.
+As the optimization process converges, it’s essential to examine how small perturbations in the input variables affect the output, ensuring that the algorithm hasn’t fallen into a local optimum or prematurely converged.
+This analysis helps quantify the trade-off between exploration and exploitation, a key consideration in Bayesian optimization.
+By systematically varying the parameters around the suggested optimal point, we can gauge the stability of the solution and identify any regions of high sensitivity.
+This process not only provides insights into the model’s behavior but also helps in assessing the reliability of the optimization results.
+Moreover, sensitivity analysis can reveal potential areas for further refinement or highlight the need for additional iterations if the optimal point proves to be unstable.
+In cases where the analysis indicates a robust optimal solution, it strengthens confidence in the APO outcome and provides valuable information about the parameter space surrounding the optimum.
+This understanding is particularly crucial in complex, high-dimensional problems where visualizing the entire optimization landscape may not be feasible.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="augmented-predictive-information-for-candidates">
+<h2>Augmented Predictive Information for Candidates<a class="headerlink" href="#augmented-predictive-information-for-candidates" title="Link to this heading">#</a></h2>
+<section id="prediction-uncertainty">
+<h3>Prediction Uncertainty<a class="headerlink" href="#prediction-uncertainty" title="Link to this heading">#</a></h3>
+<p>Adding prediction intervals as an uncertainty metric to suggested candidates is crucial for enhancing both the performance and interpretability of the optimization process.
+These intervals provide a quantifiable measure of uncertainty around predicted values, enabling a balanced approach between exploration of uncertain areas and exploitation of promising regions.
+This balance is key to avoiding premature convergence to local optima and making more informed decisions about where to sample next.
+Furthermore, they greatly enhance the explainability of the process by visually and numerically representing the model’s confidence across the parameter space.
+This additional context allows for clearer communication of potential risks and rewards associated with different candidate points.
+By incorporating prediction intervals, APO becomes a more transparent and interpretable tool, which is crucial for its effective real-world applications where understanding the rationale behind suggestions is as important as the suggestions themselves.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Link to this heading">#</a></h2>
+<p>(TBA…)</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="1_APO_Workflow_and_CodeStructure.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Algorithmic Process Optimization (APO) Workflow</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="3_Data.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data Structure</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#post-hoc-data-analysis">Post-hoc Data Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-the-measured-experimental-conditions">Evaluating the Measured Experimental Conditions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-overall-optimization-performance-metrics">The Overall Optimization Performance Metrics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#surrogate-model-interpretation">Surrogate Model Interpretation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shap-shapley-additive-explanations">SHAP (SHapley Additive exPlanations)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#partial-dependence-plot">Partial Dependence Plot</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#individual-conditional-expectation">Individual Conditional Expectation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sensitivity-analysis">Sensitivity Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#augmented-predictive-information-for-candidates">Augmented Predictive Information for Candidates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prediction-uncertainty">Prediction Uncertainty</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/wiki/2_Analysis_and_Visualization.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

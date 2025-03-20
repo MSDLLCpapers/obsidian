@@ -1,0 +1,26 @@
+﻿objectives
+==========
+
+.. automodule:: obsidian.objectives
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module_shallow.rst
+   :recursive:
+
+
+   base
+
+
+   custom
+
+   scalarize
+
+   sequence
+

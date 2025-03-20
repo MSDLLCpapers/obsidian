@@ -1,0 +1,38 @@
+Task
+====
+
+.. currentmodule:: obsidian.parameters.discrete
+
+.. autoclass:: Task
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Task.__init__
+      ~Task.decode
+      ~Task.encode
+      ~Task.load_state
+      ~Task.open_search
+      ~Task.save_state
+      ~Task.set_search
+      ~Task.unit_demap
+      ~Task.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Task.max
+      ~Task.min
+      ~Task.nc
+   
+   

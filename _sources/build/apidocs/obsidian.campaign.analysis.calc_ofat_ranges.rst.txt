@@ -1,0 +1,6 @@
+calc\_ofat\_ranges
+==================
+
+.. currentmodule:: obsidian.campaign.analysis
+
+.. autofunction:: calc_ofat_ranges

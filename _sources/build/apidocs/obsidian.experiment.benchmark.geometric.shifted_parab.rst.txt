@@ -1,0 +1,6 @@
+shifted\_parab
+==============
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: shifted_parab
