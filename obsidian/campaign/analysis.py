@@ -20,7 +20,8 @@ def calc_ofat_ranges(optimizer: Optimizer,
     Args:
         optimizer (Optimizer): The optimizer object which contains a surrogate that has been fit to data
             and can be used to make predictions.
-        X_ref (pd.DataFrame): The reference data point from which the OFAT variations are calculated.
+        X_ref (pd.DataFrame): The reference data point from which the OFAT variations are calculated. If ``None``,
+            will use the best point from the optimizer training data.
         threshold (float): The response value threshold (minimum value) which would be considered passing for OFAT variations.
         PI_range (float, optional): The prediction interval coverage (fraction of density)
         steps (int, optional): The number of steps to use in the search for the OFAT boundaries.
@@ -39,7 +40,7 @@ def calc_ofat_ranges(optimizer: Optimizer,
 
     ofat_ranges = []
     response_name = optimizer.target[response_id].name
-
+    
     if X_ref is None:
         X_ref = optimizer.X_best_f
     if isinstance(X_ref, pd.Series):
@@ -58,11 +59,17 @@ def calc_ofat_ranges(optimizer: Optimizer,
             ub = df_pred[response_name + ' ub']
             pred_mu = df_pred[response_name + ' (pred)']
         
-            row = {'Name': p.name, 'PI Range': PI_range, 'Threshold': threshold, 'Response': response_name}
+            row = {'Name': p.name, 'PI Range': PI_range, 'Threshold': threshold,
+                   'Aim': optimizer.target[response_id].aim, 'Response': response_name}
+            
             labels = ['Mu', 'LB', 'UB']
 
             for label, y in zip(labels, [pred_mu, lb, ub]):
-                pass_ids = np.where(y > threshold)
+                
+                if optimizer.target[response_id].aim == 'max':
+                    pass_ids = np.where(y > threshold)
+                else:
+                    pass_ids = np.where(y < threshold)
                 pass_vals = X_sim[p.name].iloc[pass_ids]
 
                 row['Min_'+label] = p.encode(pass_vals.min())
@@ -93,7 +100,7 @@ def calc_ofat_ranges(optimizer: Optimizer,
                     cor_j.append([np.nan]*len(optimizer.X_space))
                     continue
             
-                Xj_pass_span = pi.unit_demap(np.linspace(ofat_ranges['Min_Mu'][pj.name],
+                Xj_pass_span = pj.unit_demap(np.linspace(ofat_ranges['Min_Mu'][pj.name],
                                                          ofat_ranges['Max_Mu'][pj.name], steps))
 
                 # Set up a simulation dataframe where these parameters will co-vary

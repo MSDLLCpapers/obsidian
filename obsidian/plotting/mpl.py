@@ -72,13 +72,14 @@ def plot_ofat_ranges(optimizer: Optimizer,
     alpha = ofat_ranges['PI Range'].mode().iloc[0]
     LCL = (1 - alpha) / 2
     UCL = 1 - LCL
-
+    comparator = ">" if row['Aim'] == 'max' else "<"
+    
     plt.xticks(rotation=90)
     plt.ylabel('Parameter Value (Scaled)')
     plt.ylim([-0.15, 1.15])
     plt.xlim([-1, len(ofat_ranges)])
     plt.title('Univariate Range (OFAT) Estimates from APO Model \n'
-              + f'Ranges Exceeding {row["Response"]} > {row["Threshold"]} \n'
+              + f'Ranges Satisfying {row["Response"]} ' + comparator + f' {row["Threshold"]} \n'
               + f'Confidence Range: {LCL*100:.1f} - {UCL*100:.1f}%',
               fontsize=10)
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
