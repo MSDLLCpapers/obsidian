@@ -111,7 +111,10 @@ def calc_ofat_ranges(optimizer: Optimizer,
                 # Predict the responses, and extract the target one
                 pred_mu_cor_all = optimizer.predict(X_sim_cor)
                 pred_mu_cor = pred_mu_cor_all.iloc[:, response_id]
-                cor_passing = np.where(pred_mu_cor > threshold)[0]
+                if optimizer.target[response_id].aim == 'max':
+                    cor_passing = np.where(pred_mu_cor > threshold)[0]
+                else:
+                    cor_passing = np.where(pred_mu_cor < threshold)[0]
 
                 # Want to calculate the number of steps along the diagonal which pass
                 # A value of 0 for cor_j means that the two parameters are independent

@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Untracked Changes]
+### Modified
+- Bugfix for correlation plot respecting minimized targets
+
 
 ## [0.8.6]
 ### Added
