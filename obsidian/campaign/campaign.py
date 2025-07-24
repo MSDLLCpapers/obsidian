@@ -12,6 +12,7 @@ import obsidian
 import pandas as pd
 import torch
 import warnings
+import traceback
 
 
 class Campaign():
@@ -306,12 +307,19 @@ class Campaign():
             try:
                 # In case X_space has changed, re-set the optimizer X_space
                 self.optimizer.set_X_space(self.X_space)
-                X, eval = self.optimizer.suggest(objective=self.objective,
-                                                 out_constraints=self.output_constraints,
-                                                 **optim_kwargs)
+                if "objective" not in optim_kwargs:
+                    optim_kwargs["objective"] = self.objective
+                X, eval = self.optimizer.suggest(
+                    out_constraints=self.output_constraints,
+                    **optim_kwargs,
+                )
                 return (X, eval)
-            except Exception:
+            except Exception as e:
                 warnings.warn('Optimization failed')
+                print("Error message:", e)
+                # print full traceback for debugging verbosity
+                if self.optimizer.verbose > 2:
+                    print("Stack trace:", traceback.format_exc())
                 return None
         else:
             warnings.warn('Optimizer is not fit to data. Suggesting initial experiments.', UserWarning)
