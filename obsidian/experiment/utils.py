@@ -135,7 +135,7 @@ def non_uniform_lhs_categorical(level_dict, n_samples, seed=None, scramble=True)
     probabilities = [level_dict[level]['freq'] for level in levels]
     if not np.isclose(sum(probabilities), 1.0):
         probabilities = np.array(probabilities) / np.sum(probabilities)
-    sampler = qmc.LatinHypercube(d=1, seed=20 + 3 * seed if seed is not None else None, scramble=scramble)
+    sampler = qmc.LatinHypercube(d=1, seed=20 + 3 * seed if seed is not None else None, scramble=scramble, strength=1, optimization='random-cd')
     uniform_samples = sampler.random(n=n_samples).flatten()
     cdf = np.cumsum(probabilities)
     results = []
@@ -148,7 +148,7 @@ def non_uniform_lhs_categorical(level_dict, n_samples, seed=None, scramble=True)
             values, weights = value
             weights = np.array(weights, dtype=float)
             weights /= weights.sum()
-            sub_sampler = qmc.LatinHypercube(d=1, seed=seed + i if seed is not None else None, scramble=scramble)
+            sub_sampler = qmc.LatinHypercube(d=1, seed=seed + i if seed is not None else None, scramble=scramble, strength=1, optimization='random-cd')
             sub_sample = sub_sampler.random(n=1).flatten()[0]
             sub_cdf = np.cumsum(weights)
             sub_index = np.searchsorted(sub_cdf, sub_sample)
@@ -479,7 +479,6 @@ def plot_mds(design, continuous_params_keys, subparam_mapping, hue=None, metric=
 
 
 def plot_umap(design, continuous_params_keys, subparam_mapping, hue=None, n_neighbors=15, min_dist=0.1, metric='euclidean'):
-    import umap
     pH_key = list(subparam_mapping.values())[0]
     continuous_keys = continuous_params_keys + [pH_key]
     X = design[continuous_keys].values
@@ -569,7 +568,7 @@ def find_best_design_parallel(n, n_samples, continuous_params, conditional_subpa
     continuous_keys = list(continuous_params.keys())
     categorical_keys = list(conditional_subparameters.keys())
 
-    import concurrent.futures
+    
     records = []
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         futures = [
@@ -589,7 +588,6 @@ def find_best_design_parallel(n, n_samples, continuous_params, conditional_subpa
         for future in concurrent.futures.as_completed(futures):
             records.append(future.result())
 
-    import numpy as np
     metric_array = np.array([r['metric_values'] for r in records])
     norm_metrics = []
     for idx, m in enumerate(metrics_to_optimize):
