@@ -9,8 +9,11 @@ from scipy.spatial.distance import pdist
 from sklearn.decomposition import PCA
 from sklearn.manifold import MDS
 import concurrent.futures
+import time
+from concurrent.futures import ThreadPoolExecutor
 import seaborn as sns
 import umap.umap_ as umap
+from tqdm import tqdm
 
 
 class AdvExpDesigner:
@@ -132,7 +135,7 @@ class AdvExpDesigner:
         existing_design,
         n,
         seed=None,
-        num_candidates=10,
+        n_trials=10,
         metrics_to_optimize=None,
         maximize_metrics=None,
         max_workers=None,
@@ -159,7 +162,7 @@ class AdvExpDesigner:
             subparam_mapping=self.subparam_mapping,
             metrics_to_optimize=metrics_to_optimize,
             maximize_metrics=maximize_metrics,
-            num_candidates=num_candidates,
+            n_trials=n_trials,
             seed_start=seed_start,
             max_workers=max_workers,
         )
@@ -714,8 +717,8 @@ def plot_umap(
     metric="euclidean",
 ):
 
-    pH_key = list(subparam_mapping.values())[0]
-    continuous_keys = continuous_params_keys + [pH_key]
+    categorical_keys = list(subparam_mapping.values())[0]
+    continuous_keys = continuous_params_keys + [categorical_keys]
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
 
@@ -726,9 +729,22 @@ def plot_umap(
         metric=metric,
         random_state=42,
         n_jobs=1,
+        verbose=True
     )
 
-    X_umap = reducer.fit_transform(X_std)
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(reducer.fit_transform, X_std)
+        if tqdm:
+            progress_bar = tqdm(total=100, desc='UMAP Progress')
+            while not future.done():
+                progress_bar.update(1)
+                time.sleep(0.1)
+            progress_bar.close()
+        else:
+            while not future.done():
+                time.sleep(0.1)
+
+        X_umap = future.result()
 
     plt.figure(figsize=(8, 6))
     if hue and hue in design.columns:
@@ -827,7 +843,6 @@ def find_best_design_parallel(
     seed_start=0,
     max_workers=None,
 ):
-
     if subparam_mapping is None:
         subparam_mapping = infer_subparam_mapping(conditional_subparameters)
     if metrics_to_optimize is None:
@@ -861,7 +876,7 @@ def find_best_design_parallel(
             )
             for i in range(n)
         ]
-        for future in concurrent.futures.as_completed(futures):
+        for future in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc='Optimizing Designs'):
             records.append(future.result())
 
     metric_array = np.array([r["metric_values"] for r in records])
@@ -869,11 +884,7 @@ def find_best_design_parallel(
     for idx, m in enumerate(metrics_to_optimize):
         vals = metric_array[:, idx]
         min_val, max_val = vals.min(), vals.max()
-        norm = (
-            (vals - min_val) / (max_val - min_val)
-            if max_val > min_val
-            else np.zeros_like(vals)
-        )
+        norm = (vals - min_val) / (max_val - min_val) if max_val > min_val else np.zeros_like(vals)
         if not maximize_metrics[idx]:
             norm = 1 - norm
         norm_metrics.append(norm)
@@ -913,6 +924,7 @@ def plot_design_quality_evolution(metrics_df):
         ax.set_title(f"{metric} vs Seed")
         ax.set_xlabel("Seed")
         ax.set_ylabel(metric)
+        ax.tick_params(axis='x', rotation=45)
         ax.grid(axis="y")
 
     plt.tight_layout()
@@ -1055,7 +1067,7 @@ def extend_design(
     subparam_mapping=None,
     metrics_to_optimize=None,
     maximize_metrics=None,
-    num_candidates=10,
+    n_trials=10,
     seed_start=1000,
     max_workers=None,
 ):
@@ -1092,7 +1104,7 @@ def extend_design(
                 categorical_keys,
                 metrics_to_optimize,
             )
-            for i in range(num_candidates)
+            for i in range(n_trials)
         ]
         for future in concurrent.futures.as_completed(futures):
             records.append(future.result())

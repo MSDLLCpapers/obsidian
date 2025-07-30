@@ -1,5 +1,5 @@
 """obsidian: Automated experiment design and black-box optimization"""
-__version__ = '0.8.6'
+__version__ = '0.8.6-test'
 
 # Import key objects
 from obsidian.campaign import Campaign
