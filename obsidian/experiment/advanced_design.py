@@ -366,14 +366,20 @@ def optimize_category_assignment_parallel(
         sample_cat = [entry["level"] for entry in sample_cat_entries]
         temp_cat_samples = cat_samples.copy()
         temp_cat_samples[category_key] = sample_cat
+
         corr_matrix = calculate_mixed_correlation_matrix(
             pd.DataFrame(temp_cat_samples),
             categorical_vars=[category_key] + other_cat_keys,
         )
-        max_corr = max(
-            abs(corr_matrix.loc[category_key, other_key])
-            for other_key in other_cat_keys
-        )
+
+        if other_cat_keys:
+            max_corr = max(
+                abs(corr_matrix.loc[category_key, other_key])
+                for other_key in other_cat_keys
+            )
+        else:
+            max_corr = 0.0  # No other categories to correlate with
+
         return max_corr, sample_cat
 
     best_category_assignment = None
