@@ -13,6 +13,8 @@ from botorch.optim.fit import fit_gpytorch_mll_torch, fit_gpytorch_mll_scipy
 from botorch.models.gpytorch import GPyTorchModel
 from botorch.models.ensemble import EnsembleModel
 from gpytorch.mlls import ExactMarginalLogLikelihood
+from gpytorch.priors import GammaPrior
+from botorch.optim.utils import sample_all_priors
 
 import torch
 import torch.nn as nn
@@ -20,6 +22,14 @@ import numpy as np
 import pandas as pd
 import warnings
 
+# Maximum number of attempts to fit the model 
+# BoTorch default is 5
+MAX_ATTEMPTS = 5  
+# Whether to use multiple restarts for optimization
+# BoTorch default is False
+MULTI_STARTS = False
+# Whether to sample all parameters from prior or not
+RANDOM_INITIAL_PARAMETERS = False 
 
 class SurrogateBoTorch(SurrogateModel):
     """
@@ -107,6 +117,10 @@ class SurrogateBoTorch(SurrogateModel):
                     self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps)
         else:
             self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(TORCH_DTYPE)
+        
+        # self.torch_model.likelihood.noise_covar.noise_prior = GammaPrior(1.1, 10.0)
+        if RANDOM_INITIAL_PARAMETERS:
+            sample_all_priors(self.torch_model)
 
         return
 
@@ -149,7 +163,8 @@ class SurrogateBoTorch(SurrogateModel):
                 optimizer = fit_gpytorch_mll_scipy
 
             try:
-                fit_gpytorch_mll(self.loss_fcn, optimizer=optimizer)
+                fit_gpytorch_mll(self.loss_fcn, optimizer=optimizer, max_attempts=MAX_ATTEMPTS, pick_best_of_all_attempts=MULTI_STARTS)
+                # fit_gpytorch_mll(self.loss_fcn, optimizer=optimizer)
             except Exception:
                 try:
                     fit_gpytorch_mll(self.loss_fcn, optimizer=fit_gpytorch_mll_torch)

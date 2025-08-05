@@ -48,15 +48,26 @@ class Campaign():
                  optimizer: Optimizer | None = None,
                  designer: ExpDesigner | None = None,
                  objective: Objective | None = None,
-                 seed: int | None = None):
+                 seed: int | None = None,
+                 unique_seeds: bool = False
+                 ):
         
         self.set_X_space(X_space)
         self.data = pd.DataFrame()
         
-        optimizer = BayesianOptimizer(X_space, seed=seed) if optimizer is None else optimizer
+        print("Primary seed", seed)
+        if unique_seeds:
+            if seed is not None:
+                self.primary_rng = torch.Generator().manual_seed(seed)
+            else:
+                self.primary_rng = torch.Generator()
+            optimizer_seed, designer_seed = map(int, torch.randint(0, 1_000_000, (2,), generator=self.primary_rng))
+        else:
+            optimizer_seed, designer_seed = seed, seed
+        optimizer = BayesianOptimizer(X_space, seed=optimizer_seed) if optimizer is None else optimizer
         self.set_optimizer(optimizer)
 
-        designer = ExpDesigner(X_space, seed=seed) if designer is None else designer
+        designer = ExpDesigner(X_space, seed=designer_seed) if designer is None else designer
         self.set_designer(designer)
         
         self.set_target(target)

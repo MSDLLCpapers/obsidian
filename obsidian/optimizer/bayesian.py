@@ -28,6 +28,8 @@ import pandas as pd
 import numpy as np
 import warnings
 
+UNIQUE_SEEDS = False
+UNIQUE_SEEDS_SAMPLER = False
 
 class BayesianOptimizer(Optimizer):
     """
@@ -80,6 +82,13 @@ class BayesianOptimizer(Optimizer):
                  verbose: int = 1):
        
         super().__init__(X_space=X_space, seed=seed, verbose=verbose)
+        print("  Optimizer seed", seed)
+
+        if UNIQUE_SEEDS:
+            if seed is not None:
+                self.optimizer_rng = torch.Generator().manual_seed(seed)
+            else:
+                self.optimizer_rng = torch.Generator()
 
         self.surrogate_type = []  # Shorthand name as str (as provided)
         self.surrogate_hps = []  # Hyperparameters
@@ -223,10 +232,15 @@ class BayesianOptimizer(Optimizer):
         self.X_best_f = self.X_train.iloc[self.X_best_f_idx, :].to_frame().T
 
         # Instantiate and fit the model(s)
+        if UNIQUE_SEEDS:
+            model_seed = torch.randint(0, 1_000_000, (1,), generator=self.optimizer_rng).item()
+        else:
+            model_seed = self.seed
+        print("    Model seed", model_seed)
         self.surrogate = []
         for i in range(self.n_response):
             self.surrogate.append(
-                SurrogateBoTorch(model_type=self.surrogate_type[i], seed=self.seed,
+                SurrogateBoTorch(model_type=self.surrogate_type[i], seed=model_seed,
                                  verbose=self.verbose >= 2, hps=self.surrogate_hps[i]))
             
             # Handle response NaN values on a response-by-response basis
@@ -719,18 +733,22 @@ class BayesianOptimizer(Optimizer):
                           + ' Recommend reducing the number of discrete parameters used.', OptimizerWarning)
         
         # Set up the sampler, for MC-based optimization of acquisition functions
+        if UNIQUE_SEEDS_SAMPLER:
+            sampler_seed = torch.randint(0, 1_000_000, (1,), generator=self.optimizer_rng).item()
+        else:
+            sampler_seed = self.seed
         if not isinstance(model, ModelListGP):
             samplers = []
             for m in model.models:
                 if isinstance(m, EnsembleModel):
-                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
+                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=sampler_seed)
                 else:
-                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
+                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=sampler_seed)
                 samplers.append(sampler_i)
             sampler = ListSampler(*samplers)
         else:
-            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
-            
+            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=sampler_seed)
+
         # Calculate search bounds for optimization
         X_bounds = torch.tensor(self.X_space.search_space.values, dtype=TORCH_DTYPE)
         
