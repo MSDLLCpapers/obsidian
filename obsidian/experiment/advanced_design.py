@@ -22,7 +22,7 @@ class AdvExpDesigner:
     """
 
     def __init__(
-        self, continuous_params, conditional_subparameters, subparam_mapping=None
+        self, continuous_params=None, conditional_subparameters=None, subparam_mapping=None, design_df = None
     ):
         """
         Initializes the AdvExpDesigner with experimental parameters and optional subparameter mappings.
@@ -30,17 +30,24 @@ class AdvExpDesigner:
         :param continuous_params: A dictionary containing the continuous parameters for the design.
         :param conditional_subparameters: A dictionary containing the conditional subparameters for the design.
         :param subparam_mapping: A dictionary for mapping, will be inferred if not provided.
+        :param design_df: A Pandas DataFrame of an existing experimental design, default None
         """
-        self.continuous_params = continuous_params
-        self.conditional_subparameters = conditional_subparameters
-        self.subparam_mapping = subparam_mapping or infer_subparam_mapping(
-            self.conditional_subparameters
-        )
-        self.continuous_keys = list(self.continuous_params.keys())
-        self.categorical_keys = list(self.conditional_subparameters.keys())
-        self.subparam_key = (
-            list(self.subparam_mapping.values())[0] if self.subparam_mapping else None
-        )
+        self.continuous_params = continuous_params if continuous_params else {}
+        self.conditional_subparameters = conditional_subparameters if conditional_subparameters else {}
+
+        if design_df is not None and not design_df.empty:
+            self.design = design_df
+            self.continuous_keys = list(self.continuous_params.keys()) if continuous_params else design_df.select_dtypes(include=['number']).columns.tolist()
+            self.categorical_keys = design_df.select_dtypes(exclude=['number']).columns.tolist()
+        else: 
+            self.continuous_keys = list(self.continuous_params.keys()) if continuous_params else []
+            self.categorical_keys = list(self.conditional_subparameters.keys()) if conditional_subparameters else []
+
+        self.subparam_mapping = subparam_mapping or infer_subparam_mapping(self.conditional_subparameters)
+        self.subparam_key = (list(self.subparam_mapping.values())[0] if self.subparam_mapping else None)
+
+    #consider adding a constructor function with DataFrame of design preloaded
+    #include subparameter mapping schema, buffer_type -> pH, catalyst -> loading_range
 
     def generate_design(self, seed, n_samples, optimize_categories=True):
         """
@@ -426,13 +433,15 @@ def assign_conditional_subparameter(
 
 def infer_subparam_mapping(conditional_subparameters):
     mapping = {}
-    for cat_param, levels in conditional_subparameters.items():
-        subparam_candidates = set()
-        for level_info in levels.values():
-            subparams = [k for k in level_info if k != "freq"]
-            subparam_candidates.update(subparams)
-        if len(subparam_candidates) == 1:
-            mapping[cat_param] = subparam_candidates.pop()
+    if len(conditional_subparameters) == 0: return mapping
+    else:
+        for cat_param, levels in conditional_subparameters.items():
+            subparam_candidates = set()
+            for level_info in levels.values():
+                subparams = [k for k in level_info if k != "freq"]
+                subparam_candidates.update(subparams)
+            if len(subparam_candidates) == 1:
+                mapping[cat_param] = subparam_candidates.pop()
     return mapping
 
 
@@ -914,15 +923,9 @@ def find_best_design_parallel(
 def plot_design_quality_evolution(metrics_df):
     metrics_df = metrics_df.sort_values("seed")
 
+
     fig, axes = plt.subplots(2, 3, figsize=(15, 10))
-    metrics = [
-        "D-optimality",
-        "A-optimality",
-        "Pairwise Distance CV",
-        "Max Continuous Corr",
-        "Max Categorical Corr",
-        "score",
-    ]
+    metrics = metrics_df.columns
 
     for i, metric in enumerate(metrics):
         ax = axes[i // 3, i % 3]
