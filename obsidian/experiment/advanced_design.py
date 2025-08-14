@@ -22,7 +22,7 @@ class AdvExpDesigner:
     """
 
     def __init__(
-        self, continuous_params=None, conditional_subparameters=None, subparam_mapping=None, design_df = None
+        self, continuous_params=None, conditional_subparameters=None, subparam_mapping=None, design_df=None
     ):
         """
         Initializes the AdvExpDesigner with experimental parameters and optional subparameter mappings.
@@ -37,17 +37,18 @@ class AdvExpDesigner:
 
         if design_df is not None and not design_df.empty:
             self.design = design_df
-            self.continuous_keys = list(self.continuous_params.keys()) if continuous_params else design_df.select_dtypes(include=['number']).columns.tolist()
             self.categorical_keys = design_df.select_dtypes(exclude=['number']).columns.tolist()
-        else: 
+            if continuous_params:
+                self.continuous_keys = list(self.continuous_params.keys())
+            else:
+                self.continuous_keys = design_df.select_dtypes(include=['number']).columns.tolist()
+        else:
             self.continuous_keys = list(self.continuous_params.keys()) if continuous_params else []
             self.categorical_keys = list(self.conditional_subparameters.keys()) if conditional_subparameters else []
 
         self.subparam_mapping = subparam_mapping or infer_subparam_mapping(self.conditional_subparameters)
         self.subparam_key = (list(self.subparam_mapping.values())[0] if self.subparam_mapping else None)
 
-    #consider adding a constructor function with DataFrame of design preloaded
-    #include subparameter mapping schema, buffer_type -> pH, catalyst -> loading_range
 
     def generate_design(self, seed, n_samples, optimize_categories=True):
         """
@@ -433,7 +434,8 @@ def assign_conditional_subparameter(
 
 def infer_subparam_mapping(conditional_subparameters):
     mapping = {}
-    if len(conditional_subparameters) == 0: return mapping
+    if len(conditional_subparameters) == 0:
+        return mapping
     else:
         for cat_param, levels in conditional_subparameters.items():
             subparam_candidates = set()
@@ -922,7 +924,6 @@ def find_best_design_parallel(
 
 def plot_design_quality_evolution(metrics_df):
     metrics_df = metrics_df.sort_values("seed")
-
 
     fig, axes = plt.subplots(2, 3, figsize=(15, 10))
     metrics = metrics_df.columns

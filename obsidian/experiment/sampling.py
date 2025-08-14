@@ -1,10 +1,11 @@
-import numpy as np 
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 def generate_weights(df, n, bias, plot_weights=False, enforce=False):
     """
-    Generates a Pandas series of weights for each datum given a particular bias. 
+    Generates a Pandas series of weights for each datum given a particular bias.
 
     df: DataFrame of candidates
     n:  size of the design to pick
@@ -15,7 +16,7 @@ def generate_weights(df, n, bias, plot_weights=False, enforce=False):
     plot_weights: boolean, whether to plot distribution of weights, default False
     enforce: boolean, whether to force biases, default False
 
-    Returns: Pandas Series of normalized row weights. 
+    Returns: Pandas Series of normalized row weights.
     """
     weights = pd.Series(1.0, index=df.index)
     for col, params in bias.items():
@@ -29,7 +30,7 @@ def generate_weights(df, n, bias, plot_weights=False, enforce=False):
     if enforce:
         if (weights > 0).sum() < n:
             raise ValueError(f"Not enough rows ({(weights > 0).sum()}) satisfy all enforce conditions for n={n}.")
-        
+       
     weights = weights / weights.sum()
 
     print("Weights min:", weights.min(), "max:", weights.max())
@@ -43,10 +44,11 @@ def generate_weights(df, n, bias, plot_weights=False, enforce=False):
         plt.show()
 
     return weights
-    
+
+
 def sample_with_bias(df, n, replace=False, seed=None, bias=None, enforce=False, plot_weights=False):
     """
-    Returns a random Pandas DataFrame sample of data points from a population with or without bias. 
+    Returns a random Pandas DataFrame sample of data points from a population with or without bias.
 
     df: DataFrame of candidates
     n:  int, size of the design to pick
@@ -58,13 +60,14 @@ def sample_with_bias(df, n, replace=False, seed=None, bias=None, enforce=False, 
     enforce: boolean, whether to force biases, default False
     plot_weights: boolean, whether to plot distribution of weights, default False
 
-    Returns: Pandas DataFrame of sampled data points. 
+    Returns: Pandas DataFrame of sampled data points.
     """
     if bias:
         w = generate_weights(df, n, bias, plot_weights, enforce)
         return df.sample(n=n, replace=replace, random_state=seed, weights=w)
     else:
         return df.sample(n=n, replace=replace, random_state=seed)
+
 
 def _space_filling_score(Z, metric="hybrid"):
     """
@@ -87,6 +90,7 @@ def _space_filling_score(Z, metric="hybrid"):
         return 0.6 * d_min + 0.4 * d_mnn
     raise ValueError("Unknown metric")
 
+
 def best_sample(df, k, feature_cols, *, n_trials=500, bias=None, plot_weights=False, enforce=False,
                 random_state=None, standardize=True, dropna=True, metric="hybrid"):
     """
@@ -103,7 +107,7 @@ def best_sample(df, k, feature_cols, *, n_trials=500, bias=None, plot_weights=Fa
     dfv = df.loc[idx]
     Xfull = base.loc[idx].to_numpy(dtype=float)
 
-    if bias: 
+    if bias:
         weights = generate_weights(df, k, bias, plot_weights, enforce)
     else:
         weights = None
