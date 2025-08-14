@@ -49,7 +49,6 @@ class AdvExpDesigner:
         self.subparam_mapping = subparam_mapping or infer_subparam_mapping(self.conditional_subparameters)
         self.subparam_key = (list(self.subparam_mapping.values())[0] if self.subparam_mapping else None)
 
-
     def generate_design(self, seed, n_samples, optimize_categories=True):
         """
         Generates a design by sampling from the given parameter space.
