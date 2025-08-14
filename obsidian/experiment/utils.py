@@ -2,13 +2,15 @@
 from obsidian.exceptions import UnsupportedError
 
 import numpy as np
+from numpy.random import Generator
 from itertools import product
+from types import ModuleType
 
 
 def factorial_DOE(d: int,
                   n_CP: int = 3,
                   shuffle: bool = True,
-                  seed: int | None = None,
+                  seed: Generator | int | None = None,
                   full: bool = False):
     """
     Creates a statistically designed factorial experiment (DOE).
@@ -22,7 +24,7 @@ def factorial_DOE(d: int,
             uncertainty and curvature. Default is ``3``.
         shuffle (bool, optional): Whether or not to shuffle the design or leave them in the default run
             order. Default is ``True``.
-        seed (int, optional): Randomization seed. Default is ``None``.
+        seed (Generator | int | None, optional): Randomization seed or generator for numpy. Default is ``None``.
         full (bool, optional): Whether or not to run the full DOE. Default is ``False``, which
             will lead to an efficient Res4+ design.
 
@@ -72,10 +74,17 @@ def factorial_DOE(d: int,
     
     # Add centerpoints then shuffle
     X = np.vstack((X, CP))
-    if seed is not None:
-        np.random.seed(seed)
+    if isinstance(seed, Generator):
+        # if it is actually a generator
+        rng: Generator | ModuleType = seed
+    else:
+        # with or without a seed, we use np.random for now
+        # in the future, we should instantiate a new random generator from entropy
+        rng = np.random
+        if seed is not None:
+            np.random.seed(seed)
     if shuffle:
-        np.random.shuffle(X)
+        rng.shuffle(X)
     # Rescale from (-1,1) to (0,0.999999)
     X = (X+1)/2 - 1e-6
     

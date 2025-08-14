@@ -1,11 +1,13 @@
 """obsidian: Automated experiment design and black-box optimization"""
-__version__ = '0.8.6'
+
+__version__ = "0.8.6"
 
 # Import key objects
 from obsidian.campaign import Campaign
 from obsidian.optimizer import BayesianOptimizer
 from obsidian.surrogates import SurrogateBoTorch
 from obsidian.parameters import ParamSpace, Target
+from obsidian.rng import get_global_rng, reset_global_rng, USE_OLD_RNG_CONTROL, is_global_rng_initialized
 
 # Ensure that other subpackages are imported properly for documentation
 from obsidian.objectives import Objective

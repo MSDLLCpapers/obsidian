@@ -5,6 +5,7 @@ Simulation functions used for an optimization hackathon (OptiThon) in March 2024
 import numpy as np
 import pandas as pd
 from scipy.special import gamma
+from numpy.random import Generator
 
 
 def Vm_func(X):
@@ -61,7 +62,7 @@ def response_2(X):
     return E_curve
 
 
-def OT_simulator(X, addNoise=False):
+def OT_simulator(X, addNoise=False, generator=None):
     if isinstance(X, pd.DataFrame):
         X = X.to_numpy()
     if isinstance(X, np.ndarray) and X.ndim == 1:
@@ -88,7 +89,10 @@ def OT_simulator(X, addNoise=False):
     # Note: The overall problem is slightly heteroskedastic
     if addNoise:
         sd = 0.01+0.02*X6
-        rel_error = np.random.normal(loc=1, scale=sd, size=y.shape[0])
+        if isinstance(generator, Generator):
+            rel_error = generator.normal(loc=1, scale=sd, size=y.shape[0])
+        else:
+            rel_error = np.random.normal(loc=1, scale=sd, size=y.shape[0])
         y *= rel_error
     
     return y

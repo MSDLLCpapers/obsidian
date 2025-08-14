@@ -1,5 +1,6 @@
 """Simulate virtual experimental data"""
 
+from types import ModuleType
 from obsidian.parameters import ParamSpace
 
 from typing import Callable
@@ -7,6 +8,8 @@ import pandas as pd
 import numpy as np
 import warnings
 
+from numpy.random import Generator
+import obsidian
 
 class Simulator:
     """
@@ -34,6 +37,7 @@ class Simulator:
                  response_function: Callable,
                  name: str | list[str] = 'Response',
                  eps: float | list[float] = 0.0,
+                 rng: Generator | int | None = None,
                  **kwargs):
         
         if not callable(response_function):
@@ -45,14 +49,28 @@ class Simulator:
         self.response_function = response_function
         self.name = name
         self.eps = eps if isinstance(eps, list) else [eps]
+        if isinstance(rng, Generator):
+            # use provided numpy generator
+            self.rng: Generator | ModuleType = rng
+        else:
+            self._seed = rng
+            if obsidian.USE_OLD_RNG_CONTROL:
+                # no random state control here
+                self.rng = np.random
+            else:
+                # use new global RNG control
+                # note that if the global RNG is already initialized
+                # and the seed (rng) is different, a ValueError will be raised
+                global_rng = obsidian.get_global_rng(rng)
+                self.rng = global_rng.np_rng
         self.kwargs = kwargs
-    
+
     def __repr__(self):
         """String representation of object"""
         return f" obsidian Simulator(response_function={self.response_function.__name__}, eps={self.eps})"
 
     def simulate(self,
-                 X_prop: pd.DataFrame) -> np.ndarray:
+                 X_prop: pd.DataFrame) -> pd.DataFrame:
         """
         Generates a response to a set of experiments.
 
@@ -76,9 +94,10 @@ class Simulator:
             self.eps *= y_sim.ndim
         if y_sim.ndim == 1:
             y_sim = y_sim.reshape(-1, 1)
-        for i in range(y_sim.shape[1]):
-            rel_error = np.random.normal(loc=1, scale=self.eps[i], size=y_sim.shape[0])
-            y_sim[:, i] *= rel_error
+
+        # vectorized operation
+        rel_error = 1 + self.eps * self.rng.normal(size=y_sim.size).reshape(y_sim.shape)
+        y_sim *= rel_error
 
         # Handle naming conventions
         y_dims = y_sim.shape[1]

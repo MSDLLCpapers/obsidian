@@ -7,6 +7,7 @@ from obsidian.objectives import Objective, Objective_Sequence, obj_class_dict
 from obsidian.constraints import Output_Constraint, const_class_dict
 from obsidian.exceptions import IncompatibleObjectiveError
 from obsidian.utils import tensordict_to_dict
+from obsidian.rng import GlobalRNG
 import obsidian
 
 import pandas as pd
@@ -49,25 +50,28 @@ class Campaign():
                  designer: ExpDesigner | None = None,
                  objective: Objective | None = None,
                  seed: int | None = None,
-                 unique_seeds: bool = False
+                 global_rng: GlobalRNG | None = None
                  ):
         
         self.set_X_space(X_space)
         self.data = pd.DataFrame()
-        
-        print("Primary seed", seed)
-        if unique_seeds:
-            if seed is not None:
-                self.primary_rng = torch.Generator().manual_seed(seed)
-            else:
-                self.primary_rng = torch.Generator()
-            optimizer_seed, designer_seed = map(int, torch.randint(0, 1_000_000, (2,), generator=self.primary_rng))
+        if obsidian.USE_OLD_RNG_CONTROL:
+            optimizer_seed = seed
+            designer_seed = seed
+            torch_rng = None
         else:
-            optimizer_seed, designer_seed = seed, seed
+            if not global_rng:
+                global_rng = obsidian.get_global_rng(seed)
+            # optimizer_seed = global_rng.np_rng
+            # designer_seed = global_rng.np_rng
+            optimizer_seed = seed
+            designer_seed = seed
+            torch_rng = global_rng.torch_rng
+            self.global_rng = global_rng
         optimizer = BayesianOptimizer(X_space, seed=optimizer_seed) if optimizer is None else optimizer
         self.set_optimizer(optimizer)
 
-        designer = ExpDesigner(X_space, seed=designer_seed) if designer is None else designer
+        designer = ExpDesigner(X_space, seed=designer_seed, torch_rng=torch_rng) if designer is None else designer
         self.set_designer(designer)
         
         self.set_target(target)
@@ -295,8 +299,8 @@ class Campaign():
         Maps ExpDesigner.initialize method
         """
         return self.designer.initialize(**design_kwargs)
-    
-    def fit(self):
+
+    def fit(self, fit_options: dict = {}):
         """
         Maps Optimizer.fit method
 
@@ -307,7 +311,7 @@ class Campaign():
         if self.m_exp <= 0:
             raise ValueError('Must register data before fitting')
 
-        self.optimizer.fit(self.data, target=self.target)
+        self.optimizer.fit(self.data, target=self.target, fit_options=fit_options)
 
     def suggest(self, **optim_kwargs):
         """

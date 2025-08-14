@@ -1,5 +1,6 @@
 """Optimizer class definition"""
 
+import obsidian
 from obsidian.parameters import ParamSpace, Target, Param_Observational
 from obsidian.exceptions import UnsupportedError
 
@@ -12,6 +13,8 @@ import numpy as np
 import torch
 import random
 from torch import Tensor
+
+from obsidian.rng import GlobalRNG, dummy_decorator
 
 
 class Optimizer(ABC):
@@ -32,6 +35,7 @@ class Optimizer(ABC):
     def __init__(self,
                  X_space: ParamSpace,
                  seed: int | None = None,
+                 global_rng: GlobalRNG | None = None,
                  verbose: int = 1):
         
         # Verbose selection
@@ -42,11 +46,26 @@ class Optimizer(ABC):
 
         # Handle randomization seed, considering all 3 sources (torch, random, numpy)
         self.seed = seed
-        if self.seed is not None:
-            torch.manual_seed(self.seed)
-            torch.use_deterministic_algorithms(True)
-            np.random.seed(self.seed)
-            random.seed(self.seed)
+        # TODO: this part is only for backward compatibility, we should drop it eventually
+        if obsidian.USE_OLD_RNG_CONTROL:
+            if self.seed is not None:
+                torch.manual_seed(self.seed)
+                torch.use_deterministic_algorithms(True)
+                np.random.seed(self.seed)
+                random.seed(self.seed)
+            self.rng_decorator = dummy_decorator
+            self.fit = self.rng_decorator(self.fit)
+            self.torch_rng = None
+        else:
+            if not global_rng:
+                self.global_rng = obsidian.get_global_rng(seed)
+            elif not isinstance(global_rng, GlobalRNG):
+                raise TypeError('global_rng must be an instance of GlobalRNG')
+            else:
+                self.global_rng = global_rng
+            self.torch_rng = self.global_rng.torch_rng
+            self.rng_decorator = self.global_rng.tmp_seed_override
+            self.fit = self.rng_decorator(self.fit)
 
         # Store the parameter space which contains useful reference properties
         if not isinstance(X_space, ParamSpace):
@@ -217,9 +236,7 @@ class Optimizer(ABC):
         return min_distance
 
     @abstractmethod
-    def fit(self,
-            Z: pd.DataFrame,
-            target: Target | list[Target]):
+    def fit(self, Z: pd.DataFrame, target: Target | list[Target], fit_options: dict):
         """Fit the optimizer's surrogate models to data"""
         pass  # pragma: no cover
 
