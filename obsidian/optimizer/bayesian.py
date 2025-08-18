@@ -857,6 +857,7 @@ class BayesianOptimizer(Optimizer):
                 if fixed_features_list:
                     # If there are any discrete values, we must used the mixed integer optimization
                     optim_func = optimize_acqf_mixed
+                    optim_kwargs["fixed_features_list"] = fixed_features_list
                 else:
                     optim_func = optimize_acqf
                     optim_kwargs["sequential"] = optim_sequential
@@ -864,7 +865,6 @@ class BayesianOptimizer(Optimizer):
                 candidates, _ = optim_func(
                     acq_function=aq_func,
                     bounds=X_bounds,
-                    fixed_features_list=fixed_features_list,
                     q=m_batch,  
                     num_restarts=optim_restarts,
                     raw_samples=optim_samples,
