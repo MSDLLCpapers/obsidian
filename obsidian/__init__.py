@@ -1,5 +1,5 @@
 """obsidian: Automated experiment design and black-box optimization"""
-__version__ = '0.8.6'
+__version__ = '0.8.6-test'
 
 # Import key objects
 from obsidian.campaign import Campaign
@@ -10,6 +10,7 @@ from obsidian.parameters import ParamSpace, Target
 # Ensure that other subpackages are imported properly for documentation
 from obsidian.objectives import Objective
 from obsidian.experiment import ExpDesigner
+from obsidian.experiment import AdvExpDesigner
 import obsidian.constraints as constraints
 import obsidian.exceptions as exceptions
 import obsidian.acquisition as acquisition

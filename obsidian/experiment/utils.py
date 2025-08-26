@@ -5,11 +5,14 @@ import numpy as np
 from itertools import product
 
 
-def factorial_DOE(d: int,
-                  n_CP: int = 3,
-                  shuffle: bool = True,
-                  seed: int | None = None,
-                  full: bool = False):
+def factorial_DOE(
+        d: int,
+        n_CP: int = 3,
+        shuffle: bool = True,
+        seed: int | None = None,
+        full: bool = False
+):
+        
     """
     Creates a statistically designed factorial experiment (DOE).
     Specifically for 2-level designs only.
@@ -32,6 +35,7 @@ def factorial_DOE(d: int,
     Raises:
         UnsupportedError: If the number of dimensions exceeds 12
     """
+
     if d > 12:
         raise UnsupportedError('The number of dimensions must be 12 or fewer for DOE (currently)')
     
