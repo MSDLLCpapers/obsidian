@@ -147,7 +147,7 @@ def MDS_plot(campaign: Campaign) -> Figure:
     except ImportError:
         raise ImportError(
             "The `sklearn` package (>1.0) is required for the MDS plot. \
-            Please install it using `pip install scikit-learn`"
+                          Please install it using `pip install scikit-learn`"
         )
 
     mds = MDS(n_components=2)

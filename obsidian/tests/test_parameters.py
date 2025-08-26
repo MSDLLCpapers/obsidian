@@ -255,7 +255,16 @@ def test_target_validation():
     with pytest.warns(UserWarning):
         transform_func = Logit_Scaler(range_response=100)
         transform_func.forward(test_neg_response, fit=False)
-        
-        
+
+    # Transform constant target values
+    test_constant_response = torch.zeros(10) + 9.0
+    with pytest.warns(UserWarning):
+        Target('Response1', f_transform='Standard').transform_f(test_constant_response, fit=True)
+
+    # Corner case for Logit_Scaler
+    transform_func = Logit_Scaler(standardize=False)
+    transform_func.forward(test_response, fit=True)
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-m', 'fast'])
