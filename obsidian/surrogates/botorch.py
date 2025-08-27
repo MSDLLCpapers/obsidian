@@ -169,7 +169,7 @@ class SurrogateBoTorch(SurrogateModel):
         
         if isinstance(self.torch_model, GPyTorchModel):
             self.loss_fcn = ExactMarginalLogLikelihood(self.torch_model.likelihood, self.torch_model)
-            if optimizer:
+            if not optimizer:
                 if self.model_type == 'DKL':
                     optimizer = fit_gpytorch_mll_torch
                 else:
