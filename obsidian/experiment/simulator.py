@@ -1,6 +1,6 @@
 """Simulate virtual experimental data"""
 
-from types import ModuleType
+from types import ModuleType, MethodType
 from obsidian.parameters import ParamSpace
 
 from typing import Callable
@@ -38,6 +38,7 @@ class Simulator:
                  name: str | list[str] = 'Response',
                  eps: float | list[float] = 0.0,
                  rng: Generator | int | None = None,
+                 error_function: Callable | None = None,
                  **kwargs):
         
         if not callable(response_function):
@@ -63,6 +64,10 @@ class Simulator:
                 # and the seed (rng) is different, a ValueError will be raised
                 global_rng = obsidian.get_global_rng(rng)
                 self.rng = global_rng.np_rng
+        if not error_function:
+            self.error_function = self._default_gaussian_error
+        else:
+            self.error_function = MethodType(error_function, self)
         self.kwargs = kwargs
 
     def __repr__(self):
@@ -88,16 +93,14 @@ class Simulator:
         
         y_sim = self.response_function(X)
         
-        # Apply error
         # Expand length of eps to match number of outputs
         if len(self.eps) == 1:
             self.eps *= y_sim.ndim
         if y_sim.ndim == 1:
             y_sim = y_sim.reshape(-1, 1)
 
-        # vectorized operation
-        rel_error = 1 + self.eps * self.rng.normal(size=y_sim.size).reshape(y_sim.shape)
-        y_sim *= rel_error
+        # Apply error
+        y_sim = self.error_function(X, y_sim)
 
         # Handle naming conventions
         y_dims = y_sim.shape[1]
@@ -114,3 +117,7 @@ class Simulator:
         df_sim = pd.DataFrame(y_sim, columns=self.name)
 
         return df_sim
+
+    def _default_gaussian_error(self, X, y_sim: np.ndarray) -> np.ndarray:
+        rel_error = 1 + self.eps * self.rng.normal(size=y_sim.size).reshape(y_sim.shape)
+        return y_sim * rel_error
