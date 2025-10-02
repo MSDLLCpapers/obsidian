@@ -20,7 +20,7 @@ def setup_predict(app, app_tabs):
         dbc.Card([
             dbc.CardHeader('Parameter Space'),
             dbc.CardBody([
-                html.Div(id='div-xspace_df', children=[], style={'overflow-x': 'scroll'})
+                html.Div(id='div-xspace_df', children=[], className="overflow-x-scroll")
                 ]),
             ]),
         ],
@@ -34,7 +34,7 @@ def setup_predict(app, app_tabs):
         dbc.Card([
             dbc.CardHeader('Example Prediction Input'),
             dbc.CardBody([
-                html.Div(id='div-template', children=[], style={'overflow-x': 'scroll'})
+                html.Div(id='div-template', children=[], className="overflow-x-scroll")
                 ]),
             ]),
             ],
@@ -47,7 +47,7 @@ def setup_predict(app, app_tabs):
     template_downloader = html.Div(children=[dbc.Button('Download Template Candidates', id='button-download_template',
                                                         className='me-2', color='primary'),
                                              dcc.Download(id='downloader-template')],
-                                   style={'textAlign': 'center', 'margin-top': '15px'})
+                                   style={'textAlign': 'center'}, className="mt-3")
 
     default_data = pd.DataFrame()
     
@@ -78,15 +78,17 @@ def setup_predict(app, app_tabs):
                          parameters and response variable(s), with one row per observation. Download\
                          template data (left) for example.',
                          target='info-data_1', placement='top', style={'text-transform': 'none'}),
-             dbc.FormText('Example Data', color='info', style={'font-size': '1em', 'font-style': 'italic'},
+             dbc.FormText('Example Data', 
+                          color="info",
+                          className="obsd-form-text obsd-text-xl fst-italic",
                           id='table-X1-footer')
              ],
              style={'textAlign': 'center'}))
          ]))
 
     row1 = dbc.Row([dbc.Col([xspace_df_div], width=4),
-                    dbc.Col([template_div, template_downloader], width=8)], style={'margin-top': '15px'})
-    row2 = dbc.Row([uploader_1, preview_1], style={'margin-top': '15px'})
+                    dbc.Col([template_div, template_downloader], width=8)], className="mt-3")
+    row2 = dbc.Row([uploader_1, preview_1], className="mt-3")
     
     # Add all of these elements to the app
     elements = [html.Br(), store_template, row1, row2, storage_X1]

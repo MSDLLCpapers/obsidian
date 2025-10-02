@@ -58,7 +58,7 @@ def setup_optimize(app, app_tabs):
         dbc.Button('Download Suggested Candidates', id='button-download_candidates',
                    className='me-2', color='primary'),
         dcc.Download(id='downloader-candidates')],
-                                     style={'textAlign': 'center', 'margin-top': '15px'})
+                                     style={'textAlign': 'center'}, className="mt-3")
     
     # Add all of these elements to the app
     columns = dbc.Row([dbc.Col(fit_div, width=6), dbc.Col([predict_div, candidates_downloader], width=6)])

@@ -42,7 +42,9 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
                          parameters and response variable(s), with one row per observation. Download\
                          template data (left) for example.',
                          target='info-data', placement='top', style={'text-transform': 'none'}),
-             dbc.FormText('Example Data', color='info', style={'font-size': '1em', 'font-style': 'italic'},
+             dbc.FormText('Example Data',
+                          color="info",
+                          className="obsd-form-text obsd-text-xl fst-italic",
                           id='table-X0-footer')
              ],
              style={'textAlign': 'center'}))
@@ -50,7 +52,7 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
     
     preview_uploader = dbc.Row([dbc.Col([uploader, template_downloader], width=4),
                                 dbc.Col(preview, width=8)],
-                               style={'margin-top': '15px'})
+                               className="mt-3")
     
     # Data store
     storage_X0 = dcc.Store(id='store-X0', data=default_data.to_dict())
@@ -180,7 +182,7 @@ def setup_data_callbacks(app):
                 ],
                 color='primary', outline=True), width=2))
  
-        return dbc.Container(dbc.Row(cols, style={'margin-top': '15px'},
+        return dbc.Container(dbc.Row(cols, className="mt-3",
                                      justify='center'),
                              fluid=True)
     
@@ -298,7 +300,7 @@ def setup_data_callbacks(app):
             
             preview = []
             for cat in cat_list:
-                preview += [html.Div(cat, style={'font-size': '0.8em'})]
+                preview += [html.Div(cat, className="obsd-form-text obsd-text-lg")]
             return preview
 
     @app.callback(

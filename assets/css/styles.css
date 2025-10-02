@@ -1,0 +1,38 @@
+:root {
+    /* global defaults for Obsidian typography */
+    --obsd-text-color: var(--bs-primary);
+    --obsd-form-font-size: 0.7em;
+    --obsd-form-lg-font-size: 0.8em;
+    --obsd-form-xl-font-size: 1em;
+    --obsd-info-color: var(--bs-info, #0dcaf0);
+}
+
+/* Base Class */
+.obsd-form-text {
+    font-size: var(--obsd-form-font-size);
+    color: var(--obsd-text-color);
+}
+
+/* Utility Classes */
+.obsd-text-lg {
+    font-size: var(--obsd-form-lg-font-size);
+}
+
+.obsd-text-xl {
+    font-size: var(--obsd-form-xl-font-size);
+}
+
+.obsd-text-normal-style {
+    font-style: var(--obsd-help-font-style);
+    /* 'normal' */
+}
+
+.obsd-input-row {
+    margin-bottom: 1rem;
+}
+
+.obsd-form-label {
+    font-weight: bold;
+    color: var(--obsd-text-color);
+    font-size: var(--obsd-form-lg-font-size);
+}

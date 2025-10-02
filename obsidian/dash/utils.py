@@ -28,57 +28,75 @@ def add_tab(target, elements, id, label):
     target.children.append(tab)
     return target.children
 
-
-def make_input(property_name, help_text, default_value=None, id=None, kwargs={}, required=True):
+def make_input(
+    property_name, help_text, default_value=None, id=None, kwargs={}, required=True
+):
     components = [
-        dbc.Label(property_name, style={'font-weight': 'bold', 'font-size': '0.8em'}),
-        dbc.Input(value=default_value, id=f'input-[{property_name}]' if id is None else id,
-                  debounce=True, required=required, **kwargs),
-        html.Div(f'{help_text}', style={'font-size': '0.7em'}),
+        dbc.Label(property_name, className="obsd-form-label"),
+        dbc.Input(
+            value=default_value,
+            id=f"input-[{property_name}]" if id is None else id,
+            debounce=True,
+            required=required,
+            **kwargs,
+        ),
+        html.Div(help_text, className="obsd-help-text"),
     ]
-           
-    return html.Div(components, className='mb-4')
+    return html.Div(components, className="mb-4 obsd-input-row")
 
 
 def make_dropdown(property_name, help_text, options=[], id=None, kwargs={}):
     components = [
-        dbc.Label(property_name, style={'font-weight': 'bold', 'font-size': '0.8em'}),
-        dcc.Dropdown(options, id=f'input-[{property_name}]' if id is None else id, clearable=False, **kwargs),
-        dbc.FormText(f'{help_text}', style={'font-size': '0.7em'}),
-        ]
-
-    return html.Div(components, className='mb-4')
+        dbc.Label(property_name, className="obsd-form-label"),
+        dcc.Dropdown(
+            options,
+            id=f"input-[{property_name}]" if id is None else id,
+            clearable=False,
+            **kwargs,
+        ),
+        dbc.FormText(help_text, className="obsd-help-text"),
+    ]
+    return html.Div(components, className="mb-4 obsd-input-row")
 
 
 def make_switch(property_name, help_text, id=None, kwargs={}):
     components = [
-        dbc.Label(property_name, style={'font-weight': 'bold', 'font-size': '0.8em'}),
-        html.Div(dbc.Switch(id=f'toggle-[{property_name}]' if id is None else id, value=True, **kwargs)),
-        dbc.FormText(f'{help_text}', style={'font-size': '0.7em'}),
+        dbc.Label(property_name, className="obsd-form-label"),
+        html.Div(
+            dbc.Switch(
+                id=f"toggle-[{property_name}]" if id is None else id,
+                value=True,
+                **kwargs,
+            )
+        ),
+        dbc.FormText(help_text, className="obsd-help-text"),
     ]
-
-    return html.Div(components)
+    return html.Div(components, className="obsd-input-row")
 
 
 def make_slider(property_name, help_text, min, max, id=None, kwargs={}):
     components = [
-        dbc.Label(property_name, style={'font-weight': 'bold', 'font-size': '0.8em'}),
-        dcc.Slider(min, max, id=f'input-[{property_name}]' if id is None else id, **kwargs),
-        dbc.FormText(f'{help_text}', style={'font-size': '0.7em'}),
+        dbc.Label(property_name, className="obsd-form-label"),
+        dcc.Slider(
+            min, max, id=f"input-[{property_name}]" if id is None else id, **kwargs
+        ),
+        dbc.FormText(help_text, className="obsd-help-text"),
     ]
-
-    return html.Div(components)
+    return html.Div(components, className="obsd-input-row")
 
 
 def make_knob(property_name, help_text, min, max, id=None, kwargs={}):
     components = [
-        dbc.Label(property_name, style={'font-weight': 'bold', 'font-size': '0.8em'}),
-        daq.Knob(min=min, max=max, id=f'input-[{property_name}]' if id is None else id,  **kwargs),
-        dbc.FormText(f'{help_text}', style={'font-size': '0.7em'}),
+        dbc.Label(property_name, className="obsd-form-label"),
+        daq.Knob(
+            min=min,
+            max=max,
+            id=f"input-[{property_name}]" if id is None else id,
+            **kwargs,
+        ),
+        dbc.FormText(help_text, className="obsd-help-text"),
     ]
-
-    return html.Div(components)
-
+    return html.Div(components, className="obsd-input-row")
 
 def make_table(df, fill_width=False):
     table = html.Div([dash_table.DataTable(data=df.to_dict('records'),

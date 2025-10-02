@@ -20,7 +20,8 @@ logo = Image.open('docs/_static/obsidian_logo.png')
 app_image = html.Div(html.Img(src=logo, style={'width': '5%', 'height': '5%'}), style={'textAlign': 'center'})
 app_title = html.Div([html.H1(children='obsidian'),
                       html.H5(children='Algorithmic Process Optimization and Experiment Design',
-                              style={'font-style': 'italic', 'color': '#AAAAAA'})],
+                              className="fst-italic",
+                              style={'color': '#AAAAAA'})],
                      style={'textAlign': 'center'})
 app_infobar = html.Div(id='root-infobar')
 app_tabs = dbc.Tabs(children=[], id="root-tabs")

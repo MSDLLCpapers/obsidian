@@ -25,7 +25,8 @@ def make_acquisition(index, delete=True):
                                       className='me-2', color='danger', n_clicks=0))
 
     columns.append(dbc.Col([dbc.InputGroup(hyper_input),
-                            dbc.FormText('Input a hyperparameter (optional)', style={'font-size': '0.7em'})]))
+                            dbc.FormText('Input a hyperparameter (optional)',
+                            className="obsd-form-text")]))
 
     return dbc.Row(id={'type': 'div-acquisition', 'index': index}, children=columns, align='center')
 
@@ -62,19 +63,19 @@ def setup_config(app, app_tabs):
     acquisitions = dbc.Container(dbc.Card(id='aq_inputs', children=[
         dbc.CardHeader(['Acquisition Functions', html.Div(dbc.FormText('Objective function of the experiment\
                                                                       search/selection',
-                                                          style={'font-size': '0.7em'}))]),
+                                                          className="obsd-form-text"))]),
         dbc.CardBody(html.Div(id='div-acquisition_all', children=[make_acquisition(index=0, delete=False)])),
         dbc.CardFooter(dbc.Button('Add', id='button-acquisition_add', className='me-2', color='secondary', n_clicks=0))
-        ], style={'margin-top': '15px'}))
+        ], className="mt-3"))
     
     general_options = dbc.Container(dbc.Card(dbc.CardBody(
         children=[input_surrogate, input_m_batch, input_optim_sequential])),
-                                    style={'margin-top': '15px'})
+                                    className="mt-3")
     
     advanced_options = dbc.Container(make_collapse('adv_options',
                                                    [input_optimizer_seed, input_f_transform, input_optim_restarts],
                                                    'Advanced Options'),
-                                     style={'margin-top': '15px'})
+                                     className="mt-3")
 
     # Config store
     config = dcc.Store(id='store-config')
