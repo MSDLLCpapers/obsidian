@@ -1,7 +1,7 @@
 from .utils import add_tab, make_input, make_dropdown, make_switch, make_slider, make_knob, make_table, make_collapse
-from .utils import center
+from .utils import center, error_message_handling, is_input_empty
 import dash_bootstrap_components as dbc
-from dash import dcc, html, Dash, dash_table, callback, Output, Input, State, ALL, MATCH
+from dash import dcc, html, Dash, dash_table, callback, Output, Input, State, ALL, MATCH, no_update
 import pandas as pd
 import base64
 import io
@@ -80,17 +80,42 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
                                                                  kwargs={'value': default_data.columns[-1]})]))
                     ]), width=4), justify='center')
     
+    input_container = dbc.Row(
+        dbc.Col(
+            dbc.Card(
+                [
+                    dbc.CardHeader(
+                        [
+                            html.I(
+                                id="search-space-block",
+                                className="bi bi-info-circle-fill me-2",
+                            ),
+                            dbc.Tooltip(
+                                "The search space defines the range and types of values for each parameter that the optimizer will explore. These parameter types and ranges are initially inferred from the uploaded data. Please verify they are appropriate for your use case. While you can update the parameter space during optimization, do so only if you understand the implications.",
+                                target="search-space-block",
+                                placement="top",
+                                style={"text-transform": "none"},
+                            ),
+                            "Search Space Configuration",
+                        ]
+                    ),
+                    dbc.CardBody(xspace),
+                ]
+            ),
+        ),
+        justify="center",
+        className="m-3",
+    )
     # Extra div for printing outputs, for troubleshooting
     troubleshoot = html.Div(id='debug-print-data')
     
     # Add all of these elements to the app
-    elements = [html.Br(), preview_uploader, html.Hr(), ycol, xspace, storage_X0,
+    elements = [html.Br(), preview_uploader, html.Hr(), ycol, input_container, storage_X0,
                 storage_X0_template, storage_Xspace, html.Hr(), troubleshoot]
     add_tab(app_tabs, elements, 'tab-data', 'Data')
     setup_data_callbacks(app)
     
     return
-
 
 def setup_data_callbacks(app):
     
@@ -235,25 +260,55 @@ def setup_data_callbacks(app):
         Input({'type': 'input-param_min', 'index': MATCH}, 'value'),
         Input({'type': 'input-param_max', 'index': MATCH}, 'value'),
         Input({'type': 'store-param_categories', 'index': MATCH}, 'data'),
+        State('store-config', 'data'),
         prevent_initial_call=True  # It takes a second for these input matches to show up
     )
-    def update_param_save(param_id, param_type, param_min, param_max, param_cat):
-        
-        name = param_id['index']
-        
+    def update_param_save(
+        param_id, param_type, param_min, param_max, param_cat, config
+    ):
+        """
+        Build and serialize a single-parameter ParamSpace for this control.
+        On exception, do not update the store (return no_update) to avoid triggering downstream aggregation.
+        """
+
+        name = param_id["index"]
+        # Placeholder for verbosity setting from config
+        # It should be configurable in the future
+        verbosity = (config or {}).get('verbose', 1)
         try:
-            if param_type == 'Numeric':
+            # Explicit conversion/validation
+            if param_type == "Numeric":
+                # Allow empty/incomplete during edit: keep previous store value
+                if not (param_min and param_max):
+                    return no_update
+                param_min = float(param_min)
+                param_max = float(param_max)
                 param = Param_Continuous(name, param_min, param_max)
-            elif param_type == 'Categorical':
-                param = Param_Categorical(name, param_cat)
-            elif param_type == 'Ordinal':
-                param = Param_Ordinal(name, param_cat)
-        
+
+            elif param_type in ("Categorical", "Ordinal"):
+                # Expect a comma-separated string or list; accept both
+                if is_input_empty(param_cat):
+                    return no_update
+                if param_type == "Categorical":
+                    param = Param_Categorical(name, param_cat)
+                else:
+                    param = Param_Ordinal(name, param_cat)
+
+            else:
+                error_message_handling(name, f'unknown param_type "{param_type}"', verbosity)
+                return no_update
+
             single_param = ParamSpace([param])
             return single_param.save_state()
-        
-        except TypeError:
-            return None
+
+        except Exception as e:
+            error_message_handling(
+                name,
+                f"please double check the inputs. Error: {e}",
+                verbosity,
+                tb="traceback",
+            )
+            return no_update
     
     # Category management for categorical variables
     @app.callback(

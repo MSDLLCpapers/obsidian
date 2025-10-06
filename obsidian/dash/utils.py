@@ -1,3 +1,5 @@
+import traceback
+
 import dash_bootstrap_components as dbc
 from dash import dcc, html, Dash, dash_table, callback, Output, Input, State, ALL, MATCH
 from dash.dash_table.Format import Format, Scheme
@@ -119,3 +121,18 @@ def make_collapse(id, contents, label):
         dbc.Collapse(contents, id=f'collapse-{id}', is_open=False)
     ]
     return dbc.Card(dbc.CardBody(components))
+
+def is_input_empty(value):
+    if isinstance(value, (list, tuple)):
+        return len(value) == 0
+    if isinstance(value, str):
+        return value.strip() == ''
+
+def error_message_handling(name, message, verbosity=1, tb=None):
+    if verbosity >= 1:
+        print(f'Updating "{name}" failed: {message}')
+    if tb is not None and verbosity > 1:
+        if isinstance(tb, str):
+            print(tb)
+        else:
+            traceback.print_exc()
