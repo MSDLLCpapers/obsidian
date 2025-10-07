@@ -42,7 +42,7 @@ def make_input(
             required=required,
             **kwargs,
         ),
-        html.Div(help_text, className="obsd-help-text"),
+        html.Div(help_text, className="obsd-form-text"),
     ]
     return html.Div(components, className="mb-4 obsd-input-row")
 
@@ -56,7 +56,7 @@ def make_dropdown(property_name, help_text, options=[], id=None, kwargs={}):
             clearable=False,
             **kwargs,
         ),
-        dbc.FormText(help_text, className="obsd-help-text"),
+        dbc.FormText(help_text, className="obsd-form-text"),
     ]
     return html.Div(components, className="mb-4 obsd-input-row")
 
@@ -71,7 +71,7 @@ def make_switch(property_name, help_text, id=None, kwargs={}):
                 **kwargs,
             )
         ),
-        dbc.FormText(help_text, className="obsd-help-text"),
+        dbc.FormText(help_text, className="obsd-form-text"),
     ]
     return html.Div(components, className="obsd-input-row")
 
@@ -82,7 +82,7 @@ def make_slider(property_name, help_text, min, max, id=None, kwargs={}):
         dcc.Slider(
             min, max, id=f"input-[{property_name}]" if id is None else id, **kwargs
         ),
-        dbc.FormText(help_text, className="obsd-help-text"),
+        dbc.FormText(help_text, className="obsd-form-text"),
     ]
     return html.Div(components, className="obsd-input-row")
 
@@ -96,7 +96,7 @@ def make_knob(property_name, help_text, min, max, id=None, kwargs={}):
             id=f"input-[{property_name}]" if id is None else id,
             **kwargs,
         ),
-        dbc.FormText(help_text, className="obsd-help-text"),
+        dbc.FormText(help_text, className="obsd-form-text"),
     ]
     return html.Div(components, className="obsd-input-row")
 

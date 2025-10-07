@@ -1,6 +1,6 @@
 :root {
-    /* global defaults for Obsidian typography */
-    --obsd-text-color: var(--bs-primary);
+    --obsd-label-color: var(--bs-primary);
+    --obsd-text-color: var(--bs-body-color);
     --obsd-form-font-size: 0.7em;
     --obsd-form-lg-font-size: 0.8em;
     --obsd-form-xl-font-size: 1em;
@@ -32,7 +32,6 @@
 
 .obsd-text-normal-style {
     font-style: var(--obsd-help-font-style);
-    /* 'normal' */
 }
 
 .obsd-input-row {
@@ -41,7 +40,7 @@
 
 .obsd-form-label {
     font-weight: bold;
-    color: var(--obsd-text-color);
+    color: var(--obsd-label-color);
     font-size: var(--obsd-form-lg-font-size);
 }
 
