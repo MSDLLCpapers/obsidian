@@ -16,12 +16,9 @@ def setup_infobar(app, app_infobar):
     app_infobar.children = dbc.Container([
         html.Br(),
         dbc.Row([
-            dbc.Col(dbc.Button('Help', outline='True', color='warning', className='me-1', id='button-help'),
-                    style={'textAlign': 'left'}, width={'size': 2}),
-            dbc.Col(html.Div(dbc.Badge(f'v{obsidian.__version__}', color='primary', className='me-1'), style={'textAlign': 'center'}),
-                    width={'size': 2}),
-            dbc.Col(dbc.Button('Contact', outline='True', color='secondary', className='me-1', id='button-contact'),
-                    style={'textAlign': 'right'}, width={'size': 2}),
+            dbc.Col(dbc.Button('Help', outline='True', color='warning', className='me-1', id='button-help'), className="text-start", width={'size': 2}),
+            dbc.Col(html.Div(dbc.Badge(f'v{obsidian.__version__}', color='primary', className='me-1 text-center')), className="text-center", width={'size': 2}),
+            dbc.Col(dbc.Button('Contact', outline='True', color='secondary', className='me-1', id='button-contact'), className="text-end", width={'size': 2}),
             ], justify='center'),
         # Pop-up for Contact Us
         dbc.Modal([
@@ -31,7 +28,7 @@ def setup_infobar(app, app_infobar):
                            color='primary', className='me-1'),
                 dbc.Button('Visit Our Site', href='https://msdllcpapers.github.io/obsidian/', target='_blank', external_link=True,
                            color='primary', className='me-1')
-                ], style={'textAlign': 'center'}),
+                ], className="text-center"),
             dbc.ModalFooter([])
             ], id='modal-contact', is_open=False, size='xl', centered=True),
         # Pop-up for Help

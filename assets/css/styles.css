@@ -7,6 +7,14 @@
     --obsd-info-color: var(--bs-info, #0dcaf0);
 }
 
+.obsd-dashed-box {
+    height: 60px;
+    line-height: 60px;
+    border: 1px dashed;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
 /* Base Class */
 .obsd-form-text {
     font-size: var(--obsd-form-font-size);
@@ -35,4 +43,17 @@
     font-weight: bold;
     color: var(--obsd-text-color);
     font-size: var(--obsd-form-lg-font-size);
+}
+
+.text-transform-none {
+    text-transform: none !important;
+}
+
+.d-inline-block {
+    display: inline-block;
+}
+
+.overflow-x-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }

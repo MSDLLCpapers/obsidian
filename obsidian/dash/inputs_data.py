@@ -16,12 +16,7 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
     uploader = dcc.Upload(id='uploader-X0',
                           children=html.Div(['Upload Data: Drag and Drop or ',
                                              html.A('Select Files')]),
-                          style={
-                              'width': '100%', 'height': '60px',
-                              'lineHeight': '60px', 'borderWidth': '1px',
-                              'borderStyle': 'dashed', 'borderRadius': '5px',
-                              'textAlign': 'center', 'margin': '10px'
-                              },
+                          className="w-100 m-2 text-center obsd-dashed-box",
                           multiple=False,
                           filename='Example Data'
                           )
@@ -30,7 +25,7 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
     template_downloader = html.Div(children=[dbc.Button('Download Template Data', id='button-download_data',
                                                         className='me-2', color='primary'),
                                              dcc.Download(id='downloader-X0_template')],
-                                   style={'textAlign': 'center'})
+                                   className="text-center")
     
     # Data preview
     preview = html.Div(id='table-X0', children=dbc.Card(
@@ -41,13 +36,13 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
              dbc.Tooltip('Input data must be a CSV file and must include column headers for the input\
                          parameters and response variable(s), with one row per observation. Download\
                          template data (left) for example.',
-                         target='info-data', placement='top', style={'text-transform': 'none'}),
+                         target='info-data', placement='top', className="text-transform-none"),
              dbc.FormText('Example Data',
                           color="info",
                           className="obsd-form-text obsd-text-xl fst-italic",
                           id='table-X0-footer')
              ],
-             style={'textAlign': 'center'}))
+             className="text-center"))
          ]))
     
     preview_uploader = dbc.Row([dbc.Col([uploader, template_downloader], width=4),
@@ -70,7 +65,7 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
                                                                  it is the target of the objective function before\
                                                                  including optional transformations.',
                                                                  target='info-response_col', placement='top',
-                                                                 style={'text-transform': 'none'}),
+                                                                 className="text-transform-none"),
                                                      'Response Selection']),
                    dbc.CardBody(html.Div(id='div-response_name',
                                          children=[make_dropdown('Data Column',
@@ -94,7 +89,7 @@ def setup_data(app, app_tabs, default_data, default_Xspace):
                                 "The search space defines the range and types of values for each parameter that the optimizer will explore. These parameter types and ranges are initially inferred from the uploaded data. Please verify they are appropriate for your use case. While you can update the parameter space during optimization, do so only if you understand the implications.",
                                 target="search-space-block",
                                 placement="top",
-                                style={"text-transform": "none"},
+                                className="text-transform-none",
                             ),
                             "Search Space Configuration",
                         ]
@@ -245,7 +240,7 @@ def setup_data_callbacks(app):
                                                   className='me-2', color='danger')]),
                        html.Hr(),
                        html.Div(id={'type': 'div-param_categories', 'index': x}, children=None,
-                                style={'textAlign': 'center'})])),
+                                className="text-center")])),
                        dcc.Store(id={'type': 'store-param_categories', 'index': x},
                                  data=', '.join(list(ser_x.sort_values().astype('str').unique()))),
                        html.Div(id={'type': 'input-param_min', 'index': x}),

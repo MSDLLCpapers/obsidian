@@ -24,7 +24,7 @@ def setup_predict(app, app_tabs):
                 ]),
             ]),
         ],
-        style={'textAlign': 'center'}
+        className="text-center"
     )
 
     template_div = dbc.Container([
@@ -38,7 +38,7 @@ def setup_predict(app, app_tabs):
                 ]),
             ]),
             ],
-        style={'textAlign': 'center'}
+        className="text-center"
     )
     # candidates store
     store_template = dcc.Store(id='store-template', data={})
@@ -47,7 +47,7 @@ def setup_predict(app, app_tabs):
     template_downloader = html.Div(children=[dbc.Button('Download Template Candidates', id='button-download_template',
                                                         className='me-2', color='primary'),
                                              dcc.Download(id='downloader-template')],
-                                   style={'textAlign': 'center'}, className="mt-3")
+                                   className="text-center mt-3")
 
     default_data = pd.DataFrame()
     
@@ -55,12 +55,7 @@ def setup_predict(app, app_tabs):
     uploader_1 = dcc.Upload(id='uploader-X1',
                             children=html.Div(['Upload Data: Drag and Drop or ',
                                                html.A('Select Files')]),
-                            style={
-                              'width': '100%', 'height': '60px',
-                              'lineHeight': '60px', 'borderWidth': '1px',
-                              'borderStyle': 'dashed', 'borderRadius': '5px',
-                              'textAlign': 'center', 'margin': '10px'
-                              },
+                            className="m-2 text-center obsd-dashed-box",
                             multiple=False,
                             filename='Example Data'
                             )
@@ -77,14 +72,14 @@ def setup_predict(app, app_tabs):
              dbc.Tooltip('Input data must be a CSV file and must include column headers for the input\
                          parameters and response variable(s), with one row per observation. Download\
                          template data (left) for example.',
-                         target='info-data_1', placement='top', style={'text-transform': 'none'}),
+                         target='info-data_1', placement='top', className="text-transform-none"),
              dbc.FormText('Example Data', 
                           color="info",
                           className="obsd-form-text obsd-text-xl fst-italic",
                           id='table-X1-footer')
              ],
-             style={'textAlign': 'center'}))
-         ]))
+             className="text-center"))
+         ], className="m-2"))
 
     row1 = dbc.Row([dbc.Col([xspace_df_div], width=4),
                     dbc.Col([template_div, template_downloader], width=8)], className="mt-3")
@@ -103,14 +98,14 @@ def setup_predict_callbacks(app):
     @app.callback(
         Output('button-config', 'n_clicks'),
         Output('div-xspace_df', 'children'),
-        Output('div-xspace_df', 'style'),
+        Output('div-xspace_df', 'className'),
         Input('button-config', 'n_clicks'),
         State('store-Xspace', 'data'),
         prevent_initial_call=True
     )
     def config_tableView(clicked, Xspace_save):
         if not Xspace_save:
-            return 0, None, {'overflow-x': 'scroll'}
+            return 0, None, "overflow-x-scroll"
         
         Xspace_list = []
         for param in Xspace_save.keys():
@@ -123,7 +118,7 @@ def setup_predict_callbacks(app):
         
         df_xspace = pd.DataFrame(Xspace_list)
         tables = [center(make_table(df_xspace))]
-        return 0, tables, {'overflow-x': 'scroll'}
+        return 0, tables, "overflow-x-scroll"
     
     # Generate New Data template according to x_space
     @app.callback(

@@ -11,7 +11,7 @@ from obsidian.optimizer import BayesianOptimizer
 
 
 def center(element):
-    return html.Div(html.Div(element, style={'display': 'inline-block'}), style={'textAlign': 'center'})
+    return html.Div(html.Div(element, className="d-inline-block"), className="text-center")
 
 
 def load_optimizer(config, opt_save):
@@ -117,7 +117,7 @@ def make_table(df, fill_width=False):
 def make_collapse(id, contents, label):
     components = [
         html.Div(dbc.Button(label, id=f'button-collapse-{id}', className='mb-3', color='primary', n_clicks=0),
-                 style={'textAlign': 'center'}),
+                 className="text-center"),
         dbc.Collapse(contents, id=f'collapse-{id}', is_open=False)
     ]
     return dbc.Card(dbc.CardBody(components))

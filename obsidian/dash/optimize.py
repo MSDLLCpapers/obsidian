@@ -29,7 +29,7 @@ def setup_optimize(app, app_tabs):
             ]),
         html.Div(id='graph-parity', children=[])
         ],
-        style={'textAlign': 'center'}
+        className="text-center"
     )
     
     predict_div = dbc.Container([
@@ -41,11 +41,11 @@ def setup_optimize(app, app_tabs):
         dbc.Card([
             dbc.CardHeader('Optimal Experiments'),
             dbc.CardBody([
-                html.Div(id='div-predict', children=[], style={})
+                html.Div(id="div-predict", children=[], className="overflow-x-scroll")
                 ]),
             ]),
         ],
-        style={'textAlign': 'center'}
+        className="text-center"
     )
     
     storage_fit = dcc.Store(id='store-fit', data=None)
@@ -57,8 +57,7 @@ def setup_optimize(app, app_tabs):
     candidates_downloader = html.Div(children=[
         dbc.Button('Download Suggested Candidates', id='button-download_candidates',
                    className='me-2', color='primary'),
-        dcc.Download(id='downloader-candidates')],
-                                     style={'textAlign': 'center'}, className="mt-3")
+        dcc.Download(id='downloader-candidates')], className="text-center mt-3")
     
     # Add all of these elements to the app
     columns = dbc.Row([dbc.Col(fit_div, width=6), dbc.Col([predict_div, candidates_downloader], width=6)])
@@ -142,7 +141,7 @@ def setup_optimize_callbacks(app):
     
     @app.callback(
         Output('div-predict', 'children'),
-        Output('div-predict', 'style'),
+        Output('div-predict', 'className'),
         Output('button-predict', 'n_clicks'),
         Output('store-candidates', 'data'),
         Input('button-predict', 'n_clicks'),
@@ -157,7 +156,7 @@ def setup_optimize_callbacks(app):
                 alert_color = 'danger'
             else:
                 alert_color = 'info'
-            return dbc.Alert('Model must be fit first', color=alert_color), {}, predict_clicked, {}
+            return dbc.Alert('Model must be fit first', color=alert_color), "", predict_clicked, {}
         
         optimizer = load_optimizer(config, opt_save)
         X_suggest, eval_suggest = optimizer.suggest(**config['aq_params'])
@@ -165,7 +164,7 @@ def setup_optimize_callbacks(app):
         df_suggest.insert(loc=0, column='CandidatesID', value=df_suggest.index)
         tables = [center(make_table(df_suggest))]
         
-        return tables, {'overflow-x': 'scroll'}, 0, df_suggest.to_dict()
+        return tables, "overflow-x-scroll", 0, df_suggest.to_dict()
 
     # Download Suggested Candidates
     @app.callback(
