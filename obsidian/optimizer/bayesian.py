@@ -491,7 +491,7 @@ class BayesianOptimizer(Optimizer):
             target_locs (list[int]): Indices of trained targets to use for objective function
             X_t_pending (Tensor, optional): Suggested points yet to be run
             objective (GenericMCMultiOutputObjective or GenericMCObjective, optional):
-                The objective used foroptimization after calling the target models.
+                The objective used for optimization after calling the target models.
                 Default is ``None``.
 
         Returns:
