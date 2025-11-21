@@ -33,7 +33,7 @@ class AdvExpDesigner:
                                   - (low, high, "geometric"): Geometric spacing (doubling)
                                   - (low, high, "logarithmic"): Logarithmic spacing (powers of 10)
                                   - [value1, value2, ...]: Custom list of specific levels to sample from
-                                  - {'levels': [value1, value2, ...], 'biases': [weight1, weight2, ...]}: 
+                                  - {'levels': [value1, value2, ...], 'biases': [weight1, weight2, ...]}:
                                     Custom levels with optional biases/weights for non-uniform sampling.
                                     Biases will be normalized to sum to 1.0 if they don't already.
         :param conditional_subparameters: A dictionary containing the conditional subparameters for the design.
@@ -303,7 +303,7 @@ def sample_continuous_lhs(continuous_params, n_samples, seed):
                 # Use biased sampling with inverse transform method
                 biases = np.array(biases)
                 if len(biases) != len(possible):
-                    raise ValueError(f"Length of biases ({len(biases)}) must match length of levels ({len(possible)}) for parameter '{key}'")
+                    raise ValueError(f"Bias length ({len(biases)}) must match levels length ({len(possible)}) for parameter '{key}'")
                 if not np.isclose(sum(biases), 1.0):
                     biases = biases / np.sum(biases)
                 
@@ -797,7 +797,7 @@ def calculate_max_mixed_correlation(design, continuous_keys, categorical_keys, s
     
     :param design: The design DataFrame
     :param continuous_keys: List of continuous parameter names
-    :param categorical_keys: List of categorical parameter names  
+    :param categorical_keys: List of categorical parameter names
     :param subparam_mapping: Dictionary mapping categorical variables to their subparameters
     :return: Maximum absolute mixed correlation value
     """
