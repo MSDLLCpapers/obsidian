@@ -28,6 +28,14 @@ class AdvExpDesigner:
         Initializes the AdvExpDesigner with experimental parameters and optional subparameter mappings.
 
         :param continuous_params: A dictionary containing the continuous parameters for the design.
+                                  Each parameter can be specified as:
+                                  - (low, high, step): Linear spacing with a fixed step size
+                                  - (low, high, "geometric"): Geometric spacing (doubling)
+                                  - (low, high, "logarithmic"): Logarithmic spacing (powers of 10)
+                                  - [value1, value2, ...]: Custom list of specific levels to sample from
+                                  - {'levels': [value1, value2, ...], 'biases': [weight1, weight2, ...]}: 
+                                    Custom levels with optional biases/weights for non-uniform sampling.
+                                    Biases will be normalized to sum to 1.0 if they don't already.
         :param conditional_subparameters: A dictionary containing the conditional subparameters for the design.
         :param subparam_mapping: A dictionary for mapping, will be inferred if not provided.
         :param design_df: A Pandas DataFrame of an existing experimental design, default None
@@ -47,7 +55,8 @@ class AdvExpDesigner:
             self.categorical_keys = list(self.conditional_subparameters.keys()) if conditional_subparameters else []
 
         self.subparam_mapping = subparam_mapping or infer_subparam_mapping(self.conditional_subparameters)
-        self.subparam_key = (list(self.subparam_mapping.values())[0] if self.subparam_mapping else None)
+        self.subparam_keys = list(self.subparam_mapping.values()) if self.subparam_mapping else []
+        self.subparam_key = self.subparam_keys[0] if self.subparam_keys else None
 
     def generate_design(self, seed, n_samples, optimize_categories=True):
         """
@@ -83,6 +92,7 @@ class AdvExpDesigner:
                 "Pairwise Distance CV",
                 "Max Continuous Corr",
                 "Max Categorical Corr",
+                "Max Mixed Corr",
             ]
 
         return evaluate_design(
@@ -121,6 +131,7 @@ class AdvExpDesigner:
                 "Pairwise Distance CV",
                 "Max Continuous Corr",
                 "Max Categorical Corr",
+                "Max Mixed Corr",
             ]
         if maximize_metrics is None:
             maximize_metrics = "D-optimality"
@@ -276,34 +287,74 @@ def sample_continuous_lhs(continuous_params, n_samples, seed):
     cont_samples = {}
     keys = list(continuous_params.keys())
     for idx, key in enumerate(keys):
-        low, high, step = continuous_params[key]
-        if step == "geometric":
-            possible = []
-            value = low
-            while value <= high:
-                possible.append(value)
-                value *= 2
-            possible = np.array(possible)
-            indices = np.floor(sample_cont[:, idx] * len(possible)).astype(int)
-            indices = np.clip(indices, 0, len(possible) - 1)
-            cont_samples[key] = possible[indices]
-        elif step == "logarithmic":
-            if low <= 0 or high <= 0:
-                raise ValueError(
-                    f"Logarithmic step requires positive low and high for parameter '{key}'"
-                )
-            exp_low = int(np.floor(np.log10(low)))
-            exp_high = int(np.floor(np.log10(high)))
-            possible = 10.0 ** np.arange(exp_low, exp_high + 1)
+        param_spec = continuous_params[key]
+        
+        # Check if parameter specification is a dictionary with 'levels' and optional 'biases'
+        if isinstance(param_spec, dict):
+            levels = param_spec.get('levels')
+            biases = param_spec.get('biases', None)
+            
+            if levels is None:
+                raise ValueError(f"Dictionary specification for parameter '{key}' must include 'levels' key")
+            
+            possible = np.array(levels)
+            
+            if biases is not None:
+                # Use biased sampling with inverse transform method
+                biases = np.array(biases)
+                if len(biases) != len(possible):
+                    raise ValueError(f"Length of biases ({len(biases)}) must match length of levels ({len(possible)}) for parameter '{key}'")
+                if not np.isclose(sum(biases), 1.0):
+                    biases = biases / np.sum(biases)
+                
+                # Create CDF for inverse transform sampling
+                cdf = np.cumsum(biases)
+                uniform_samples = sample_cont[:, idx]
+                indices = np.searchsorted(cdf, uniform_samples)
+                indices = np.clip(indices, 0, len(possible) - 1)
+                cont_samples[key] = possible[indices]
+            else:
+                # Uniform sampling across custom levels
+                indices = np.floor(sample_cont[:, idx] * len(possible)).astype(int)
+                indices = np.clip(indices, 0, len(possible) - 1)
+                cont_samples[key] = possible[indices]
+        
+        # Check if the parameter specification is a list (custom levels without biases)
+        elif isinstance(param_spec, (list, tuple)) and not (len(param_spec) == 3 and not isinstance(param_spec[0], (list, tuple))):
+            possible = np.array(param_spec)
             indices = np.floor(sample_cont[:, idx] * len(possible)).astype(int)
             indices = np.clip(indices, 0, len(possible) - 1)
             cont_samples[key] = possible[indices]
         else:
-            num_steps = int(round((high - low) / step)) + 1
-            possible = np.linspace(low, high, num_steps)
-            indices = np.floor(sample_cont[:, idx] * num_steps).astype(int)
-            indices = np.clip(indices, 0, num_steps - 1)
-            cont_samples[key] = possible[indices]
+            # Traditional (low, high, step) format
+            low, high, step = param_spec
+            if step == "geometric":
+                possible = []
+                value = low
+                while value <= high:
+                    possible.append(value)
+                    value *= 2
+                possible = np.array(possible)
+                indices = np.floor(sample_cont[:, idx] * len(possible)).astype(int)
+                indices = np.clip(indices, 0, len(possible) - 1)
+                cont_samples[key] = possible[indices]
+            elif step == "logarithmic":
+                if low <= 0 or high <= 0:
+                    raise ValueError(
+                        f"Logarithmic step requires positive low and high for parameter '{key}'"
+                    )
+                exp_low = int(np.floor(np.log10(low)))
+                exp_high = int(np.floor(np.log10(high)))
+                possible = 10.0 ** np.arange(exp_low, exp_high + 1)
+                indices = np.floor(sample_cont[:, idx] * len(possible)).astype(int)
+                indices = np.clip(indices, 0, len(possible) - 1)
+                cont_samples[key] = possible[indices]
+            else:
+                num_steps = int(round((high - low) / step)) + 1
+                possible = np.linspace(low, high, num_steps)
+                indices = np.floor(sample_cont[:, idx] * num_steps).astype(int)
+                indices = np.clip(indices, 0, num_steps - 1)
+                cont_samples[key] = possible[indices]
     return cont_samples
 
 
@@ -505,18 +556,57 @@ def sample_design(
 
     # Round and format continuous variables
     for key in continuous_params.keys():
-        step = continuous_params[key][2]
-        if step == "geometric":
-            design[key] = design[key].round(3)
-        elif step == "logarithmic":
-            design[key] = design[key].round(5)
-        elif isinstance(step, (int, float)):
-            decimals = max(0, -int(np.floor(np.log10(step)))) if step < 1 else 0
-            design[key] = design[key].round(decimals)
-            if isinstance(step, int) or (isinstance(step, float) and step.is_integer()):
+        param_spec = continuous_params[key]
+        
+        # Check if parameter specification is a dictionary with 'levels' and optional 'biases'
+        if isinstance(param_spec, dict):
+            levels = param_spec.get('levels')
+            possible = np.array(levels)
+            # Check if all values are integers
+            if np.all(np.equal(np.mod(possible, 1), 0)):
                 design[key] = design[key].astype(int)
+            else:
+                # Find the maximum number of decimal places in the custom levels
+                max_decimals = 0
+                for val in possible:
+                    if not np.isnan(val):
+                        val_str = str(float(val))
+                        if '.' in val_str:
+                            decimals = len(val_str.split('.')[1].rstrip('0'))
+                            max_decimals = max(max_decimals, decimals)
+                design[key] = design[key].round(max_decimals)
+        
+        # Check if the parameter specification is a list (custom levels)
+        elif isinstance(param_spec, (list, tuple)) and not (len(param_spec) == 3 and not isinstance(param_spec[0], (list, tuple))):
+            # Custom levels - determine appropriate rounding from the values
+            possible = np.array(param_spec)
+            # Check if all values are integers
+            if np.all(np.equal(np.mod(possible, 1), 0)):
+                design[key] = design[key].astype(int)
+            else:
+                # Find the maximum number of decimal places in the custom levels
+                max_decimals = 0
+                for val in possible:
+                    if not np.isnan(val):
+                        val_str = str(float(val))
+                        if '.' in val_str:
+                            decimals = len(val_str.split('.')[1].rstrip('0'))
+                            max_decimals = max(max_decimals, decimals)
+                design[key] = design[key].round(max_decimals)
         else:
-            design[key] = design[key].round(5)
+            # Traditional (low, high, step) format
+            step = param_spec[2]
+            if step == "geometric":
+                design[key] = design[key].round(3)
+            elif step == "logarithmic":
+                design[key] = design[key].round(5)
+            elif isinstance(step, (int, float)):
+                decimals = max(0, -int(np.floor(np.log10(step)))) if step < 1 else 0
+                design[key] = design[key].round(decimals)
+                if isinstance(step, int) or (isinstance(step, float) and step.is_integer()):
+                    design[key] = design[key].astype(int)
+            else:
+                design[key] = design[key].round(5)
 
     # Round subparameters like pH
     for subparam_key in subparam_mapping.values():
@@ -610,8 +700,14 @@ def calculate_mixed_correlation_matrix(df, categorical_vars=None):
 # --- Design Quality Metrics ---
 
 
-def calculate_d_optimality(design, continuous_params_keys, pH_key):
-    continuous_keys = continuous_params_keys + [pH_key]
+def calculate_d_optimality(design, continuous_params_keys, subparam_keys):
+    """Calculate D-optimality including all continuous parameters and subparameters."""
+    if subparam_keys is None:
+        subparam_keys = []
+    elif isinstance(subparam_keys, str):
+        subparam_keys = [subparam_keys]
+    
+    continuous_keys = continuous_params_keys + subparam_keys
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
     X_model = np.column_stack((np.ones(X_std.shape[0]), X_std))
@@ -619,8 +715,14 @@ def calculate_d_optimality(design, continuous_params_keys, pH_key):
     return linalg.det(XtX)
 
 
-def calculate_a_optimality(design, continuous_params_keys, pH_key):
-    continuous_keys = continuous_params_keys + [pH_key]
+def calculate_a_optimality(design, continuous_params_keys, subparam_keys):
+    """Calculate A-optimality including all continuous parameters and subparameters."""
+    if subparam_keys is None:
+        subparam_keys = []
+    elif isinstance(subparam_keys, str):
+        subparam_keys = [subparam_keys]
+    
+    continuous_keys = continuous_params_keys + subparam_keys
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
     X_model = np.column_stack((np.ones(X_std.shape[0]), X_std))
@@ -633,8 +735,14 @@ def calculate_a_optimality(design, continuous_params_keys, pH_key):
         return np.inf
 
 
-def calculate_condition_number(design, continuous_params_keys, pH_key):
-    continuous_keys = continuous_params_keys + [pH_key]
+def calculate_condition_number(design, continuous_params_keys, subparam_keys):
+    """Calculate condition number including all continuous parameters and subparameters."""
+    if subparam_keys is None:
+        subparam_keys = []
+    elif isinstance(subparam_keys, str):
+        subparam_keys = [subparam_keys]
+    
+    continuous_keys = continuous_params_keys + subparam_keys
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
     X_model = np.column_stack((np.ones(X_std.shape[0]), X_std))
@@ -642,8 +750,14 @@ def calculate_condition_number(design, continuous_params_keys, pH_key):
     return np.linalg.cond(XtX)
 
 
-def calculate_pairwise_distance_uniformity(design, continuous_params_keys, pH_key):
-    continuous_keys = continuous_params_keys + [pH_key]
+def calculate_pairwise_distance_uniformity(design, continuous_params_keys, subparam_keys):
+    """Calculate pairwise distance uniformity including all continuous parameters and subparameters."""
+    if subparam_keys is None:
+        subparam_keys = []
+    elif isinstance(subparam_keys, str):
+        subparam_keys = [subparam_keys]
+    
+    continuous_keys = continuous_params_keys + subparam_keys
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
 
@@ -654,8 +768,14 @@ def calculate_pairwise_distance_uniformity(design, continuous_params_keys, pH_ke
     return std_dist / mean_dist if mean_dist != 0 else np.inf
 
 
-def calculate_max_continuous_correlation(design, continuous_params_keys, pH_key):
-    continuous_keys = continuous_params_keys + [pH_key]
+def calculate_max_continuous_correlation(design, continuous_params_keys, subparam_keys):
+    """Calculate max continuous correlation including all continuous parameters and subparameters."""
+    if subparam_keys is None:
+        subparam_keys = []
+    elif isinstance(subparam_keys, str):
+        subparam_keys = [subparam_keys]
+    
+    continuous_keys = continuous_params_keys + subparam_keys
     corr_matrix = design[continuous_keys].corr().abs()
     np.fill_diagonal(corr_matrix.values, 0)
     return corr_matrix.values.max()
@@ -669,12 +789,50 @@ def calculate_max_categorical_correlation(design, categorical_keys):
     return corr_matrix.abs().values.max()
 
 
+def calculate_max_mixed_correlation(design, continuous_keys, categorical_keys, subparam_mapping):
+    """
+    Calculate the maximum correlation between categorical and continuous/subparameter variables.
+    This captures mixed correlations that are neither purely continuous nor purely categorical.
+    Excludes parent-subparameter correlations (e.g., buffer ↔ pH) which are structural.
+    
+    :param design: The design DataFrame
+    :param continuous_keys: List of continuous parameter names
+    :param categorical_keys: List of categorical parameter names  
+    :param subparam_mapping: Dictionary mapping categorical variables to their subparameters
+    :return: Maximum absolute mixed correlation value
+    """
+    # Get all subparameter columns
+    subparam_keys = list(subparam_mapping.values()) if subparam_mapping else []
+    
+    # Get all continuous columns (parameters + subparameters)
+    all_continuous = continuous_keys + subparam_keys
+    
+    # Calculate full correlation matrix
+    full_corr = calculate_mixed_correlation_matrix(design, categorical_vars=categorical_keys)
+    
+    # Extract mixed correlations: categorical ↔ continuous/subparameter
+    # Exclude parent-subparameter relationships (those are structural by design)
+    max_mixed = 0.0
+    for cat in categorical_keys:
+        for cont in all_continuous:
+            # Skip if this is a parent-subparameter relationship
+            if subparam_mapping and cat in subparam_mapping and subparam_mapping[cat] == cont:
+                continue  # Skip structural parent-subparameter correlation
+                
+            if cat in full_corr.index and cont in full_corr.columns:
+                corr_val = abs(full_corr.loc[cat, cont])
+                max_mixed = max(max_mixed, corr_val)
+    
+    return max_mixed
+
+
 # --- Dimensionality Reduction Plots ---
 
 
 def plot_pca(design, continuous_params_keys, subparam_mapping, hue=None):
-    pH_key = list(subparam_mapping.values())[0]
-    continuous_keys = continuous_params_keys + [pH_key]
+    """Plot PCA including all continuous parameters and subparameters."""
+    subparam_keys = list(subparam_mapping.values()) if subparam_mapping else []
+    continuous_keys = continuous_params_keys + subparam_keys
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
     pca = PCA(n_components=2)
@@ -699,8 +857,9 @@ def plot_pca(design, continuous_params_keys, subparam_mapping, hue=None):
 def plot_mds(
     design, continuous_params_keys, subparam_mapping, hue=None, metric="euclidean"
 ):
-    pH_key = list(subparam_mapping.values())[0]
-    continuous_keys = continuous_params_keys + [pH_key]
+    """Plot MDS including all continuous parameters and subparameters."""
+    subparam_keys = list(subparam_mapping.values()) if subparam_mapping else []
+    continuous_keys = continuous_params_keys + subparam_keys
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
 
@@ -732,9 +891,9 @@ def plot_umap(
     min_dist=0.1,
     metric="euclidean",
 ):
-
-    categorical_keys = list(subparam_mapping.values())[0]
-    continuous_keys = continuous_params_keys + [categorical_keys]
+    """Plot UMAP including all continuous parameters and subparameters."""
+    subparam_keys = list(subparam_mapping.values()) if subparam_mapping else []
+    continuous_keys = continuous_params_keys + subparam_keys
     X = design[continuous_keys].values
     X_std = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
 
@@ -790,26 +949,30 @@ def evaluate_design(
     :param design: The design DataFrame to evaluate.
     :param continuous_keys: List of continuous parameter names.
     :param categorical_keys: List of categorical parameter names.
-    :param subparam_mapping: Dictionary mapping categorical variable to its subparameter (e.g., {'buffer_type': 'pH'}).
+    :param subparam_mapping: Dictionary mapping categorical variable to its subparameter (e.g., {'buffer': 'pH', 'sugar': '[Sugar] (%)'}).
     :param metrics_to_optimize: List of metric names to compute.
     :return: Dictionary of computed metrics.
     """
-    subparam_key = list(subparam_mapping.values())[0] if subparam_mapping else None
+    # Get all subparameter keys from the mapping
+    subparam_keys = list(subparam_mapping.values()) if subparam_mapping else []
 
     metrics = {
-        "D-optimality": calculate_d_optimality(design, continuous_keys, subparam_key),
-        "A-optimality": calculate_a_optimality(design, continuous_keys, subparam_key),
+        "D-optimality": calculate_d_optimality(design, continuous_keys, subparam_keys),
+        "A-optimality": calculate_a_optimality(design, continuous_keys, subparam_keys),
         "Condition Number": calculate_condition_number(
-            design, continuous_keys, subparam_key
+            design, continuous_keys, subparam_keys
         ),
         "Pairwise Distance CV": calculate_pairwise_distance_uniformity(
-            design, continuous_keys, subparam_key
+            design, continuous_keys, subparam_keys
         ),
         "Max Continuous Corr": calculate_max_continuous_correlation(
-            design, continuous_keys, subparam_key
+            design, continuous_keys, subparam_keys
         ),
         "Max Categorical Corr": calculate_max_categorical_correlation(
             design, categorical_keys
+        ),
+        "Max Mixed Corr": calculate_max_mixed_correlation(
+            design, continuous_keys, categorical_keys, subparam_mapping
         ),
     }
 
@@ -869,6 +1032,7 @@ def find_best_design_parallel(
             "Pairwise Distance CV",
             "Max Continuous Corr",
             "Max Categorical Corr",
+            "Max Mixed Corr",
         ]
     if maximize_metrics is None:
         maximize_metrics = [True] + [False] * (len(metrics_to_optimize) - 1)
@@ -924,17 +1088,29 @@ def find_best_design_parallel(
 def plot_design_quality_evolution(metrics_df):
     metrics_df = metrics_df.sort_values("seed")
 
-    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    # Filter out non-metric columns
     metrics = metrics_df.columns
+    n_metrics = len(metrics)
+    
+    # Calculate grid dimensions
+    n_cols = 3
+    n_rows = (n_metrics + n_cols - 1) // n_cols
+    
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5 * n_rows))
+    axes = axes.flatten() if n_metrics > 1 else [axes]  # Handle single subplot case
 
     for i, metric in enumerate(metrics):
-        ax = axes[i // 3, i % 3]
+        ax = axes[i]
         ax.bar(metrics_df["seed"].astype(str), metrics_df[metric])
         ax.set_title(f"{metric} vs Seed")
         ax.set_xlabel("Seed")
         ax.set_ylabel(metric)
         ax.tick_params(axis='x', rotation=45)
         ax.grid(axis="y")
+    
+    # Hide unused subplots
+    for i in range(n_metrics, len(axes)):
+        axes[i].set_visible(False)
 
     plt.tight_layout()
     plt.show()
@@ -1058,6 +1234,7 @@ def evaluate_candidate(
         "Pairwise Distance CV": calculate_pairwise_distance_uniformity(combined_design, continuous_keys, subparam_key),
         "Max Continuous Corr": calculate_max_continuous_correlation(combined_design, continuous_keys, subparam_key),
         "Max Categorical Corr": calculate_max_categorical_correlation(combined_design, categorical_keys),
+        "Max Mixed Corr": calculate_max_mixed_correlation(combined_design, continuous_keys, categorical_keys, subparam_mapping),
     }
 
     return {
@@ -1090,6 +1267,7 @@ def extend_design(
             "Pairwise Distance CV",
             "Max Continuous Corr",
             "Max Categorical Corr",
+            "Max Mixed Corr",
         ]
     if maximize_metrics is None:
         maximize_metrics = [True] + [False] * (len(metrics_to_optimize) - 1)
