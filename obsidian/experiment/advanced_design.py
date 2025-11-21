@@ -1088,7 +1088,6 @@ def find_best_design_parallel(
 def plot_design_quality_evolution(metrics_df):
     metrics_df = metrics_df.sort_values("seed")
 
-    # Filter out non-metric columns
     metrics = metrics_df.columns
     n_metrics = len(metrics)
     
