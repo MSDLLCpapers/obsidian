@@ -31,17 +31,24 @@ class ExpDesigner:
     def __init__(self,
                  X_space: ParamSpace,
                  seed: np.random.Generator | int | None = None,
-                 torch_rng: torch.Generator | None = None
+                 torch_rng: torch.Generator | None = None,
+                 np_rng: np.random.Generator | None = None
                  ):
         if not isinstance(X_space, ParamSpace):
             raise TypeError('X_space must be an obsidian ParamSpace object')
-        
+
         self.X_space = X_space
         self.seed = seed
         if torch_rng:
             if not isinstance(torch_rng, torch.Generator):
                 raise TypeError('torch_rng must be a torch.Generator object')
         self.torch_rng = torch_rng
+
+        # Store numpy RNG for future use
+        if np_rng:
+            if not isinstance(np_rng, np.random.Generator):
+                raise TypeError('np_rng must be a numpy.random.Generator object')
+        self.np_rng = np_rng
 
     def __repr__(self):
         """String representation of object"""

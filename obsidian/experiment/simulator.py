@@ -1,7 +1,8 @@
 """Simulate virtual experimental data"""
 
-from types import ModuleType, MethodType
+from types import ModuleType
 from obsidian.parameters import ParamSpace
+from obsidian.rng import RNGManager
 
 from typing import Callable
 import pandas as pd
@@ -24,6 +25,14 @@ class Simulator:
         name (str or list[str]): Name of the simulated output(s). Default is ``Response``.
         eps (float or list[float]): The simulated error to apply, as the standard deviation of the Standard
             Normal distribution. Default is ``0``.
+        apply_noise (Callable | None): Optional custom function to apply noise to the simulated response. 
+            If None, uses default multiplicative Gaussian noise. Must have signature::
+        
+                apply_noise(X, y_sim, eps, rng) -> y_with_noise
+                
+            Where X is the input array, y_sim is the noiseless simulation output with shape 
+            (n_samples, n_outputs), eps is the noise parameter array with shape (1, n_eps), 
+            and rng is the numpy random Generator. Must return array with same shape as y_sim.
         kwargs (dict): Optional hyperparameters for the response function.
 
     Raises:
@@ -37,8 +46,8 @@ class Simulator:
                  response_function: Callable,
                  name: str | list[str] = 'Response',
                  eps: float | list[float] = 0.0,
-                 rng: Generator | int | None = None,
-                 error_function: Callable | None = None,
+                 rng: Generator | RNGManager | int | None = None,
+                 apply_noise: Callable | None = None,
                  **kwargs):
         
         if not callable(response_function):
@@ -49,25 +58,37 @@ class Simulator:
         self.X_space = X_space
         self.response_function = response_function
         self.name = name
-        self.eps = eps if isinstance(eps, list) else [eps]
-        if isinstance(rng, Generator):
+        # We always expect `y_sim` to be no more than 2D
+        # `eps` with more than 1D makes no sense
+        # i.e., one error per output dimension or one error for all dimensions, nothing more
+        # Always converting eps to a 2D array for simplicity
+        # numpy broadcasting will handle the rest
+        self.eps = np.atleast_1d(eps)
+        if self.eps.ndim > 1:
+            raise ValueError(f"eps must be scalar or 1D list/array, got {self.eps.ndim}D array")
+        self.eps = self.eps.reshape(1, -1)
+        if isinstance(rng, RNGManager):
+            self.rng: Generator | ModuleType = rng.np_rng
+            self._seed = rng.seed
+        elif isinstance(rng, Generator):
             # use provided numpy generator
-            self.rng: Generator | ModuleType = rng
+            self.rng = rng
+            self._seed = None
         else:
             self._seed = rng
             if obsidian.USE_OLD_RNG_CONTROL:
                 # no random state control here
                 self.rng = np.random
             else:
-                # use new global RNG control
-                # note that if the global RNG is already initialized
-                # and the seed (rng) is different, a ValueError will be raised
-                global_rng = obsidian.get_global_rng(rng)
-                self.rng = global_rng.np_rng
-        if not error_function:
-            self.error_function = self._default_gaussian_error
+                # use new RNG manager to control random state
+                rng = obsidian.create_rng_manager(rng)
+                self.rng = rng.np_rng
+        if not apply_noise:
+            self.apply_noise = self._default_gaussian_noise
         else:
-            self.error_function = MethodType(error_function, self)
+            if not callable(apply_noise):
+                raise TypeError('Error function must be a callable function')
+            self.apply_noise = apply_noise
         self.kwargs = kwargs
 
     def __repr__(self):
@@ -94,13 +115,13 @@ class Simulator:
         y_sim = self.response_function(X)
         
         # Expand length of eps to match number of outputs
-        if len(self.eps) == 1:
-            self.eps *= y_sim.ndim
+        # if len(self.eps) == 1:
+        #     self.eps *= y_sim.ndim
         if y_sim.ndim == 1:
             y_sim = y_sim.reshape(-1, 1)
 
-        # Apply error
-        y_sim = self.error_function(X, y_sim)
+        # Apply noise to the simulated response
+        y_sim = self.apply_noise(X, y_sim, self.eps, self.rng) # type: ignore
 
         # Handle naming conventions
         y_dims = y_sim.shape[1]
@@ -118,6 +139,9 @@ class Simulator:
 
         return df_sim
 
-    def _default_gaussian_error(self, X, y_sim: np.ndarray) -> np.ndarray:
-        rel_error = 1 + self.eps * self.rng.normal(size=y_sim.size).reshape(y_sim.shape)
-        return y_sim * rel_error
+
+    @staticmethod 
+    def _default_gaussian_noise(X: np.ndarray, y_sim: np.ndarray, eps: np.ndarray, rng: Generator) -> np.ndarray:
+        """Default error function - multiplicative Gaussian noise."""
+        rel_noise = 1 + eps * rng.normal(size=y_sim.shape)
+        return y_sim * rel_noise

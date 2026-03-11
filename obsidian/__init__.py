@@ -7,7 +7,7 @@ from obsidian.campaign import Campaign
 from obsidian.optimizer import BayesianOptimizer
 from obsidian.surrogates import SurrogateBoTorch
 from obsidian.parameters import ParamSpace, Target
-from obsidian.rng import get_global_rng, reset_global_rng, USE_OLD_RNG_CONTROL, is_global_rng_initialized
+from obsidian.rng import create_rng_manager, USE_OLD_RNG_CONTROL
 
 # Ensure that other subpackages are imported properly for documentation
 from obsidian.objectives import Objective

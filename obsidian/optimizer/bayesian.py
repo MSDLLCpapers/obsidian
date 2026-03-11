@@ -2,7 +2,7 @@
 
 from typing import Any
 import obsidian
-from obsidian.rng import GlobalRNG
+from obsidian.rng import RNGManager, create_torch_rng, get_new_seed
 from .base import Optimizer
 
 from obsidian.parameters import ParamSpace, Target, Task
@@ -80,10 +80,11 @@ class BayesianOptimizer(Optimizer):
                  X_space: ParamSpace,
                  surrogate: str | dict | list[str] | list[dict] = 'GP',
                  seed: int | None = None,
-                 global_rng: GlobalRNG | None = None,
+                 rng: RNGManager | None = None,
+                 fix_random_state: bool = True,
                  verbose: int = 1):
-       
-        super().__init__(X_space=X_space, seed=seed, global_rng=global_rng, verbose=verbose)
+
+        super().__init__(X_space=X_space, seed=seed, rng=rng, fix_random_state=fix_random_state, verbose=verbose)
 
         self.surrogate_type = []  # Shorthand name as str (as provided)
         self.surrogate_hps = []  # Hyperparameters
@@ -170,9 +171,10 @@ class BayesianOptimizer(Optimizer):
                     raise TypeError('Each item in target must be a Target object')
         return target
 
-    def fit(self, Z: pd.DataFrame, target: Target | list[Target], fit_options: dict = {}):
+    def _fit(self, Z: pd.DataFrame, target: Target | list[Target], fit_options: dict = {}):
         """
-        Fits the BO surrogate model to data.
+        Fits the BO surrogate model to data. The user-facing ``fit`` method is inherited from the base Optimizer class,
+        which handles RNG control and then calls this method to perform the actual fitting.
 
         Args:
             Z (pd.DataFrame): Total dataset including inputs (X) and response values (y)
@@ -226,48 +228,40 @@ class BayesianOptimizer(Optimizer):
 
         # Instantiate and fit the model(s)
         self.surrogate = []
-        # with USE_OLD_RNG_CONTROL, this decorator is dummy
-        # otherwise the decorator will activate a context manager to temporarily set the RNG seeds
-        @self.rng_decorator
-        def fit_models():
-            """A wrapper switching between new (context manager) and old (manual) RNG behavior."""
-            for i in range(self.n_response):
-                model = SurrogateBoTorch(
-                    model_type=self.surrogate_type[i],
-                    seed=self.seed,
-                    verbose=self.verbose >= 2,
-                    hps=self.surrogate_hps[i],
-                )
+        for i in range(self.n_response):
+            model = SurrogateBoTorch(
+                model_type=self.surrogate_type[i],
+                seed=self.seed,
+                verbose=self.verbose >= 2,
+                hps=self.surrogate_hps[i],
+            )
 
-                # Handle response NaN values on a response-by-response basis
-                f_train_i = self.f_train.iloc[:, i]
-                nan_indices = np.where(f_train_i.isna().values)[0]
-                X_t_train_valid = self.X_t_train.drop(nan_indices)
-                f_train_i_valid = f_train_i.drop(nan_indices)
-                if X_t_train_valid.shape[0] < 1:
-                    raise ValueError(f'No valid data points for response {self.y_names[i]}')
-                if f_train_i_valid.shape[0] < 1:
-                    raise ValueError(f'No valid response data points for response {self.y_names[i]}')
+            # Handle response NaN values on a response-by-response basis
+            f_train_i = self.f_train.iloc[:, i]
+            nan_indices = np.where(f_train_i.isna().values)[0]
+            X_t_train_valid = self.X_t_train.drop(nan_indices)
+            f_train_i_valid = f_train_i.drop(nan_indices)
+            if X_t_train_valid.shape[0] < 1:
+                raise ValueError(f'No valid data points for response {self.y_names[i]}')
+            if f_train_i_valid.shape[0] < 1:
+                raise ValueError(f'No valid response data points for response {self.y_names[i]}')
 
-                # Fit the model for each response
-                model.fit(
-                    X_t_train_valid,
-                    f_train_i_valid,
-                    cat_dims=self.X_space.X_t_cat_idx,
-                    task_feature=self.X_space.X_t_task_idx,
-                    **fit_options,
-                )
+            # Fit the model for each response
+            model.fit(
+                X_t_train_valid,
+                f_train_i_valid,
+                cat_dims=self.X_space.X_t_cat_idx,
+                task_feature=self.X_space.X_t_task_idx,
+                **fit_options,
+            )
 
-                if self.verbose >= 1:
-                    print(f'{self.surrogate_type[i]} model has been fit to data'
-                          + f' with an R2-train-score of: {model.r2_score:.3g}'
-                          + (f' and a training-loss of: {model.loss:.3g}' if self.verbose >= 2 else '')
-                          + f' for response: {self.y_names[i]}')
-                self.surrogate.append(model)
-
-        fit_models()
+            if self.verbose >= 1:
+                print(f'{self.surrogate_type[i]} model has been fit to data'
+                      + f' with an R2-train-score of: {model.r2_score:.3g}'
+                      + (f' and a training-loss of: {model.loss:.3g}' if self.verbose >= 2 else '')
+                      + f' for response: {self.y_names[i]}')
+            self.surrogate.append(model)
     
-    # TODO: incorporate new global RNG
     def save_state(self) -> dict:
         """
         Saves the parameters of the Bayesian Optimizer so that they can be reloaded without fitting.
@@ -299,6 +293,13 @@ class BayesianOptimizer(Optimizer):
             else:
                 config_save['opt_attrs'][attr] = getattr(self, attr)
 
+        # Save RNG state if new RNG control is enabled
+        if not obsidian.USE_OLD_RNG_CONTROL:
+            config_save['rng_state'] = self.rng.save_state()
+            config_save['fix_random_state'] = hasattr(self, 'model_generator') and self.model_generator is None
+            if self.model_generator:
+                config_save['model_generator_state'] = self.model_generator.get_state().cpu().tolist()
+
         # Unpack the fit parameters of each surrogate model, if present
         if self.surrogate:
             model_states = []
@@ -313,7 +314,6 @@ class BayesianOptimizer(Optimizer):
     def __repr__(self):
         return f'BayesianOptimizer(X_space={self.X_space}, surrogate={self.surrogate_type}, target={getattr(self, "target", None)})'
 
-    # TODO: incorporate new global RNG
     @classmethod
     def load_state(cls,
                    config_save: dict):
@@ -330,9 +330,26 @@ class BayesianOptimizer(Optimizer):
             ValueError: If the number of saved models does not match the number of named models.
         """
 
+        # Restore RNG state if saved
+        rng = None
+        fix_random_state = True
+        if 'rng_state' in config_save:
+            rng = RNGManager.load_state(config_save['rng_state'])
+            fix_random_state = config_save.get('fix_random_state', True)
+
+        seed = config_save.get('seed', None)
+
         new_opt = cls(X_space=ParamSpace.load_state(config_save['X_space']),
-                      surrogate=config_save['surrogate_spec'])
+                      surrogate=config_save['surrogate_spec'],
+                      seed=seed,
+                      rng=rng,
+                      fix_random_state=fix_random_state)
         new_opt.target = [Target.load_state(t) for t in config_save['target']]
+
+        # Restore model_generator state if saved
+        if 'model_generator_state' in config_save:
+            tmp_rng = create_torch_rng(0)
+            new_opt.model_generator = tmp_rng.set_state(torch.ByteTensor(config_save['model_generator_state']))
 
         # Directly unpack all of the entries in opt_attrs
         for k, v in config_save['opt_attrs'].items():
@@ -613,7 +630,8 @@ class BayesianOptimizer(Optimizer):
                 task_index: int = 0,
                 fixed_var: dict[str: float | str] | None = None,
                 X_pending: pd.DataFrame | None = None,
-                eval_pending: pd.DataFrame | None = None) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+                eval_pending: pd.DataFrame | None = None,
+                manual_seed: int | None = None) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
         Suggest future experiments based on a maximization of some acquisition
         function calculated from the expectation of a surrogate model.
@@ -852,7 +870,6 @@ class BayesianOptimizer(Optimizer):
                                    Setting optim_sequential to False', UserWarning)
                     optim_sequential = False
 
-            @self.rng_decorator
             def optimize_acqf_wrapper(fixed_features_list):
                 if fixed_features_list:
                     # If there are any discrete values, we must used the mixed integer optimization
@@ -865,7 +882,7 @@ class BayesianOptimizer(Optimizer):
                 candidates, _ = optim_func(
                     acq_function=aq_func,
                     bounds=X_bounds,
-                    q=m_batch,  
+                    q=m_batch,
                     num_restarts=optim_restarts,
                     raw_samples=optim_samples,
                     options=optim_options,
@@ -879,7 +896,9 @@ class BayesianOptimizer(Optimizer):
             else:
                 aq_func = aq_class_dict[aq_str](**aq_kwargs).to(TORCH_DTYPE)
 
-                candidates, _ = optimize_acqf_wrapper(fixed_features_list)
+                # Wrap with RNG control
+                wrapped_func = self._rng_wrapper(optimize_acqf_wrapper, manual_seed)
+                candidates, _ = wrapped_func(fixed_features_list)
 
             if self.verbose >= 2:
                 print(f'Optimized {aq_str} acquisition function successfully')
