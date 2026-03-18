@@ -1,5 +1,8 @@
 """Bayesian Optimization: Select experiments from the predicted posterior and update the prior"""
 
+from typing import Any
+import obsidian
+from obsidian.rng import RNGManager, create_torch_rng, get_new_seed
 from .base import Optimizer
 
 from obsidian.parameters import ParamSpace, Target, Task
@@ -77,9 +80,11 @@ class BayesianOptimizer(Optimizer):
                  X_space: ParamSpace,
                  surrogate: str | dict | list[str] | list[dict] = 'GP',
                  seed: int | None = None,
+                 rng: RNGManager | None = None,
+                 fix_random_state: bool = True,
                  verbose: int = 1):
-       
-        super().__init__(X_space=X_space, seed=seed, verbose=verbose)
+
+        super().__init__(X_space=X_space, seed=seed, rng=rng, fix_random_state=fix_random_state, verbose=verbose)
 
         self.surrogate_type = []  # Shorthand name as str (as provided)
         self.surrogate_hps = []  # Hyperparameters
@@ -121,8 +126,7 @@ class BayesianOptimizer(Optimizer):
             if surrogate_str not in model_class_dict.keys():
                 raise KeyError(f'Surrogate model must be selected from one of: {model_class_dict.keys()}')
 
-        return
-    
+
     @property
     def is_fit(self):
         """
@@ -167,16 +171,16 @@ class BayesianOptimizer(Optimizer):
                     raise TypeError('Each item in target must be a Target object')
         return target
 
-    def fit(self,
-            Z: pd.DataFrame,
-            target: Target | list[Target]):
+    def _fit(self, Z: pd.DataFrame, target: Target | list[Target], fit_options: dict = {}):
         """
-        Fits the BO surrogate model to data.
+        Fits the BO surrogate model to data. The user-facing ``fit`` method is inherited from the base Optimizer class,
+        which handles RNG control and then calls this method to perform the actual fitting.
 
         Args:
             Z (pd.DataFrame): Total dataset including inputs (X) and response values (y)
             target (Target or list of Target): The responses (y) to be used for optimization,
                 packed into a Target object or list thereof
+            fit_options (dict, optional): Additional options to customize the fitting process. Refer to the model's `fit` method for details.
 
         Returns:
             None. Updates the model in self.surrogate
@@ -225,10 +229,13 @@ class BayesianOptimizer(Optimizer):
         # Instantiate and fit the model(s)
         self.surrogate = []
         for i in range(self.n_response):
-            self.surrogate.append(
-                SurrogateBoTorch(model_type=self.surrogate_type[i], seed=self.seed,
-                                 verbose=self.verbose >= 2, hps=self.surrogate_hps[i]))
-            
+            model = SurrogateBoTorch(
+                model_type=self.surrogate_type[i],
+                seed=self.seed,
+                verbose=self.verbose >= 2,
+                hps=self.surrogate_hps[i],
+            )
+
             # Handle response NaN values on a response-by-response basis
             f_train_i = self.f_train.iloc[:, i]
             nan_indices = np.where(f_train_i.isna().values)[0]
@@ -238,17 +245,22 @@ class BayesianOptimizer(Optimizer):
                 raise ValueError(f'No valid data points for response {self.y_names[i]}')
             if f_train_i_valid.shape[0] < 1:
                 raise ValueError(f'No valid response data points for response {self.y_names[i]}')
-            
+
             # Fit the model for each response
-            self.surrogate[i].fit(X_t_train_valid, f_train_i_valid,
-                                  cat_dims=self.X_space.X_t_cat_idx, task_feature=self.X_space.X_t_task_idx)
-            
+            model.fit(
+                X_t_train_valid,
+                f_train_i_valid,
+                cat_dims=self.X_space.X_t_cat_idx,
+                task_feature=self.X_space.X_t_task_idx,
+                **fit_options,
+            )
+
             if self.verbose >= 1:
                 print(f'{self.surrogate_type[i]} model has been fit to data'
-                      + f' with an R2-train-score of: {self.surrogate[i].r2_score:.3g}'
-                      + (f' and a training-loss of: {self.surrogate[i].loss:.3g}' if self.verbose >= 2 else '')
+                      + f' with an R2-train-score of: {model.r2_score:.3g}'
+                      + (f' and a training-loss of: {model.loss:.3g}' if self.verbose >= 2 else '')
                       + f' for response: {self.y_names[i]}')
-        return
+            self.surrogate.append(model)
     
     def save_state(self) -> dict:
         """
@@ -281,6 +293,13 @@ class BayesianOptimizer(Optimizer):
             else:
                 config_save['opt_attrs'][attr] = getattr(self, attr)
 
+        # Save RNG state if new RNG control is enabled
+        if not obsidian.USE_OLD_RNG_CONTROL:
+            config_save['rng_state'] = self.rng.save_state()
+            config_save['fix_random_state'] = hasattr(self, 'model_generator') and self.model_generator is None
+            if self.model_generator:
+                config_save['model_generator_state'] = self.model_generator.get_state().cpu().tolist()
+
         # Unpack the fit parameters of each surrogate model, if present
         if self.surrogate:
             model_states = []
@@ -311,9 +330,26 @@ class BayesianOptimizer(Optimizer):
             ValueError: If the number of saved models does not match the number of named models.
         """
 
+        # Restore RNG state if saved
+        rng = None
+        fix_random_state = True
+        if 'rng_state' in config_save:
+            rng = RNGManager.load_state(config_save['rng_state'])
+            fix_random_state = config_save.get('fix_random_state', True)
+
+        seed = config_save.get('seed', None)
+
         new_opt = cls(X_space=ParamSpace.load_state(config_save['X_space']),
-                      surrogate=config_save['surrogate_spec'])
+                      surrogate=config_save['surrogate_spec'],
+                      seed=seed,
+                      rng=rng,
+                      fix_random_state=fix_random_state)
         new_opt.target = [Target.load_state(t) for t in config_save['target']]
+
+        # Restore model_generator state if saved
+        if 'model_generator_state' in config_save:
+            tmp_rng = create_torch_rng(0)
+            new_opt.model_generator = tmp_rng.set_state(torch.ByteTensor(config_save['model_generator_state']))
 
         # Directly unpack all of the entries in opt_attrs
         for k, v in config_save['opt_attrs'].items():
@@ -585,6 +621,7 @@ class BayesianOptimizer(Optimizer):
                 optim_sequential: bool = True,
                 optim_samples: int = 512,
                 optim_restarts: int = 10,
+                optim_options: dict | None = None,
                 objective: MCAcquisitionObjective | None = None,
                 out_constraints: Output_Constraint | list[Output_Constraint] | None = None,
                 eq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
@@ -593,7 +630,8 @@ class BayesianOptimizer(Optimizer):
                 task_index: int = 0,
                 fixed_var: dict[str: float | str] | None = None,
                 X_pending: pd.DataFrame | None = None,
-                eval_pending: pd.DataFrame | None = None) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+                eval_pending: pd.DataFrame | None = None,
+                manual_seed: int | None = None) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
         Suggest future experiments based on a maximization of some acquisition
         function calculated from the expectation of a surrogate model.
@@ -636,6 +674,7 @@ class BayesianOptimizer(Optimizer):
                 The default value is ``512``.
             optim_restarts (int, optional): The number of restarts to use in the global optimization
                 of the acquisition function. The default value is ``10``.
+            optim_options (dict, optional): Options to pass to the optimization routine directly. Refer to BoTorch's `optimize_acqf` function family, `gen_candidates_scipy`, `gen_candidates_torch`, and `scipy.optimize.minimize` for possible options.
             objective (MCAcquisitionObjective, optional): The objective function to be used for optimization.
                 The default is ``None``.
             out_constraints (Output_Constraint | list[Output_Constraint], optional): An output constraint, or a list
@@ -730,7 +769,7 @@ class BayesianOptimizer(Optimizer):
             sampler = ListSampler(*samplers)
         else:
             sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
-            
+
         # Calculate search bounds for optimization
         X_bounds = torch.tensor(self.X_space.search_space.values, dtype=TORCH_DTYPE)
         
@@ -808,16 +847,18 @@ class BayesianOptimizer(Optimizer):
                 nleq_constraints += self.X_space.nonlinear_constraints
 
             # Input constraints are used by optim_acqf and friends
-            optim_kwargs = {'equality_constraints': [c() for c in eq_constraints] if eq_constraints else None,
-                            'inequality_constraints': [c() for c in ineq_constraints] if ineq_constraints else None,
-                            'nonlinear_inequality_constraints': [c() for c in nleq_constraints] if nleq_constraints else None}
+            optim_kwargs: dict[str, Any] = {
+                "equality_constraints": [c() for c in eq_constraints] if eq_constraints else None,
+                "inequality_constraints": [c() for c in ineq_constraints] if ineq_constraints else None,
+                "nonlinear_inequality_constraints": [c() for c in nleq_constraints] if nleq_constraints else None,
+            }
             
-            optim_options = {}  # Can optionally specify batch_limit or max_iter
+            # optim_options = {}  # Can optionally specify batch_limit or max_iter
             
             # If nonlinear constraints are used, BoTorch doesn't provide an ic_generator
             # Must provide manual samples = just use random initialization
             if nleq_constraints:
-                X_ic = torch.ones((optim_samples, 1 if fixed_features_list else m_batch, self.X_space.n_tdim))*torch.rand(1)
+                X_ic = torch.ones((optim_samples, 1 if fixed_features_list else m_batch, self.X_space.n_tdim))*torch.rand(1, generator=self.torch_rng)
                 optim_kwargs['batch_initial_conditions'] = X_ic
                 if fixed_features_list:
                     raise UnsupportedError('Nonlinear constraints are not supported with discrete features.')
@@ -829,28 +870,36 @@ class BayesianOptimizer(Optimizer):
                                    Setting optim_sequential to False', UserWarning)
                     optim_sequential = False
 
+            def optimize_acqf_wrapper(fixed_features_list):
+                if fixed_features_list:
+                    # If there are any discrete values, we must used the mixed integer optimization
+                    optim_func = optimize_acqf_mixed
+                    optim_kwargs["fixed_features_list"] = fixed_features_list
+                else:
+                    optim_func = optimize_acqf
+                    optim_kwargs["sequential"] = optim_sequential
+
+                candidates, _ = optim_func(
+                    acq_function=aq_func,
+                    bounds=X_bounds,
+                    q=m_batch,
+                    num_restarts=optim_restarts,
+                    raw_samples=optim_samples,
+                    options=optim_options,
+                    **optim_kwargs,
+                )
+                return candidates, _
+
             # If it's random search, no need to do optimization; Otherwise, initialize the aq function and optimize
             if aq_str == 'RS':
-                candidates = torch.rand((m_batch, self.X_space.n_tdim), dtype=TORCH_DTYPE)
+                candidates = torch.rand((m_batch, self.X_space.n_tdim), generator=self.torch_rng, dtype=TORCH_DTYPE)
             else:
                 aq_func = aq_class_dict[aq_str](**aq_kwargs).to(TORCH_DTYPE)
-                
-                # If there are any discrete values, we must used the mixed integer optimization
-                if fixed_features_list:
-                    candidates, _ = optimize_acqf_mixed(acq_function=aq_func, bounds=X_bounds,
-                                                        fixed_features_list=fixed_features_list,
-                                                        q=m_batch,  # Always sequential
-                                                        num_restarts=optim_restarts, raw_samples=optim_samples,
-                                                        options=optim_options,
-                                                        **optim_kwargs)
-                else:
-                    candidates, _ = optimize_acqf(acq_function=aq_func, bounds=X_bounds,
-                                                  q=m_batch,
-                                                  sequential=optim_sequential,
-                                                  num_restarts=optim_restarts, raw_samples=optim_samples,
-                                                  options=optim_options,
-                                                  **optim_kwargs)
-            
+
+                # Wrap with RNG control
+                wrapped_func = self._rng_wrapper(optimize_acqf_wrapper, manual_seed)
+                candidates, _ = wrapped_func(fixed_features_list)
+
             if self.verbose >= 2:
                 print(f'Optimized {aq_str} acquisition function successfully')
             

@@ -1,5 +1,6 @@
 """Surrogate models built using BoTorch API and torch_model objects"""
 
+from typing import Callable
 from .base import SurrogateModel
 from .config import model_class_dict
 from .utils import fit_pytorch
@@ -13,6 +14,7 @@ from botorch.optim.fit import fit_gpytorch_mll_torch, fit_gpytorch_mll_scipy
 from botorch.models.gpytorch import GPyTorchModel
 from botorch.models.ensemble import EnsembleModel
 from gpytorch.mlls import ExactMarginalLogLikelihood
+from botorch.optim.utils import sample_all_priors
 
 import torch
 import torch.nn as nn
@@ -20,6 +22,14 @@ import numpy as np
 import pandas as pd
 import warnings
 
+# Maximum number of attempts to fit the model 
+# BoTorch default is 5
+MAX_ATTEMPTS = 5  
+# Whether to use multiple restarts for optimization
+# BoTorch default is False
+MULTI_STARTS = False
+# Whether to sample all parameters from prior or not
+SAMPLE_INITIAL_PARAMETERS = False 
 
 class SurrogateBoTorch(SurrogateModel):
     """
@@ -43,6 +53,7 @@ class SurrogateBoTorch(SurrogateModel):
                 to estimate uncertainty.
               
         hps (dict): Optional surrogate function hyperparameters.
+        sample_initial_parameters (bool): Whether to sample initial parameters from the prior. If hyperparameters are not provided, BoTorch will by default initialize the model with some built-in heuristics. To override this behavior, use ``sample_initial_parameters`` to sample all hyperparameters from priors.
         mll (ExactMarginalLogLikelihood): The marginal log likelihood of the model.
         torch_model (torch.nn.Module): The torch model for the surrogate.
         loss (float): The loss of the model.
@@ -52,20 +63,20 @@ class SurrogateBoTorch(SurrogateModel):
                  model_type: str = 'GP',
                  seed: int | None = None,
                  verbose: bool = False,
+                 sample_initial_parameters: bool = SAMPLE_INITIAL_PARAMETERS,
                  hps: dict = {}):
         
         super().__init__(model_type=model_type, seed=seed, verbose=verbose)
         
         # Optional surrogate function hyperparameters
         self.hps = hps
-                
-        return
-    
+        self.sample_initial_parameters = sample_initial_parameters        
+
     def init_model(self,
                    X: pd.DataFrame,
                    y: pd.Series,
                    cat_dims: list[int],
-                   task_feature: int):
+                   task_feature: int | None = None):
         """
         Instantiates the torch model for the surrogate.
         Cannot be called during __init__ normally as X,y are required
@@ -75,6 +86,7 @@ class SurrogateBoTorch(SurrogateModel):
             X (pd.DataFrame): Input parameters for the training data.
             y (pd.Series): Training data responses.
             cat_dims (list): A list of indices for categorical dimensions in the input data.
+            task_feature (int, optional): The index of the task feature in the input data.
 
         Returns:
             None. Updates surrogate attributes, including self.torch_model.
@@ -107,24 +119,38 @@ class SurrogateBoTorch(SurrogateModel):
                     self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps)
         else:
             self.torch_model = model_class_dict[self.model_type](train_X=X_p, train_Y=y_p, **self.hps).to(TORCH_DTYPE)
+        
+        # self.torch_model.likelihood.noise_covar.noise_prior = GammaPrior(1.1, 10.0)
+        if self.sample_initial_parameters:
+            sample_all_priors(self.torch_model)
 
-        return
 
-    def fit(self,
+    def fit(
+            self,
             X: pd.DataFrame,
             y: pd.Series,
-            cat_dims=None,
-            task_feature=None):
+            cat_dims: list,
+            task_feature: int | None = None,
+            optimizer: Callable | None = None,
+            max_attempts: int = MAX_ATTEMPTS,
+            multi_starts: bool = MULTI_STARTS,
+            **optimizer_kwargs
+        ) -> None:
         """
         Fits the surrogate model to data
 
         Args:
             X (pd.DataFrame): Input parameters for the training data
             y (pd.Series): Training data responses
-            cat_dims (list, optional): A list of indices for categorical dimensions in the input data. Default is ``None``.
+            cat_dims (list): A list of indices for categorical dimensions in the input data.
+            task_feature (int, optional): The index of the task feature in the input data. Default is ``None``.
+            optimizer (callable, optional): The optimizer to use for fitting the model. Default is ``None`` and chosen dynamically based on model type.
+            max_attempts (int, optional): The maximum number of attempts to fit the model. Default is ``MAX_ATTEMPTS=5``.
+            multi_starts (bool, optional): Whether to run all ``max_attempts`` restarts with different initializations and pick the best model. Default is ``MULTI_STARTS=True``.
+            **optimizer_kwargs: Additional keyword arguments to pass to the optimizer.
 
         Returns:
-            None. Updates the surrogate model attributes, including regressed parameters.
+            None. Updates the surrogate model attributes in-place, including regressed parameters.
         """
      
         # Instantiate self.torch_model
@@ -143,13 +169,14 @@ class SurrogateBoTorch(SurrogateModel):
         
         if isinstance(self.torch_model, GPyTorchModel):
             self.loss_fcn = ExactMarginalLogLikelihood(self.torch_model.likelihood, self.torch_model)
-            if self.model_type == 'DKL':
-                optimizer = fit_gpytorch_mll_torch
-            else:
-                optimizer = fit_gpytorch_mll_scipy
+            if not optimizer:
+                if self.model_type == 'DKL':
+                    optimizer = fit_gpytorch_mll_torch
+                else:
+                    optimizer = fit_gpytorch_mll_scipy
 
             try:
-                fit_gpytorch_mll(self.loss_fcn, optimizer=optimizer)
+                fit_gpytorch_mll(self.loss_fcn, optimizer=optimizer, max_attempts=max_attempts, pick_best_of_all_attempts=multi_starts, **optimizer_kwargs)
             except Exception:
                 try:
                     fit_gpytorch_mll(self.loss_fcn, optimizer=fit_gpytorch_mll_torch)

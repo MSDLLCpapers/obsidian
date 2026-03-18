@@ -1,5 +1,6 @@
 """Optimizer class definition"""
 
+import obsidian
 from obsidian.parameters import ParamSpace, Target, Param_Observational
 from obsidian.exceptions import UnsupportedError
 
@@ -12,6 +13,8 @@ import numpy as np
 import torch
 import random
 from torch import Tensor
+
+from obsidian.rng import RNGManager, get_new_seed, create_torch_rng
 
 
 class Optimizer(ABC):
@@ -32,21 +35,44 @@ class Optimizer(ABC):
     def __init__(self,
                  X_space: ParamSpace,
                  seed: int | None = None,
+                 rng: RNGManager | None = None,
+                 fix_random_state: bool = True,
                  verbose: int = 1):
         
         # Verbose selection
-        if verbose not in [0, 1, 2, 3]:
+        if verbose not in {0, 1, 2, 3}:
             raise ValueError('Verbose option must be 0 (no output), 1 (summary output), \
                              2 (detailed output), or 3 (debugging)')
         self.verbose = verbose
 
         # Handle randomization seed, considering all 3 sources (torch, random, numpy)
         self.seed = seed
-        if self.seed is not None:
-            torch.manual_seed(self.seed)
-            torch.use_deterministic_algorithms(True)
-            np.random.seed(self.seed)
-            random.seed(self.seed)
+        # TODO: this part is only for backward compatibility, we should drop it eventually
+        if obsidian.USE_OLD_RNG_CONTROL:
+            if self.seed is not None:
+                torch.manual_seed(self.seed)
+                torch.use_deterministic_algorithms(True)
+                np.random.seed(self.seed)
+                random.seed(self.seed)
+            self.torch_rng = None
+        else:
+            if not rng:
+                self.rng = obsidian.create_rng_manager(seed)
+            elif not isinstance(rng, RNGManager):
+                raise TypeError('rng must be an instance of RNGManager')
+            else:
+                self.rng = rng
+            self.torch_rng = self.rng.torch_rng
+            
+            # Create dedicated generator for model operations (fit & suggest)
+            # This ensures reproducibility - same initial state gives same seed sequence
+            if seed is None:
+                self.seed: int = get_new_seed(1, self.torch_rng) # type: ignore
+            if fix_random_state:
+                self.model_generator = None
+            else:
+                self.model_generator = create_torch_rng(self.seed)
+            self.fix_random_state = fix_random_state
 
         # Store the parameter space which contains useful reference properties
         if not isinstance(X_space, ParamSpace):
@@ -216,11 +242,33 @@ class Optimizer(ABC):
         
         return min_distance
 
+    def fit(self, Z: pd.DataFrame, target: Target | list[Target], manual_seed: int | None = None, fit_options: dict = {}):
+        """Fit surrogate model(s) using observed data.
+
+        This is a wrapper around :meth:`_fit` that handles RNG behavior for
+        backward compatibility:
+        - If ``obsidian.USE_OLD_RNG_CONTROL`` is ``True``, calls ``_fit`` directly.
+        - Otherwise, temporarily applies ``manual_seed`` via ``tmp_seed_override`` and
+          then calls ``_fit``.
+
+        Args:
+            Z (pd.DataFrame): Observation table containing input variables and
+                measured target values used for training.
+            target (Target | list[Target]): One target or a list of targets to fit.
+            manual_seed (int | None, optional): Temporary seed used only for this fit call when new RNG control is
+                enabled. If ``None``, a seed is sampled from the optimizer's model_generator. Defaults to ``None``.
+            fit_options (dict, optional): Extra options forwarded to model.fit(). Refer to model's ``fit`` method for
+                supported options. Defaults to an empty dictionary.
+
+        Returns:
+            None: Fit the surrogate model(s) in-place.
+        """
+        fit_with_seed = self._rng_wrapper(self._fit, manual_seed)
+        return fit_with_seed(Z, target, fit_options)
+
     @abstractmethod
-    def fit(self,
-            Z: pd.DataFrame,
-            target: Target | list[Target]):
-        """Fit the optimizer's surrogate models to data"""
+    def _fit(self, Z: pd.DataFrame, target: Target | list[Target], fit_options: dict) -> None:
+        """Actual method to fit the optimizer's surrogate models to data"""
         pass  # pragma: no cover
 
     @abstractmethod
@@ -242,13 +290,39 @@ class Optimizer(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
-    def save_state(self):
+    def save_state(self) -> dict:
         """Save the optimizer to a state dictionary"""
         pass  # pragma: no cover
     
     @classmethod
     @abstractmethod
-    def load_state(cls,
-                   obj_dict: dict):
+    def load_state(cls, obj_dict: dict):
         """Load the optimizer from a state dictionary"""
         pass  # pragma: no cover
+
+    def _rng_wrapper(self, func, manual_seed: int | None = None):
+        """
+        Helper to apply RNG seeding control to a function call.
+    
+        Consolidates the seed selection logic (manual_seed > model_generator > self.seed)
+        and applies tmp_seed_override for backward compatibility with USE_OLD_RNG_CONTROL.
+    
+        Args:
+            func: Function to wrap with RNG control
+            manual_seed: Optional manual seed override
+    
+        Returns:
+            Wrapped function ready to be called
+        """
+        if obsidian.USE_OLD_RNG_CONTROL:
+            return func
+        else:
+            # Seed priority: manual_seed > model_generator > self.seed
+            if manual_seed is not None:
+                seed = manual_seed
+            elif self.model_generator:
+                seed = get_new_seed(1, self.model_generator)
+            else:
+                seed = self.seed
+
+            return self.rng.tmp_seed_override(func, seed)  # type: ignore

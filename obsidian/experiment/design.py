@@ -6,6 +6,7 @@ from obsidian.parameters import ParamSpace
 from obsidian.exceptions import UnsupportedError
 
 from botorch.utils.sampling import draw_sobol_samples
+import numpy as np
 from numpy.typing import ArrayLike
 from scipy.stats import qmc
 
@@ -29,12 +30,25 @@ class ExpDesigner:
 
     def __init__(self,
                  X_space: ParamSpace,
-                 seed: int | None = None):
+                 seed: np.random.Generator | int | None = None,
+                 torch_rng: torch.Generator | None = None,
+                 np_rng: np.random.Generator | None = None
+                 ):
         if not isinstance(X_space, ParamSpace):
             raise TypeError('X_space must be an obsidian ParamSpace object')
-        
+
         self.X_space = X_space
         self.seed = seed
+        if torch_rng:
+            if not isinstance(torch_rng, torch.Generator):
+                raise TypeError('torch_rng must be a torch.Generator object')
+        self.torch_rng = torch_rng
+
+        # Store numpy RNG for future use
+        if np_rng:
+            if not isinstance(np_rng, np.random.Generator):
+                raise TypeError('np_rng must be a numpy.random.Generator object')
+        self.np_rng = np_rng
 
     def __repr__(self):
         """String representation of object"""
@@ -69,9 +83,10 @@ class ExpDesigner:
         seed = self.seed
 
         method_dict = {
+            # TODO: botorch is moving to SPEC-0007, `seed` will be phased out in favor of `rng`
             'LHS': lambda d, m: torch.tensor(
                 qmc.LatinHypercube(d=d, scramble=False, seed=seed, strength=1, optimization='random-cd').random(n=m)),
-            'Random': lambda d, m: torch.rand(size=(m, d)),
+            'Random': lambda d, m: torch.rand(size=(m, d), generator=self.torch_rng),
             'Sobol': lambda d, m: draw_sobol_samples(
                 bounds=torch.tensor([0.0, 1.0]).reshape(2, 1).repeat(1, d), n=m, q=1).squeeze(1),
             'Custom': lambda d, m: torch.tensor(sample_custom),
@@ -109,7 +124,7 @@ class ExpDesigner:
             print(f'The number of initialization experiments ({m}) exceeds the required \
                    number for the requested design ({m_required}). Filling with randomized experiments.')
             excess = m - m_required
-            sample_add = torch.rand(size=(excess, d))
+            sample_add = torch.rand(size=(excess, d), generator=self.torch_rng)
             sample = torch.vstack((sample, sample_add))
 
         sample = pd.DataFrame(sample.numpy(), columns=self.X_space.X_names)

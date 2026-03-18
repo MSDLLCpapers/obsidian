@@ -7,6 +7,7 @@ from obsidian.objectives import Objective, Objective_Sequence, obj_class_dict
 from obsidian.constraints import Output_Constraint, const_class_dict
 from obsidian.exceptions import IncompatibleObjectiveError
 from obsidian.utils import tensordict_to_dict
+from obsidian.rng import RNGManager
 import obsidian
 
 import pandas as pd
@@ -48,15 +49,53 @@ class Campaign():
                  optimizer: Optimizer | None = None,
                  designer: ExpDesigner | None = None,
                  objective: Objective | None = None,
-                 seed: int | None = None):
-        
+                 seed: int | None = None,
+                 rng: RNGManager | None = None
+                 ):
+
         self.set_X_space(X_space)
         self.data = pd.DataFrame()
-        
-        optimizer = BayesianOptimizer(X_space, seed=seed) if optimizer is None else optimizer
+        if obsidian.USE_OLD_RNG_CONTROL:
+            optimizer_seed = seed
+            designer_seed = seed
+            torch_rng = None
+        else:
+            if rng is None:
+                self.rng = obsidian.create_rng_manager(seed)
+                self._owns_rng = True
+            else:
+                # User provided explicit RNG to share
+                self.rng = rng
+                self._owns_rng = False
+                print(
+                    "Campaign is using a shared RNGManager instance. Reproducibility will depend how other objects consume from this RNG."
+                )
+                if seed is not None:
+                    warnings.warn(
+                        "Both `rng` and `seed` were provided. The seed parameter will be ignored "
+                        "in favor of the seed from `rng`.", UserWarning
+                    )
+                seed = self.rng.seed
+
+            torch_rng = self.rng.torch_rng
+            optimizer_seed = seed
+            designer_seed = seed
+
+        if not optimizer:
+            optimizer = BayesianOptimizer(
+                X_space,
+                rng=self.rng if not obsidian.USE_OLD_RNG_CONTROL else None,
+                seed=optimizer_seed
+            )
         self.set_optimizer(optimizer)
 
-        designer = ExpDesigner(X_space, seed=seed) if designer is None else designer
+        if not designer:
+            designer = ExpDesigner(
+                X_space,
+                seed=designer_seed,
+                torch_rng=torch_rng,
+                np_rng=self.rng.np_rng if not obsidian.USE_OLD_RNG_CONTROL else None
+            )
         self.set_designer(designer)
         
         self.set_target(target)
@@ -284,8 +323,8 @@ class Campaign():
         Maps ExpDesigner.initialize method
         """
         return self.designer.initialize(**design_kwargs)
-    
-    def fit(self):
+
+    def fit(self, fit_options: dict = {}):
         """
         Maps Optimizer.fit method
 
@@ -296,7 +335,7 @@ class Campaign():
         if self.m_exp <= 0:
             raise ValueError('Must register data before fitting')
 
-        self.optimizer.fit(self.data, target=self.target)
+        self.optimizer.fit(self.data, target=self.target, fit_options=fit_options)
 
     def suggest(self, **optim_kwargs):
         """
@@ -418,6 +457,14 @@ class Campaign():
             obj_dict['objective'] = self.objective.save_state()
         obj_dict['seed'] = self.seed
 
+        # Save RNG state for reproducibility
+        if hasattr(self, 'rng'):
+            obj_dict['rng_state'] = self.rng.save_state()
+            obj_dict['owns_rng'] = getattr(self, '_owns_rng', False)
+        else:
+            obj_dict['rng_state'] = None
+            obj_dict['owns_rng'] = False
+
         if getattr(self, 'output_constraints', None):
             obj_dict['output_constraints'] = [{'class': const.__class__.__name__,
                                                'state': tensordict_to_dict(const.state_dict())}
@@ -447,12 +494,18 @@ class Campaign():
                 new_objective = obj_class.load_state(obj_dict['objective'])
         else:
             new_objective = None
-        
+
+        # Restore RNG state if saved
+        rng = None
+        if 'rng_state' in obj_dict and obj_dict['rng_state'] is not None:
+            rng = RNGManager.load_state(obj_dict['rng_state'])
+
         new_campaign = cls(X_space=ParamSpace.load_state(obj_dict['X_space']),
                            target=[Target.load_state(t_dict) for t_dict in obj_dict['target']],
                            optimizer=BayesianOptimizer.load_state(obj_dict['optimizer']),
                            objective=new_objective,
-                           seed=obj_dict['seed'])
+                           seed=obj_dict['seed'],
+                           rng=rng)
         new_campaign.data = pd.DataFrame(obj_dict['data'])
         new_campaign.data.index = new_campaign.data.index.astype('int')
         
