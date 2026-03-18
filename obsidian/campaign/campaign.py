@@ -464,3 +464,14 @@ class Campaign():
                 new_campaign.constrain_outputs(const)
 
         return new_campaign
+
+    def copy(self):
+        """
+        Creates a deep copy of the Campaign object.
+
+        A shortcut for saving and then loading the state. The presence of the torch objects prevents a direct deepcopy.
+
+        Returns:
+            Campaign: A deep copy of the Campaign object.
+        """
+        return self.__class__.load_state(self.save_state())

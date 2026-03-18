@@ -14,3 +14,4 @@ import obsidian.constraints as constraints
 import obsidian.exceptions as exceptions
 import obsidian.acquisition as acquisition
 import obsidian.plotting as plotting
+import obsidian.surrogates as surrogates
