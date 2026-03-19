@@ -74,7 +74,7 @@ def test_global_rng_operations():
     global_rng3 = obsidian.rng.get_global_rng()
     assert global_rng3.seed == 12345
     # Should be a new instance
-    assert global_rng3 is not global_rng1  
+    assert global_rng3 is not global_rng1
 
     # Test that reset changes the RNG behavior
     obsidian.rng.reset_global_rng(seed=100)
@@ -382,9 +382,9 @@ def test_optimizer_rng_save_load(setup_campaign):
     opt_state = optimizer1.save_state()
 
     # Verify RNG state is saved
-    assert 'rng_state' in opt_state
-    assert opt_state['rng_state']['seed'] == 777
-    assert opt_state['fix_random_state'] is True
+    assert "rng_state" in opt_state
+    assert opt_state["rng_state"]["seed"] == 777
+    assert opt_state["fix_random_state"] is True
 
     # Make a suggestion
     X_suggest1, _ = optimizer1.suggest(m_batch=2, acquisition=["EI"])
@@ -394,7 +394,7 @@ def test_optimizer_rng_save_load(setup_campaign):
 
     # Verify RNG attributes are restored
     assert optimizer2.seed == 777
-    assert hasattr(optimizer2, 'rng')
+    assert hasattr(optimizer2, "rng")
     assert optimizer2.rng.seed == 777
 
     # Make suggestion from loaded optimizer - should be deterministic
@@ -408,12 +408,12 @@ def test_optimizer_rng_save_load(setup_campaign):
     optimizer3.fit(Z0, target)
 
     opt_state3 = optimizer3.save_state()
-    assert opt_state3['fix_random_state'] is False
-    assert 'model_generator_state' in opt_state3  # Should save generator state
+    assert opt_state3["fix_random_state"] is False
+    assert "model_generator_state" in opt_state3  # Should save generator state
 
     # Load and verify model_generator is restored
     optimizer4 = BayesianOptimizer.load_state(opt_state3)
-    assert hasattr(optimizer4, 'model_generator')
+    assert hasattr(optimizer4, "model_generator")
     assert optimizer4.model_generator is not None
 
 
