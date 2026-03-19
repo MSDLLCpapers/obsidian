@@ -500,14 +500,13 @@ def _nipv_hyperparameter_parser(
     """Parser for NIPV acquisition function"""
     n_dim = context["n_dim"]
     m_batch = context["m_batch"]
-    objective = context.get("objective")
+    # NIPV does not support custom objectives
+    aq_kwargs.pop("objective")
 
     X_bounds = torch.tensor([[0.0, 1.0]] * n_dim, dtype=TORCH_DTYPE).T
     qmc_samples = draw_sobol_samples(bounds=X_bounds, n=128, q=m_batch)
     aq_kwargs["mc_points"] = qmc_samples.squeeze(-2)
     aq_kwargs["sampler"] = None
-    if objective:
-        raise UnsupportedError("NIPV does not support objectives")
     return aq_kwargs
 
 
@@ -572,6 +571,11 @@ def _nparego_hyperparameter_parser(
     _noisy_parser(aq_kwargs, hps, context)
     _prune_baseline(aq_kwargs, hps, context)
     _scalarization_weights_parser(aq_kwargs, hps, context)
+    return aq_kwargs
+
+
+def dummy_parser(aq_kwargs: dict[str, Any], hps: dict[str, Any], context: ParserContext) -> dict[str, Any]:
+    """Dummy parser that does nothing, for compatibility purposes"""
     return aq_kwargs
 
 

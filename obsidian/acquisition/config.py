@@ -51,7 +51,7 @@ _builtin_acq_func_dict = {
     "SR": {
         "implementation": qSimpleRegret,
         "hyperparameter_defaults": {},
-        "hyperparameter_parser": None,
+        "hyperparameter_parser": acq_utils.dummy_parser,
         "modalities": ["single"],
         "task_types": ["optimization"],
     },
@@ -88,7 +88,7 @@ _builtin_acq_func_dict = {
     "Mean": {
         "implementation": qMean,
         "hyperparameter_defaults": {},
-        "hyperparameter_parser": None,
+        "hyperparameter_parser": acq_utils.dummy_parser,
         "modalities": ["single", "multi"],
         "task_types": ["optimization"],
     },
