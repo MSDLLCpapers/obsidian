@@ -2,12 +2,14 @@
 
 from typing import Any
 import obsidian
+from obsidian.acquisition.utils import ParserContext
 from obsidian.rng import RNGManager, create_torch_rng, get_new_seed
+from obsidian.utils import TaskType
 from .base import Optimizer
 
 from obsidian.parameters import ParamSpace, Target, Task
 from obsidian.surrogates import SurrogateBoTorch, EnsembleModel
-from obsidian.acquisition import aq_class_dict, aq_defaults, aq_hp_defaults, valid_aqs
+from obsidian.acquisition import registry, aq_defaults, aq_hp_defaults, valid_aqs
 from obsidian.surrogates import model_class_dict
 from obsidian.objectives import Index_Objective, Objective_Sequence
 from obsidian.constraints import Linear_Constraint, Nonlinear_Constraint, Output_Constraint
@@ -79,15 +81,19 @@ class BayesianOptimizer(Optimizer):
     def __init__(self,
                  X_space: ParamSpace,
                  surrogate: str | dict | list[str] | list[dict] = 'GP',
+                 task: TaskType | str = TaskType.OPTIMIZATION,
                  seed: int | None = None,
                  rng: RNGManager | None = None,
                  fix_random_state: bool = True,
                  verbose: int = 1):
-
+       
         super().__init__(X_space=X_space, seed=seed, rng=rng, fix_random_state=fix_random_state, verbose=verbose)
 
         self.surrogate_type = []  # Shorthand name as str (as provided)
         self.surrogate_hps = []  # Hyperparameters
+
+        self.task = TaskType.from_value(task)
+        self.aq_args: dict[str, dict[str, Any]] = {}
 
         # Surrogate model selection
         if not isinstance(surrogate, (str, list, dict)):
@@ -261,7 +267,8 @@ class BayesianOptimizer(Optimizer):
                       + (f' and a training-loss of: {model.loss:.3g}' if self.verbose >= 2 else '')
                       + f' for response: {self.y_names[i]}')
             self.surrogate.append(model)
-    
+
+
     def save_state(self) -> dict:
         """
         Saves the parameters of the Bayesian Optimizer so that they can be reloaded without fitting.
@@ -293,6 +300,8 @@ class BayesianOptimizer(Optimizer):
             else:
                 config_save['opt_attrs'][attr] = getattr(self, attr)
 
+        config_save['opt_attrs']['task'] = self.task.value
+        
         # Save RNG state if new RNG control is enabled
         if not obsidian.USE_OLD_RNG_CONTROL:
             config_save['rng_state'] = self.rng.save_state()
@@ -315,8 +324,7 @@ class BayesianOptimizer(Optimizer):
         return f'BayesianOptimizer(X_space={self.X_space}, surrogate={self.surrogate_type}, target={getattr(self, "target", None)})'
 
     @classmethod
-    def load_state(cls,
-                   config_save: dict):
+    def load_state(cls, config_save: dict):
         """
         Loads the parameters of the Bayesian Optimizer from a previously fit optimizer.
 
@@ -324,19 +332,18 @@ class BayesianOptimizer(Optimizer):
             config_save (dict): A dictionary containing the fit parameters for later loading.
 
         Returns:
-            None. Updates the parameters of the BayesianOptimizer and its surrogate model.
+            BayesianOptimizer: Loaded optimizer instance
 
         Raises:
             ValueError: If the number of saved models does not match the number of named models.
         """
-
+        
         # Restore RNG state if saved
         rng = None
-        fix_random_state = True
+        fix_random_state = True  # Default
         if 'rng_state' in config_save:
             rng = RNGManager.load_state(config_save['rng_state'])
             fix_random_state = config_save.get('fix_random_state', True)
-
         seed = config_save.get('seed', None)
 
         new_opt = cls(X_space=ParamSpace.load_state(config_save['X_space']),
@@ -344,12 +351,10 @@ class BayesianOptimizer(Optimizer):
                       seed=seed,
                       rng=rng,
                       fix_random_state=fix_random_state)
-        new_opt.target = [Target.load_state(t) for t in config_save['target']]
-
-        # Restore model_generator state if saved
         if 'model_generator_state' in config_save:
             tmp_rng = create_torch_rng(0)
             new_opt.model_generator = tmp_rng.set_state(torch.ByteTensor(config_save['model_generator_state']))
+        new_opt.target = [Target.load_state(t) for t in config_save['target']]
 
         # Directly unpack all of the entries in opt_attrs
         for k, v in config_save['opt_attrs'].items():
@@ -378,7 +383,9 @@ class BayesianOptimizer(Optimizer):
             new_opt.surrogate = []
             for obj_dict in config_save['model_states']:
                 new_opt.surrogate.append(SurrogateBoTorch.load_state(obj_dict))
-        
+
+        new_opt.task = TaskType.from_value(new_opt.task)
+
         return new_opt
     
     def predict(self,
@@ -447,6 +454,43 @@ class BayesianOptimizer(Optimizer):
             preds = pd.concat([preds, predict_i], axis=1)
             
         return preds
+
+    def _build_parser_context(
+            self,
+            m_batch: int,
+            X_t_pending: torch.Tensor | None,
+            target: list[Target],
+            target_locs: list[int],
+            objective: MCAcquisitionObjective | None = None
+        ):
+
+        # Establish baseline X from training and pending
+        X_train = torch.tensor(self.X_space.encode(self.X_train).values, dtype=TORCH_DTYPE)
+        if X_t_pending is not None:
+            X_baseline = torch.concat([X_train, X_t_pending], axis=0) # type: ignore
+        else:
+            X_baseline = X_train
+
+        # Calculate the performance on baseline X
+        f_all = []
+        for i in target_locs:
+            X_b = pd.DataFrame(X_baseline.numpy(),
+                               columns=[col for col in self.X_t_train.columns
+                                        if col not in self.X_space.X_task])
+            f_i, _ = self.surrogate[i].predict(X_b)
+            f_all.append(f_i)
+        f_t = torch.stack(f_all, axis=1)
+        # Create parser context
+        context: ParserContext = {
+            "f_t": f_t,
+            "X_baseline": X_baseline,
+            "m_batch": m_batch,
+            "n_dim": self.X_space.n_tdim,
+            "target": target,
+            "generator": self.torch_rng,
+            "objective": objective
+        }
+        return context
        
     def _validate_hypers(self,
                          o_dim: int,
@@ -479,23 +523,23 @@ class BayesianOptimizer(Optimizer):
         else:
             # Validate the hypers if provided
             if len(acquisition.items()) != 1:
-                raise ValueError('One dictionary of hyperparameters \
-                                    must be provided for each acquisition function')
+                raise ValueError("One dictionary of hyperparameters "
+                                 "must be provided for each acquisition function")
             aq_str, hps = list(acquisition.items())[0]
             if not isinstance(hps, dict):
                 raise TypeError('Hyperparameters must be provided as a dictionary')
             if not all(key in aq_hp_defaults[aq_str].keys() for key in hps.keys()):
-                raise ValueError('Unknown hyperpameter amongst {hps.keys()} \
-                                    selected for {aq_str}, select from one of \
-                                    {aq_hp_defaults[aq_str].keys()}')
+                raise ValueError(f"Unknown hyperparameter amongst {hps.keys()} "
+                                 f"selected for {aq_str}, select from one of "
+                                 f"{aq_hp_defaults[aq_str].keys()}")
             aq_hps.update(hps)
 
         optim_type = 'single' if o_dim == 1 else 'multi'
 
         # Validate the acquisition name
         if aq_str not in valid_aqs[optim_type]:
-            raise UnsupportedError(f'Each acquisition function must be \
-                                    selected from: {valid_aqs[optim_type]}')
+            raise UnsupportedError(f"Each acquisition function must be "
+                                    f"selected from: {valid_aqs[optim_type]}")
 
         # Fill in empty hypers with defaults, as appropriate
         for key, defaults in aq_hp_defaults[aq_str].items():
@@ -509,129 +553,279 @@ class BayesianOptimizer(Optimizer):
 
         return (aq_str, aq_hps)
 
-    def _parse_aq_kwargs(self,
-                         aq: str,
-                         hps: dict,
-                         m_batch: int,
-                         target_locs: list[int],
-                         model: Model,
-                         X_t_pending: Tensor | None = None,
-                         objective: MCAcquisitionObjective | None = None) -> dict:
-        """
-        Parses the acquisition function keyword arguments based on the selected acquisition
-        function and hyperparameters.
-
-        Args:
-            aq (str): The name of the acquisition function.
-            hps (dict): The hyperparameters for the acquisition function.
-            target_locs (list[int]): Indices of trained targets to use for objective function
-            X_t_pending (Tensor, optional): Suggested points yet to be run
-            objective (GenericMCMultiOutputObjective or GenericMCObjective, optional):
-                The objective used for optimization after calling the target models.
-                Default is ``None``.
-
-        Returns:
-            dict: The parsed acquisition function keyword arguments.
-        """
-        
-        aq_kwargs = {}
-
-        # Establish baseline X from training and pending
-        X_train = torch.tensor(self.X_space.encode(self.X_train).values, dtype=TORCH_DTYPE)
-        if X_t_pending is not None:
-            X_baseline = torch.concat([X_train, X_t_pending], axis=0)
-        else:
-            X_baseline = X_train
-
-        # Calculate the performance on baseline X
-        f_all = []
-        for i in target_locs:
-            X_b = pd.DataFrame(X_baseline.numpy(),
-                               columns=[col for col in self.X_t_train.columns
-                                        if col not in self.X_space.X_task])
-            f_i, _ = self.surrogate[i].predict(X_b)
-            f_all.append(f_i)
-        f_t = torch.stack(f_all, axis=1)
-
-        # If using an objective, want to calculate EI/PI from here
-        o = f_t if not objective else objective(f_t.unsqueeze(0), X_baseline).squeeze(0)
-        if objective:
-            aq_kwargs['objective'] = objective
-        
-        # Improvement aqs based on inflation or deflation of best point
-        if aq in ['EI', 'PI']:
-            o_max = o.max(dim=0).values * (1+hps['inflate'])
-            aq_kwargs.update({'best_f': o_max})
-        
-        # UCB based on: mu + sqrt(beta) * sqrt(variance) = mu + sqrt(beta) * sd
-        if aq == 'UCB':
-            aq_kwargs['beta'] = hps['beta']
-
-        # Noisy aqs require X_train reference
-        if aq in ['NEI', 'NEHVI', 'NParEGO']:
-            aq_kwargs['X_baseline'] = X_baseline
-            if any(isinstance(m, EnsembleModel) for m in model.models):
-                aq_kwargs['cache_root'] = False
-
-        # Hypervolume requires reference point
-        if aq in ['EHVI', 'NEHVI']:
-
-            # The reference point must be in the objective space, by default
-            # use the minimum point - 10% of the range
-            ref_point = hps['ref_point']
-            if ref_point is None:
-                max = o.max(dim=0).values
-                min = o.min(dim=0).values
-                ref_point = min - 0.1 * (max - min)
-            else:
-                ref_point = torch.tensor(ref_point)
-
-            aq_kwargs['ref_point'] = ref_point
-            
-        if aq in ['NParEGO', 'NEHVI']:
-            aq_kwargs['prune_baseline'] = True
-            
-        if aq == 'EHVI':
-            aq_kwargs['partitioning'] = NondominatedPartitioning(aq_kwargs['ref_point'], Y=o)
-
-        if aq == 'NIPV':
-            X_bounds = torch.tensor([[0.0, 1.0]]*self.X_space.n_tdim, dtype=TORCH_DTYPE).T
-            qmc_samples = draw_sobol_samples(bounds=X_bounds, n=128, q=m_batch)
-            aq_kwargs['mc_points'] = qmc_samples.squeeze(-2)
-            aq_kwargs['sampler'] = None
-            if objective:
-                raise UnsupportedError('NIPV does not support objectives')
-
-        if aq == 'NParEGO':
-            w = hps['scalarization_weights']
-            if isinstance(w, list):
-                w = torch.tensor(w)
-                w = w/torch.sum(torch.abs(w))
-            aq_kwargs['scalarization_weights'] = w
-
-        if aq == 'SF':
-            aq_kwargs['X_baseline'] = X_baseline
-
+    def _parse_aq_kwargs(
+            self,
+            aq_name: str,
+            hps: dict[str, Any],
+            model: ModelList | ModelListGP,
+            sampler: ListSampler | SobolQMCNormalSampler | None,
+            X_t_pending: torch.Tensor | None,
+            objective: MCAcquisitionObjective | None,
+            o_dim: int,
+            target: list[Target],
+            target_locs: list[int],
+            m_batch: int,
+            aq_kwargs: dict[str, Any] = {}
+            ):
+        """A wrapper function to validate and parse acquisition function hyperparameters."""
+        # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
+        aq_kwargs.update({'model': model, 'sampler': sampler, 'X_pending': X_t_pending, "objective": objective})
+        # Extract acq function names and custom hyperparameters from the 'acquisition' list in config
+        aq_kwargs, aq_hps = registry.validate_hyperparameters(self.task, o_dim, aq_name, hps, aq_kwargs)
+        context = self._build_parser_context(m_batch, X_t_pending, target, target_locs, objective)
+        aq_kwargs = registry.parse_hyperparameters(aq_name, aq_kwargs, aq_hps, context)
         return aq_kwargs
+
+    def _setup_model_and_objective(
+            self,
+            target: Target | list[Target] | None,
+            objective: MCAcquisitionObjective | None
+        ) -> tuple[ModelList | ModelListGP, int, list[int], list[Target]]:
+        """
+        Set up the model list and validate objective dimensions.
+        
+        Args:
+            target: Target or list of Target objects
+            objective: MCAcquisitionObjective or None
+        
+        Returns:
+            tuple: (model, o_dim, target_locs, target)
+        
+        Raises:
+            IncompatibleObjectiveError: If the objective does not successfully execute on a sample.
+        """
+        target = self._validate_target(target)
+        target_locs = [self.y_names.index(t.name) for t in target]
+        
+        model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) 
+                      if i in target_locs]
+        if all(isinstance(m, GPyTorchModel) for m in model_list):
+            model = ModelListGP(*model_list)
+        else:
+            model = ModelList(*model_list)
+        
+        # Determine output dimensions
+        if objective:
+            try:
+                X_sample = self.X_train.iloc[0, :].to_frame().T
+                eval_suggest = self.evaluate(X_sample, target=target, objective=objective)
+                o_dim = len([col for col in eval_suggest.columns if 'Objective' in col])
+            except Exception:
+                raise IncompatibleObjectiveError('Objective(s) did not successfully execute on sample')
+        else:
+            o_dim = len(target_locs)
+        
+        return model, o_dim, target_locs, target
+
+    def _setup_constraints(
+            self,
+            eq_constraints: Linear_Constraint | list[Linear_Constraint] | None,
+            ineq_constraints: Linear_Constraint | list[Linear_Constraint] | None,
+            nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] | None
+        ) -> tuple[list[Linear_Constraint], list[Linear_Constraint], list[Nonlinear_Constraint]]:
+        """
+        Consolidate and validate all constraints.
+        
+        Args:
+            eq_constraints: Equality constraints (single or list)
+            ineq_constraints: Inequality constraints (single or list)
+            nleq_constraints: Nonlinear constraints (single or list)
+        
+        Returns:
+            tuple: (eq_constraints, ineq_constraints, nleq_constraints) as lists
+        """
+        # Coerce to lists
+        if not eq_constraints:
+            eq_constraints = []
+        if not ineq_constraints:
+            ineq_constraints = []
+        if not nleq_constraints:
+            nleq_constraints = []
+        
+        if not isinstance(eq_constraints, list):
+            eq_constraints = [eq_constraints]
+        if not isinstance(ineq_constraints, list):
+            ineq_constraints = [ineq_constraints]
+        if not isinstance(nleq_constraints, list):
+            nleq_constraints = [nleq_constraints]
+        
+        # Append X_space constraints
+        if getattr(self.X_space, 'linear_constraints', []):
+            for c in self.X_space.linear_constraints:
+                if c.equality:
+                    eq_constraints.append(c)
+                else:
+                    ineq_constraints.append(c)
+        if getattr(self.X_space, 'nonlinear_constraints', []):
+            nleq_constraints += self.X_space.nonlinear_constraints
+        
+        return eq_constraints, ineq_constraints, nleq_constraints
+
+    def _optimize_single_acquisition(
+        self,
+        aq_i: str | dict[str, Any],
+        model: ModelList | ModelListGP,
+        sampler: ListSampler | SobolQMCNormalSampler,
+        X_t_pending: Tensor | None,
+        objective: MCAcquisitionObjective | None,
+        o_dim: int,
+        target: list[Target],
+        target_locs: list[int],
+        m_batch: int,
+        manual_seed: int | None,
+        out_constraints: Output_Constraint | list[Output_Constraint] | None,
+        eq_constraints: list[Linear_Constraint],
+        ineq_constraints: list[Linear_Constraint],
+        nleq_constraints: list[Nonlinear_Constraint],
+        fixed_var: dict[str, float | str] | None,
+        optim_sequential: bool,
+        optim_samples: int,
+        optim_restarts: int,
+        optim_options: dict | None,
+    ) -> tuple[Tensor, pd.DataFrame, pd.DataFrame]:
+        """
+        Optimize a single acquisition function with given constraints.
+        
+        Args:
+            aq_i: Acquisition function specification (string or dict)
+            model: Surrogate model
+            sampler: MC sampler
+            X_t_pending: Pending experiments (torch tensor)
+            objective: Objective function
+            o_dim: Output dimension
+            target: Target or list of targets
+            target_locs: Target locations in y_names
+            m_batch: Batch size
+            out_constraints: Output constraints
+            eq_constraints: Equality constraints
+            ineq_constraints: Inequality constraints
+            nleq_constraints: Nonlinear constraints
+            fixed_var: Fixed variables dict
+            optim_sequential: Whether to optimize sequentially
+            optim_samples: Number of optimization samples
+            optim_restarts: Number of optimization restarts
+            optim_options: Additional optimization options
+        
+        Returns:
+            tuple: (candidates_tensor, candidates_df, eval_df)
+        
+        Raises:
+            UnsupportedError: If acquisition function doesn't support constraints or
+                             if nonlinear constraints are used with discrete features
+        """
+        aq_str, aq_hps = self._normalize_aq_input(aq_i)
+        
+        # Validation for constraints
+        aq_kwargs = {}
+        if aq_str in ['UCB', 'Mean', 'TS', 'SF', 'SR', 'NIPV']:
+            if out_constraints is not None:
+                raise UnsupportedError('Provided acquisition function does not support output constraints')
+        else:
+            if out_constraints and not isinstance(out_constraints, list):
+                out_constraints = [out_constraints]
+            aq_kwargs['constraints'] = [c.forward(scale=objective is None)
+                                        for c in out_constraints] if out_constraints else None
+        
+        aq_kwargs = self._parse_aq_kwargs(aq_str, aq_hps, model, sampler, X_t_pending, 
+                                         objective, o_dim, target, target_locs, m_batch, aq_kwargs)
+        
+        # Cache parsed acquisition arguments
+        self.aq_args[aq_str] = aq_kwargs
+        
+        # Compute fixed features
+        fixed_features_list = self._fixed_features(fixed_var)
+        if len(fixed_features_list) > 25:
+            warnings.warn(f'The combinations of discrete features is large at {len(fixed_features_list)}.'
+                          + ' Optimization will proceed very slowly due to the combinatorial explosion.'
+                          + ' Recommend reducing the number of discrete parameters used.', OptimizerWarning)
+        
+        # Setup optimization kwargs
+        X_bounds = torch.tensor(self.X_space.search_space.values, dtype=TORCH_DTYPE)
+        optim_kwargs: dict[str, Any] = {
+            "equality_constraints": [c() for c in eq_constraints] if eq_constraints else None,
+            "inequality_constraints": [c() for c in ineq_constraints] if ineq_constraints else None,
+            "nonlinear_inequality_constraints": [c() for c in nleq_constraints] if nleq_constraints else None,
+        }
+        
+        # Handle nonlinear constraints
+        if nleq_constraints:
+            X_ic = torch.ones((optim_samples, 1 if fixed_features_list else m_batch, 
+                              self.X_space.n_tdim))*torch.rand(1, generator=self.torch_rng)
+            optim_kwargs['batch_initial_conditions'] = X_ic
+            if fixed_features_list:
+                raise UnsupportedError('Nonlinear constraints are not supported with discrete features.')
+        
+        # Hypervolume aqs special handling
+        if aq_str in ['NEHVI', 'EHVI']:
+            if optim_sequential and X_t_pending is not None:
+                warnings.warn('Hypervolume aqs with X_pending require joint optimization. '
+                             'Setting optim_sequential to False', UserWarning)
+                optim_sequential = False
+        
+        # Optimize
+        aq_func = registry.instantiate_acquisition(aq_str, **aq_kwargs).to(TORCH_DTYPE)
+        
+        if aq_str == 'RS':
+            candidates = aq_func()
+        else:
+            def optimize_acqf_wrapper(fixed_features_list):
+                if fixed_features_list:
+                    optim_func = optimize_acqf_mixed
+                    optim_kwargs["fixed_features_list"] = fixed_features_list
+                else:
+                    optim_func = optimize_acqf
+                    optim_kwargs["sequential"] = optim_sequential
+                
+                candidates, acq_values = optim_func(
+                    acq_function=aq_func,
+                    bounds=X_bounds,
+                    q=m_batch,
+                    num_restarts=optim_restarts,
+                    raw_samples=optim_samples,
+                    options=optim_options,
+                    **optim_kwargs,
+                )
+                return candidates, acq_values
+            
+            # Apply RNG seeding for suggest operation
+            wrapped_func =  self._rng_wrapper(optimize_acqf_wrapper, manual_seed)  # type: ignore
+            candidates, _ = wrapped_func(fixed_features_list)
+        
+        if self.verbose >= 2:
+            print(f'Optimized {aq_str} acquisition function successfully')
+        
+        # Decode candidates
+        candidates_df = self.X_space.decode(
+            pd.DataFrame(candidates.detach().cpu().numpy(),
+                        columns=[col for col in self.X_t_train.columns 
+                                if col not in self.X_space.X_task]))
+        
+        # Evaluate
+        eval_df = self.evaluate(candidates_df, X_t_pending,
+                               target=target, acquisition=aq_i, 
+                               objective=objective, eval_aq=True)
+        
+        return candidates, candidates_df, eval_df
 
     def suggest(self,
                 m_batch: int = 1,
                 target: Target | list[Target] | None = None,
-                acquisition: list[str] | list[dict] = None,
+                acquisition: list[str] | list[dict] | None = None,
                 optim_sequential: bool = True,
                 optim_samples: int = 512,
                 optim_restarts: int = 10,
                 optim_options: dict | None = None,
+                manual_seed: int | None = None,
                 objective: MCAcquisitionObjective | None = None,
                 out_constraints: Output_Constraint | list[Output_Constraint] | None = None,
                 eq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
                 ineq_constraints: Linear_Constraint | list[Linear_Constraint] | None = None,
                 nleq_constraints: Nonlinear_Constraint | list[Nonlinear_Constraint] | None = None,
                 task_index: int = 0,
-                fixed_var: dict[str: float | str] | None = None,
+                fixed_var: dict[str, float | str] | None = None,
                 X_pending: pd.DataFrame | None = None,
                 eval_pending: pd.DataFrame | None = None,
-                manual_seed: int | None = None) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+                ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         Suggest future experiments based on a maximization of some acquisition
         function calculated from the expectation of a surrogate model.
@@ -696,8 +890,7 @@ class BayesianOptimizer(Optimizer):
                 X_suggest (pd.DataFrame): Experiment matrix of real input variables,
                     selected by optimizer.
                 eval_suggest (pd.DataFrame): Mean results (response, prediction interval, f(response), obj
-                    function for
-                    each suggested experiment.
+                    function for each suggested experiment.
         
         Raises:
             UnfitError: If the surrogate model has not been fit before suggesting new experiments.
@@ -705,79 +898,39 @@ class BayesianOptimizer(Optimizer):
             IncorrectObjectiveError: If the objective does not successfully execute on a sample.
             TypeError: If the acquisition is not a list of strings or dictionaries.
             UnsupportedError: If the provided acquisition function does not support output constraints.
-
         """
-
+        
         if not self.is_fit:
             raise UnfitError('Surrogate model must be fit before suggesting new experiments')
-            
+        
         if self.verbose >= 2:
             print(f'Optimizing {m_batch} experiments [...]')
         
-        # Use indexing to handle if suggestions are made for a subset of fit targets/surrogates
-        target = self._validate_target(target)
-        target_locs = [self.y_names.index(t.name) for t in target]
-        
-        # Select the model(s) to use for optimization
-        model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) if i in target_locs]
-        if all(isinstance(m, GPyTorchModel) for m in model_list):
-            model = ModelListGP(*model_list)
-        else:
-            model = ModelList(*model_list)
-
-        # Make sure that model/objective outputs match the input requirements for aqs
-        # In order to determine the number of outputs, considering objectives,
-        # just call the objective on a random sample, and check the output dims
-        if objective:
-            try:
-                X_sample = self.X_train.iloc[0, :].to_frame().T
-                eval_suggest = self.evaluate(X_sample, target=target, objective=objective)
-                o_dim = len([col for col in eval_suggest.columns if 'Objective' in col])
-            except Exception:
-                raise IncompatibleObjectiveError('Objective(s) did not successfully execute on sample')
-        else:
-            o_dim = len(target_locs)
-
+        # Setup model and objective
+        model, o_dim, target_locs, target = self._setup_model_and_objective(target, objective)
         optim_type = 'single' if o_dim == 1 else 'multi'
-
-        # Default if no aq method is provided
+        
+        # Default acquisition
         if not acquisition:
-            acquisition = [aq_defaults[optim_type]]
-
-        # Type check for acquisition
+            acquisition = [aq_defaults[self.task.value][optim_type]]
+        
+        # Type check
         if not isinstance(acquisition, list):
             raise TypeError('acquisition must be a list of strings or dictionaries')
         if not all(isinstance(item, (str, dict)) for item in acquisition):
             raise TypeError('Each item in acquisition list must be either a string or a dictionary')
         
-        # Compute static variable inputs
-        fixed_features_list = self._fixed_features(fixed_var)
-        if len(fixed_features_list) > 25:
-            warnings.warn(f'The combinations of discrete features is large at {len(fixed_features_list)}.'
-                          + ' Optimization will proceed very slowly due to the combinatorial explosion.'
-                          + ' Recommend reducing the number of discrete parameters used.', OptimizerWarning)
+        # Setup constraints
+        eq_constraints, ineq_constraints, nleq_constraints = self._setup_constraints(
+            eq_constraints, ineq_constraints, nleq_constraints)
         
-        # Set up the sampler, for MC-based optimization of acquisition functions
-        if not isinstance(model, ModelListGP):
-            samplers = []
-            for m in model.models:
-                if isinstance(m, EnsembleModel):
-                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
-                else:
-                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
-                samplers.append(sampler_i)
-            sampler = ListSampler(*samplers)
-        else:
-            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=self.seed)
-
-        # Calculate search bounds for optimization
-        X_bounds = torch.tensor(self.X_space.search_space.values, dtype=TORCH_DTYPE)
+        # Setup sampler
+        sampler = self._setup_sampler(model, optim_samples, self.seed)
         
-        # Set up master lists to hold the candidates from multi-acquisition results
+        # Handle pending experiments
         candidates_all = []
         eval_suggest = pd.DataFrame()
-
-        # Incorporate previously suggested X values, if provided
+        
         if X_pending is not None:
             m_pending = X_pending.shape[0]
             candidates_pending = torch.tensor(self.X_space.encode(X_pending).values)
@@ -789,144 +942,56 @@ class BayesianOptimizer(Optimizer):
                 eval_suggest = eval_pending
         else:
             X_t_pending = None
-
-        #  Select the task to optimize for a multi-task model
+        
+        # Handle task index
+        task_name = None
+        task_value = None
         if self.X_space.X_task:
             if objective is not None:
-                objective = Objective_Sequence([Index_Objective(task_index), objective])
+                objective = Objective_Sequence([Index_Objective(task_index), objective])  # type: ignore
             task_param = next(x for x in self.X_space if isinstance(x, Task))
             task_name = task_param.name
-            task_value = task_param.encode([task_param.categories[task_index]])
-
-        # Proceed with the optimization over each set of acquisition/hypers
+            task_value = task_param.encode(np.array([task_param.categories[task_index]]))
+        
+        # Reset parsed acquisition arguments
+        self.aq_args = {}
+        
+        # OPTIMIZATION LOOP
         for aq_i in acquisition:
-            # Extract acq function names and custom hyperparameters from the 'acquisition' list in config
-            aq_str, aq_hps = self._validate_hypers(o_dim, aq_i)
-
-            # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
-            aq_kwargs = {'model': model, 'sampler': sampler, 'X_pending': X_t_pending}
+            candidates, candidates_df, eval_df = self._optimize_single_acquisition(
+                aq_i=aq_i,
+                model=model,
+                sampler=sampler,
+                X_t_pending=X_t_pending,
+                objective=objective,
+                o_dim=o_dim,
+                target=target,
+                target_locs=target_locs,
+                m_batch=m_batch,
+                manual_seed=manual_seed,
+                out_constraints=out_constraints,
+                eq_constraints=eq_constraints,
+                ineq_constraints=ineq_constraints,
+                nleq_constraints=nleq_constraints,
+                fixed_var=fixed_var,
+                optim_sequential=optim_sequential,
+                optim_samples=optim_samples,
+                optim_restarts=optim_restarts,
+                optim_options=optim_options,
+            )
             
-            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, m_batch,
-                                                   target_locs, model,
-                                                   X_t_pending, objective))
-
-            # Raise errors related to certain constraints
-            if aq_str in ['UCB', 'Mean', 'TS', 'SF', 'SR', 'NIPV']:
-                if out_constraints is not None:
-                    raise UnsupportedError('Provided aquisition function does not support output constraints')
-            else:
-                if out_constraints and not isinstance(out_constraints, list):
-                    out_constraints = [out_constraints]
-                aq_kwargs['constraints'] = [c.forward(scale=objective is None)
-                                            for c in out_constraints] if out_constraints else None
-
-            # If NoneType, coerce to list
-            if not eq_constraints:
-                eq_constraints = []
-            if not ineq_constraints:
-                ineq_constraints = []
-            if not nleq_constraints:
-                nleq_constraints = []
-
-            # Coerce input constraints to lists
-            if not isinstance(eq_constraints, list):
-                eq_constraints = [eq_constraints]
-            if not isinstance(ineq_constraints, list):
-                ineq_constraints = [ineq_constraints]
-            if not isinstance(nleq_constraints, list):
-                nleq_constraints = [nleq_constraints]
-
-            # Append X_space constraints
-            if getattr(self.X_space, 'linear_constraints', []):
-                for c in self.X_space.linear_constraints:
-                    if c.equality:
-                        eq_constraints.append(c)
-                    else:
-                        ineq_constraints.append(c)
-            if getattr(self.X_space, 'nonlinear_constraints', []):
-                nleq_constraints += self.X_space.nonlinear_constraints
-
-            # Input constraints are used by optim_acqf and friends
-            optim_kwargs: dict[str, Any] = {
-                "equality_constraints": [c() for c in eq_constraints] if eq_constraints else None,
-                "inequality_constraints": [c() for c in ineq_constraints] if ineq_constraints else None,
-                "nonlinear_inequality_constraints": [c() for c in nleq_constraints] if nleq_constraints else None,
-            }
-            
-            # optim_options = {}  # Can optionally specify batch_limit or max_iter
-            
-            # If nonlinear constraints are used, BoTorch doesn't provide an ic_generator
-            # Must provide manual samples = just use random initialization
-            if nleq_constraints:
-                X_ic = torch.ones((optim_samples, 1 if fixed_features_list else m_batch, self.X_space.n_tdim))*torch.rand(1, generator=self.torch_rng)
-                optim_kwargs['batch_initial_conditions'] = X_ic
-                if fixed_features_list:
-                    raise UnsupportedError('Nonlinear constraints are not supported with discrete features.')
-            
-            # Hypervolume aqs fail with X_t_pending when optim_sequential=True
-            if aq_str in ['NEHVI', 'EHVI']:
-                if optim_sequential and X_t_pending is not None:
-                    warnings.warn('Hypervolume aqs with X_pending require joint optimization. \
-                                   Setting optim_sequential to False', UserWarning)
-                    optim_sequential = False
-
-            def optimize_acqf_wrapper(fixed_features_list):
-                if fixed_features_list:
-                    # If there are any discrete values, we must used the mixed integer optimization
-                    optim_func = optimize_acqf_mixed
-                    optim_kwargs["fixed_features_list"] = fixed_features_list
-                else:
-                    optim_func = optimize_acqf
-                    optim_kwargs["sequential"] = optim_sequential
-
-                candidates, _ = optim_func(
-                    acq_function=aq_func,
-                    bounds=X_bounds,
-                    q=m_batch,
-                    num_restarts=optim_restarts,
-                    raw_samples=optim_samples,
-                    options=optim_options,
-                    **optim_kwargs,
-                )
-                return candidates, _
-
-            # If it's random search, no need to do optimization; Otherwise, initialize the aq function and optimize
-            if aq_str == 'RS':
-                candidates = torch.rand((m_batch, self.X_space.n_tdim), generator=self.torch_rng, dtype=TORCH_DTYPE)
-            else:
-                aq_func = aq_class_dict[aq_str](**aq_kwargs).to(TORCH_DTYPE)
-
-                # Wrap with RNG control
-                wrapped_func = self._rng_wrapper(optimize_acqf_wrapper, manual_seed)
-                candidates, _ = wrapped_func(fixed_features_list)
-
-            if self.verbose >= 2:
-                print(f'Optimized {aq_str} acquisition function successfully')
-            
-            candidates_i = self.X_space.decode(
-                pd.DataFrame(candidates.detach().cpu().numpy(),
-                             columns=[col for col in self.X_t_train.columns if col not in self.X_space.X_task]))
-            
-            if X_t_pending is not None:
-                X_t_pending_i = X_t_pending
-            else:
-                X_t_pending_i = None
-            
-            eval_i = self.evaluate(candidates_i, X_t_pending_i,
-                                   target=target, acquisition=aq_i, objective=objective, eval_aq=True)
-            eval_suggest = pd.concat([eval_suggest, eval_i], axis=0).reset_index(drop=True)
-
+            eval_suggest = pd.concat([eval_suggest, eval_df], axis=0).reset_index(drop=True)
             candidates_all.append(candidates)
             X_t_pending = torch.concat(candidates_all)
-                       
-        candidates_all = pd.DataFrame(X_t_pending.detach().cpu().numpy(),
+        
+        # Finalize results
+        candidates_all = pd.DataFrame(torch.concat(candidates_all).detach().cpu().numpy(),
                                       columns=[col for col in self.X_t_train.columns
-                                               if col not in self.X_space.X_task])
-    
+                                              if col not in self.X_space.X_task])
+        
         if self.X_space.X_task:
             candidates_all[task_name] = task_value
         
-        # Arrange suggested experiments into a single dataframe, and compute predictions
         X_suggest = self.X_space.decode(candidates_all)
         
         return X_suggest, eval_suggest
@@ -935,7 +1000,7 @@ class BayesianOptimizer(Optimizer):
                  X_suggest: pd.DataFrame,
                  X_t_pending: Tensor | None = None,
                  target: Target | list[Target] | None = None,
-                 acquisition: str | dict = None,
+                 acquisition: str | dict | None = None,
                  objective: MCAcquisitionObjective | None = None,
                  eval_aq: bool = False) -> pd.DataFrame:
         """
@@ -967,56 +1032,31 @@ class BayesianOptimizer(Optimizer):
         X_t = torch.tensor(self.X_space.encode(X_suggest).values, dtype=TORCH_DTYPE)
         X_t_train = torch.tensor(self.X_space.encode(self.X_train).values, dtype=TORCH_DTYPE)
 
-        # Evaluate f_predict on new and pending points
-        f_all = []
-        f_train_all = []
-        f_pending_all = []
-        for loc in target_locs:
-            # Predict: new suggestions
-            t_model = self.surrogate[loc]
-            mu_i, _ = t_model.predict(self.X_space.encode(X_suggest))
-            f_all.append(mu_i.unsqueeze(1))
-            eval_suggest[f'f({self.target[loc].name})'] = mu_i
-
-            # Training data on select targets
-            mu_i_train, _ = t_model.predict(self.X_space.encode(self.X_train))
-            f_train_all.append(mu_i_train.unsqueeze(1))
-
-            # Pending points if provided
-            if X_t_pending is not None:
-                mu_i_pending, _ = t_model.predict(pd.DataFrame(X_t_pending,
-                                                               columns=[col for col in self.X_t_train.columns
-                                                                        if col not in self.X_space.X_task]))
-                f_pending_all.append(mu_i_pending.unsqueeze(1))
-
-        f_t = torch.concat(f_all, dim=1)
-        f_t_train = torch.concat(f_train_all, dim=1)
+        # Compute f_tensors for new, training, and pending points
+        f_t = self._compute_f_tensors(X_suggest, target_locs)
+        f_t_train = self._compute_f_tensors(self.X_train, target_locs)
+        
         if X_t_pending is not None:
-            f_t_pending = torch.concat(f_pending_all, dim=1)
+            X_pending_df = pd.DataFrame(X_t_pending.detach().cpu().numpy(),
+                                        columns=[col for col in self.X_t_train.columns
+                                                 if col not in self.X_space.X_task])
+            f_t_pending = self._compute_f_tensors(X_pending_df, target_locs)
+        
+        # Add standardized predictions to eval_suggest
+        for i, loc in enumerate(target_locs):
+            eval_suggest[f'{self.target[loc].name} Standardized'] = f_t[:, i].detach().cpu().numpy()
 
+        # Evaluate objectives
+        o = self._evaluate_objectives(f_t, X_t, objective)
+        o_train = self._evaluate_objectives(f_t_train, X_t_train, objective)
+        if X_t_pending is not None:
+            o_pending = self._evaluate_objectives(f_t_pending, X_t_pending, objective)
+        
+        # Store objective values and determine dimensionality
         if objective:
-            # Convert f_predict to tensor and evaluate objective
-            # Must add sample dimension to f_t
-            o = objective(f_t.unsqueeze(0), X_t).squeeze(0)
-            if o.ndim < 2:
-                o = o.unsqueeze(1)  # Rearrange into m x o
-
-            # Store multiple objectives if applicable
             for o_i in range(o.shape[-1]):
                 eval_suggest[f'Objective {o_i+1}'] = o[:, o_i].detach().cpu().numpy()
-
-            # Also calculate for training and pending data (for total hv and pareto calcs)
-            o_train = objective(f_t_train.unsqueeze(0), X_t_train).squeeze(0)
-            if o_train.ndim < 2:
-                o_train = o_train.unsqueeze(1)
-            if X_t_pending is not None:
-                o_pending = objective(f_t_pending.unsqueeze(0), X_t_pending).squeeze(0)
-                if o_pending.ndim < 2:
-                    o_pending = o_pending.unsqueeze(1)
-
-            # Calculate output dimensionality and evaluate acquisition
             o_dim = o.shape[-1]
-            
         else:
             o_dim = len(target_locs)
 
@@ -1025,50 +1065,36 @@ class BayesianOptimizer(Optimizer):
         if eval_aq:
             # Default if no aq method is provided
             if not acquisition:
-                acquisition = [aq_defaults[optim_type]]
+                acquisition = aq_defaults[self.task.value][optim_type]
 
             if not isinstance(acquisition, (str, dict)):
                 raise TypeError('Acquisition must be either a string or a dictionary')
-            
-            model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) if i in target_locs]
-            if all(isinstance(m, GPyTorchModel) for m in model_list):
-                model = ModelListGP(*model_list)
+
+            aq_str, aq_hps = self._normalize_aq_input(acquisition)
+
+            if aq_str not in self.aq_args:
+                model_list = [one_surrogate.torch_model for i, one_surrogate in enumerate(self.surrogate) if i in target_locs]
+                if all(isinstance(m, GPyTorchModel) for m in model_list):
+                    model = ModelListGP(*model_list)
+                else:
+                    model = ModelList(*model_list)
+                aq_kwargs = {'model': model, 'sampler': None, 'X_pending': X_t_pending}
+                aq_kwargs = self._parse_aq_kwargs(aq_str, aq_hps, model, None, X_t_pending, None, o_dim, target, target_locs, 1)     
             else:
-                model = ModelList(*model_list)
+                aq_kwargs = self.aq_args[aq_str]
             
-            # Extract acq function names and custom hyperparameters from the 'acquisition' list in config
-            aq_str, aq_hps = self._validate_hypers(o_dim, acquisition)
-
-            # Use aq_kwargs so that extra unnecessary ones in hps get removed for certain aq funcs
-            aq_kwargs = {'model': model, 'sampler': None, 'X_pending': X_t_pending}
-                       
-            aq_kwargs.update(self._parse_aq_kwargs(aq_str, aq_hps, X_suggest.shape[0],
-                                                   target_locs, model,
-                                                   X_t_pending, objective))
-                
-            # If it's random search, no need to evaluate aq
-            if aq_str == 'RS':
-                a_joint = torch.tensor([float('nan')]).repeat(X_t.shape[0]).unsqueeze(1)
-            else:
-                aq_func = aq_class_dict[aq_str](**aq_kwargs)
-
-                # Evaluate acquisition on individual samples, then jointly
-                a = []
-                for x_i in X_t:
-                    a_i = aq_func(x_i.unsqueeze(0))
-                    a.append(a_i.detach().cpu())
-                a = torch.concat(a).unsqueeze(1)
-                a_joint = aq_func(X_t).repeat(X_t.shape[0]).unsqueeze(1)  # Rearrange into m x 1
-
+            # Evaluate acquisition function
+            a, a_joint = self._evaluate_acquisition(X_t, aq_str, aq_kwargs)
+            
+            if aq_str != 'RS':
                 eval_suggest['aq Value'] = a.numpy()
-                
-            eval_suggest['aq Value (joint)'] = a_joint.detach().cpu().numpy()
+            
+            eval_suggest['aq Value (joint)'] = a_joint.detach().cpu().numpy() if a_joint is not None else float('nan')
             eval_suggest['aq Method'] = [aq_str]*X_t.shape[0]
 
         # For multi-output evaluations, calculate pareto and hv considering objectives
         if o_dim > 1:
             if objective is None:
-                o = f_t
                 o_list = [f_t, f_t_train]
                 if X_t_pending is not None:
                     o_list.append(f_t_pending)
@@ -1088,7 +1114,7 @@ class BayesianOptimizer(Optimizer):
     def maximize(self,
                  optim_samples=1026,
                  optim_restarts=50,
-                 fixed_var: dict[str: float | str] | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+                 fixed_var: dict[str, float | str] | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
         """
         Predicts the conditions which return the maximum response value within the parameter space.
 
@@ -1116,3 +1142,107 @@ class BayesianOptimizer(Optimizer):
             eval_suggest = pd.concat([eval_suggest, eval_suggest_i], axis=0)
         
         return X_suggest, eval_suggest
+
+    def _compute_f_tensors(self, X_df: pd.DataFrame, target_locs: list[int]) -> Tensor:
+        """
+        Compute f (transformed objective) tensors for given X data.
+        
+        Args:
+            X_df (pd.DataFrame): Input data in original space
+            target_locs (list[int]): Indices of targets to compute
+        
+        Returns:
+            torch.Tensor: Concatenated f predictions with shape (n_samples, n_targets)
+        """
+        f_all = []
+        for loc in target_locs:
+            t_model = self.surrogate[loc]
+            mu_i, _ = t_model.predict(self.X_space.encode(X_df))
+            f_all.append(mu_i.unsqueeze(1))
+        
+        return torch.concat(f_all, dim=1)
+
+    def _evaluate_objectives(self, f_tensors: Tensor, X_tensors: Tensor, objective: MCAcquisitionObjective | None) -> Tensor:
+        """
+        Evaluate objective function(s) on f tensors.
+        
+        Args:
+            f_tensors (torch.Tensor): Transformed objective values (n x m)
+            X_tensors (torch.Tensor): Input tensors in encoded space (n x d)
+            objective (MCAcquisitionObjective): Objective function
+        
+        Returns:
+            torch.Tensor: Objective values with shape (n x o_dim)
+        """
+        if objective is None:
+            return f_tensors
+        
+        # Evaluate objective with sample dimension
+        o = objective(f_tensors.unsqueeze(0), X_tensors).squeeze(0)
+        if o.ndim < 2:
+            o = o.unsqueeze(1)  # Reshape to (n x 1) if 1D
+        
+        return o
+
+    def _evaluate_acquisition(self, X_t: Tensor, aq_str: str, aq_kwargs: dict[str, Any]) -> tuple[Tensor, Tensor | None]:
+        """
+        Evaluate acquisition function on candidates.
+        
+        Args:
+            X_t (torch.Tensor): Candidate points in encoded space
+            aq_str (str): Acquisition function name
+            aq_kwargs (dict): Acquisition function arguments
+        
+        Returns:
+            tuple: (individual_values, joint_value) - both are torch Tensors
+                individual_values: Acquisition values for each point individually
+                joint_value: Acquisition value for all points jointly
+        """
+        # Random search has no acquisition value
+        if aq_str == 'RS':
+            return torch.tensor([float('nan')]).repeat(X_t.shape[0]).unsqueeze(1), None
+        
+        aq_func = registry.instantiate_acquisition(aq_str, **aq_kwargs)
+        
+        # Evaluate acquisition on individual samples
+        a = []
+        for x_i in X_t:
+            a_i = aq_func(x_i.unsqueeze(0))
+            a.append(a_i.detach().cpu())
+        a = torch.concat(a).unsqueeze(1)
+        
+        # Evaluate acquisition jointly
+        a_joint = aq_func(X_t).repeat(X_t.shape[0]).unsqueeze(1)
+        
+        return a, a_joint
+
+    @staticmethod
+    def _setup_sampler(model: Model | ModelListGP, optim_samples: int, seed: int | None) -> ListSampler | SobolQMCNormalSampler:
+        if not isinstance(model, ModelListGP):
+            samplers = []
+            for m in model.models:
+                if isinstance(m, EnsembleModel):
+                    sampler_i = IndexSampler(sample_shape=torch.Size([optim_samples]), seed=seed)
+                else:
+                    sampler_i = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=seed)
+                samplers.append(sampler_i)
+            sampler = ListSampler(*samplers)
+        else:
+            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([optim_samples]), seed=seed)
+        return sampler
+
+    @staticmethod
+    def _normalize_aq_input(acquisition: str | dict[str, Any]) -> tuple[str, dict[str, Any]]:
+        # Parse acquisition input
+        if isinstance(acquisition, str):
+            aq_name = acquisition
+            hps = {}
+        elif isinstance(acquisition, dict):
+            if len(acquisition) != 1:
+                raise ValueError("One dictionary of hyperparameters must be provided for each acquisition function")
+            aq_name, hps = next(iter(acquisition.items()))
+            if not isinstance(hps, dict):
+                raise TypeError("Hyperparameters must be provided as a dictionary")
+        else:
+            raise TypeError("Acquisition must be a string or a dictionary")
+        return aq_name, hps

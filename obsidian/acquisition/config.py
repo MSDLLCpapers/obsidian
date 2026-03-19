@@ -1,6 +1,6 @@
 """Method pointers and config for acquisition functions"""
 
-from typing import Callable, Dict, Type
+from typing import Callable, Type
 
 # avoid possible naming space collision
 import obsidian.acquisition.utils as acq_utils
@@ -16,48 +16,51 @@ from .botorch import (
     qSimpleRegret,
     qUpperConfidenceBound,
 )
-from .custom import qMean, qSpaceFill
+from .custom import qMean, qSpaceFill, RandomSampling
 
 _builtin_acq_func_dict = {
     # Single-objective optimization
     "EI": {
         "implementation": qLogExpectedImprovement,
-        "hyperparameter_defaults": {
-            "inflate": {"val": 0, "dtype": float, "optional": True}
-        },
+        "hyperparameter_defaults": {"inflate": {"val": 0, "dtype": float, "optional": True}},
         "hyperparameter_parser": acq_utils._ei_hyperparameter_parser,
         "modalities": ["single"],
+        "task_types": ["optimization"],
     },
     "NEI": {
         "implementation": qLogNoisyExpectedImprovement,
         "hyperparameter_defaults": {},
         "hyperparameter_parser": acq_utils._noisy_parser,
         "modalities": ["single"],
+        "task_types": ["optimization"],
     },
     "PI": {
         "implementation": qProbabilityOfImprovement,
         "hyperparameter_defaults": {"inflate": {"val": 0, "dtype": float, "optional": True}},
         "hyperparameter_parser": acq_utils._ei_hyperparameter_parser,
         "modalities": ["single"],
+        "task_types": ["optimization"],
     },
     "UCB": {
         "implementation": qUpperConfidenceBound,
         "hyperparameter_defaults": {"beta": {"val": 1, "dtype": float, "optional": True}},
         "hyperparameter_parser": acq_utils._ucb_hyperparameter_parser,
         "modalities": ["single"],
+        "task_types": ["optimization"],
     },
     "SR": {
         "implementation": qSimpleRegret,
         "hyperparameter_defaults": {},
         "hyperparameter_parser": None,
-        "hyperparameter_parser": None,
         "modalities": ["single"],
+        "task_types": ["optimization"],
     },
     "NIPV": {
         "implementation": qNegIntegratedPosteriorVariance,
         "hyperparameter_defaults": {},
         "hyperparameter_parser": acq_utils._nipv_hyperparameter_parser,
         "modalities": ["single"],
+        "task_types": ["optimization"],
     },
     # Multi-objective optimization
     "EHVI": {
@@ -65,39 +68,44 @@ _builtin_acq_func_dict = {
         "hyperparameter_defaults": {"ref_point": {"val": None, "dtype": list, "optional": True}},
         "hyperparameter_parser": acq_utils._ehvi_hyperparameter_parser,
         "modalities": ["multi"],
+        "task_types": ["optimization"],
     },
     "NEHVI": {
         "implementation": qLogNoisyExpectedHypervolumeImprovement,
         "hyperparameter_defaults": {"ref_point": {"val": None, "dtype": list, "optional": True}},
         "hyperparameter_parser": acq_utils._nehvi_hyperparameter_parser,
         "modalities": ["multi"],
+        "task_types": ["optimization"],
     },
     "NParEGO": {
         "implementation": qLogNParEGO,
-        "hyperparameter_defaults": {
-            "scalarization_weights": {"val": None, "dtype": list, "optional": True}
-        },
+        "hyperparameter_defaults": {"scalarization_weights": {"val": None, "dtype": list, "optional": True}},
         "hyperparameter_parser": acq_utils._nparego_hyperparameter_parser,
         "modalities": ["multi"],
+        "task_types": ["optimization"],
     },
-    # Universal optimization functions
-    "RS": {
-        "implementation": None,
-        "hyperparameter_defaults": {},
-        "hyperparameter_parser": None,
-        "modalities": ["single", "multi"],
-    },
+    # Single and multi-objective optimization
     "Mean": {
         "implementation": qMean,
         "hyperparameter_defaults": {},
         "hyperparameter_parser": None,
         "modalities": ["single", "multi"],
+        "task_types": ["optimization"],
+    },
+    # Universal functions
+    "RS": {
+        "implementation": RandomSampling,
+        "hyperparameter_defaults": {},
+        "hyperparameter_parser": RandomSampling.parser,
+        "modalities": ["single", "multi"],
+        "task_types": ["optimization", "characterization"],
     },
     "SF": {
         "implementation": qSpaceFill,
         "hyperparameter_defaults": {},
-        "hyperparameter_parser": acq_utils._sf_hyperparameter_parser,
+        "hyperparameter_parser": qSpaceFill.parser,
         "modalities": ["single", "multi"],
+        "task_types": ["optimization", "characterization"],
     },
 }
 
@@ -109,7 +117,7 @@ _registry = acq_utils.AcquisitionRegistry(_builtin_acq_func_dict)
 def acquisition_function_register(
     name: str,
     implementation: Type,
-    hp_defaults: Dict | None = None,
+    hp_defaults: dict | None = None,
     is_single_target=False,
     is_multi_target=False,
     set_as_default=False,
@@ -142,7 +150,7 @@ external_aqs = _registry.external_aqs
 # Note that one nested layer is added for future characterization functions
 # For now, to keep backward compatibility, we flatten the structure
 valid_aqs = _registry.valid_opt_aqs
-aq_defaults = _registry.aq_defaults["optimization"]
+aq_defaults = _registry.aq_defaults
 universal_aqs = _registry.universal_aqs
 
 # Export the registry for direct access if needed

@@ -3,6 +3,7 @@
 from obsidian.parameters import Target
 from torch import Tensor
 import torch
+from enum import Enum
 
 
 def unscale_samples(samples: Tensor,
@@ -76,3 +77,40 @@ def dict_to_tensordict(dict: dict[float | int | str]) -> dict[Tensor]:
         else:
             state_dict[param] = torch.tensor(dict[param])
     return state_dict
+
+
+class TaskType(Enum):
+    """
+    Task types for specifying an optimization or characterization task.
+    """
+    OPTIMIZATION = "optimization"
+    CHARACTERIZATION = "characterization"
+
+    @classmethod
+    def allowed_tasks(cls) -> str:
+        return ", ".join(f"{t.value!r} (TaskType.{t.name})" for t in cls)
+
+    @classmethod
+    def from_value(cls, task: "TaskType | str") -> "TaskType":
+        """
+        Converts a string representation of a task type to a TaskType enum.
+
+        Args:
+            task_str (str): The string representation of the task type.
+
+        Returns:
+            TaskType: The corresponding TaskType enum.
+
+        Raises:
+            ValueError: If the task_str does not match any TaskType.
+        """
+        if isinstance(task, str):
+            try:
+                return TaskType[task.upper()]
+            except KeyError:
+                pass
+        elif isinstance(task, cls):
+            return task
+        else:
+            raise TypeError(f"Expected task to be of type str or TaskType, got {type(task)}")
+        raise ValueError(f"Unknown task type: {task!r}. Choose from {TaskType.allowed_tasks()}")

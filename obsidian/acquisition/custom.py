@@ -1,16 +1,53 @@
 """Custom implementations of acquisition functions using BoTorch API"""
+from typing import Any
 
 from botorch.acquisition.monte_carlo import MCAcquisitionFunction
-from botorch.sampling.normal import SobolQMCNormalSampler
 from botorch.utils import t_batch_mode_transform
 from botorch.acquisition.multi_objective.objective import IdentityMCMultiOutputObjective
 from botorch.models.model import Model
 from botorch.sampling.base import MCSampler
 from botorch.acquisition.objective import MCAcquisitionObjective, PosteriorTransform
 
+from .utils import ParserContext, default_sampler
+from ..config import TORCH_DTYPE
+
 import torch
 from torch import Tensor
 
+class RandomSampling(torch.nn.Module):
+    def __init__(self,
+                 m_batch: int,
+                 n_dim: int,
+                 data_type: torch.dtype = TORCH_DTYPE,
+                 generator: torch.Generator | None = None,
+                 model: Model | None = None,
+                 sampler: MCSampler | None = None,
+                 objective: MCAcquisitionObjective | None = None,
+                 posterior_transform: PosteriorTransform | None = None,
+                 X_pending: Tensor | None = None,
+                 constraints=None,
+                 ):
+
+        self.m_batch = m_batch
+        self.n_dim = n_dim
+        self.data_type = data_type
+        if generator is None:
+            # fallback to stateless behavior uses global RNG
+            self.generator = torch.Generator()
+        else:
+            self.generator = generator
+
+    def forward(self, x: Tensor | None = None) -> torch.Tensor:
+        return torch.rand((self.m_batch, self.n_dim), generator=self.generator, dtype=self.data_type)
+
+    @staticmethod
+    def parser(
+        aq_kwargs: dict[str, Any], hps: dict[str, Any], context: ParserContext
+    ) -> dict[str, Any]:
+       aq_kwargs["m_batch"] = context["m_batch"]
+       aq_kwargs["n_dim"] = context["n_dim"]
+       aq_kwargs["generator"] = context["generator"]
+       return aq_kwargs
 
 class qMean(MCAcquisitionFunction):
     """
@@ -19,13 +56,10 @@ class qMean(MCAcquisitionFunction):
     """
     def __init__(self,
                  model: Model,
-                 sampler: MCSampler | None = None,
+                 sampler: MCSampler = default_sampler,
                  objective: MCAcquisitionObjective | None = None,
                  posterior_transform: PosteriorTransform | None = None,
                  X_pending: Tensor | None = None):
-        
-        if sampler is None:
-            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([512]))
         
         # An objective is required if this aq is used on a multi-output model
         if objective is None:
@@ -65,13 +99,10 @@ class qSpaceFill(MCAcquisitionFunction):
     def __init__(self,
                  model: Model,
                  X_baseline: Tensor,
-                 sampler: MCSampler | None = None,
+                 sampler: MCSampler = default_sampler,
                  objective: MCAcquisitionObjective | None = None,
                  posterior_transform: PosteriorTransform | None = None,
                  X_pending: Tensor | None = None,):
-        
-        if sampler is None:
-            sampler = SobolQMCNormalSampler(sample_shape=torch.Size([512]))
         
         # An objective is required if this aq is used on a multi-output model
         if model.num_outputs > 1:
@@ -107,3 +138,11 @@ class qSpaceFill(MCAcquisitionFunction):
         closest_dist = dist.min(dim=-1)[0].min(dim=-1)[0]
 
         return closest_dist
+
+    @staticmethod
+    def parser(
+        aq_kwargs: dict[str, Any], hps: dict[str, Any], context: ParserContext
+    ) -> dict[str, Any]:
+        """Parser for Space Filling acquisition function"""
+        aq_kwargs["X_baseline"] = context["X_baseline"]
+        return aq_kwargs
