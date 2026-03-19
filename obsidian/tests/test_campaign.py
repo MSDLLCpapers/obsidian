@@ -29,10 +29,10 @@ target_test = [
 @pytest.mark.parametrize('X_space, sim_fcn, target',
                          [(X_sp_cont_ndims[2], two_leaves, target_test[0]),
                           (X_sp_default, shifted_parab, target_test[1])])
-def test_campaign_basics(X_space, sim_fcn, target):
+def test_campaign_basics(X_space, sim_fcn, target, rng_mode):
     # Standard usage
-    campaign = Campaign(X_space, target)
-    simulator = Simulator(X_space, sim_fcn, eps=0.05)
+    campaign = Campaign(X_space, target, seed=114514)
+    simulator = Simulator(X_space, sim_fcn, eps=0.05, rng=114514)
     X0 = campaign.suggest()
     y0 = simulator.simulate(X0)
     Z0 = pd.concat([X0, y0], axis=1)
@@ -67,6 +67,9 @@ def test_campaign_basics(X_space, sim_fcn, target):
 # Load default
 with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)
+    # Override seeds for determinism with new RNG control
+    obj_dict['seed'] = 114514
+    obj_dict['optimizer']['opt_attrs']['seed'] = 114514
 campaign = Campaign.load_state(obj_dict)
 X_space = campaign.X_space
 target = campaign.target
@@ -76,6 +79,9 @@ def test_explain():
     # SOO includes discrete variables
     with open(DEFAULT_SOO_PATH) as json_file:
         obj_dict = json.load(json_file)
+        # Override seeds for determinism with new RNG control
+        obj_dict['seed'] = 114514
+        obj_dict['optimizer']['opt_attrs']['seed'] = 114514
     campaign = Campaign.load_state(obj_dict)
     
     # Standard usage

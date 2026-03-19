@@ -139,6 +139,7 @@ class Simulator:
 
         return df_sim
 
+    #TODO: simulator can have its own random state now, so a save and load state method should be implemented in the future.
 
     @staticmethod 
     def _default_gaussian_noise(X: np.ndarray, y_sim: np.ndarray, eps: np.ndarray, rng: Generator) -> np.ndarray:

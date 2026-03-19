@@ -59,6 +59,7 @@ class Campaign():
             optimizer_seed = seed
             designer_seed = seed
             torch_rng = None
+            warnings.warn("Using old RNG control. This is deprecated.", UserWarning)
         else:
             if rng is None:
                 self.rng = obsidian.create_rng_manager(seed)
@@ -75,7 +76,7 @@ class Campaign():
                         "Both `rng` and `seed` were provided. The seed parameter will be ignored "
                         "in favor of the seed from `rng`.", UserWarning
                     )
-                seed = self.rng.seed
+            seed = self.rng.seed
 
             torch_rng = self.rng.torch_rng
             optimizer_seed = seed
@@ -497,19 +498,32 @@ class Campaign():
 
         # Restore RNG state if saved
         rng = None
+        seed=obj_dict['seed']
         if 'rng_state' in obj_dict and obj_dict['rng_state'] is not None:
             rng = RNGManager.load_state(obj_dict['rng_state'])
+        else:
+            msg = "Loading a legacy campaign save.\nA new RNG manager object will be created to control randomness.\n"
+            if seed is None:
+                msg += "A random seed will be assigned due to seed is none."
+            else:
+                msg += f"Seed {seed} will be used to initialize the new RNG manager."
+            msg += "\nNote that due to the differences in random states by design, campaign results will be different.\nTo fully recover legacy behavior, set `obsidian.USE_OLD_RNG_CONTROL = True` before loading."
+            warnings.warn(msg, UserWarning)
 
         new_campaign = cls(X_space=ParamSpace.load_state(obj_dict['X_space']),
                            target=[Target.load_state(t_dict) for t_dict in obj_dict['target']],
                            optimizer=BayesianOptimizer.load_state(obj_dict['optimizer']),
                            objective=new_objective,
-                           seed=obj_dict['seed'],
+                           seed=seed,
                            rng=rng)
         new_campaign.data = pd.DataFrame(obj_dict['data'])
         new_campaign.data.index = new_campaign.data.index.astype('int')
-        
+
         new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
+
+        # Restore owns_rng flag (gets overwritten during __init__ when rng is passed)
+        if 'owns_rng' in obj_dict:
+            new_campaign._owns_rng = obj_dict['owns_rng']
 
         if 'output_constraints' in obj_dict:
             for const_dict in obj_dict['output_constraints']:
