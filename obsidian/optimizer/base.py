@@ -46,14 +46,13 @@ class Optimizer(ABC):
         self.verbose = verbose
 
         # Handle randomization seed, considering all 3 sources (torch, random, numpy)
-        self.seed = seed
         # TODO: this part is only for backward compatibility, we should drop it eventually
         if obsidian.USE_OLD_RNG_CONTROL:
-            if self.seed is not None:
-                torch.manual_seed(self.seed)
+            if seed is not None:
+                torch.manual_seed(seed)
                 torch.use_deterministic_algorithms(True)
-                np.random.seed(self.seed)
-                random.seed(self.seed)
+                np.random.seed(seed)
+                random.seed(seed)
             self.torch_rng = None
         else:
             if not rng:
@@ -62,18 +61,20 @@ class Optimizer(ABC):
                 raise TypeError('rng must be an instance of RNGManager')
             else:
                 self.rng = rng
+            seed = self.rng.seed
             self.torch_rng = self.rng.torch_rng
             
             # Create dedicated generator for model operations (fit & suggest)
             # This ensures reproducibility - same initial state gives same seed sequence
             if seed is None:
-                self.seed: int = get_new_seed(1, self.torch_rng) # type: ignore
+                seed: int = get_new_seed(1, self.torch_rng) # type: ignore
             if fix_random_state:
                 self.model_generator = None
             else:
-                self.model_generator = create_torch_rng(self.seed)
+                self.model_generator = create_torch_rng(seed)
             self.fix_random_state = fix_random_state
 
+        self.seed = seed
         # Store the parameter space which contains useful reference properties
         if not isinstance(X_space, ParamSpace):
             raise TypeError('X_space must be an obsidian ParamSpace object')

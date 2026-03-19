@@ -22,9 +22,12 @@ import pandas as pd
 import pytest
 import json
 
-# Load default
+# Load default campaign
 with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)
+    # Override seeds for determinism with new RNG control
+    obj_dict['seed'] = 114514
+    obj_dict['optimizer']['opt_attrs']['seed'] = 114514
 campaign = Campaign.load_state(obj_dict)
 X_space = campaign.X_space
 target = campaign.target
@@ -64,6 +67,8 @@ def test_campaign_objectives(obj):
 
     # Serialize, deserialize, re-serialize
     obj_dict = campaign.save_state()
+    obj_dict['seed'] = 114514
+    obj_dict['optimizer']['opt_attrs']['seed'] = 114514
     campaign2 = Campaign.load_state(obj_dict)
     obj_dict2 = campaign2.save_state()
     assert equal_state_dicts(obj_dict, obj_dict2), 'Error during serialization'

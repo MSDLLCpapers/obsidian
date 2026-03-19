@@ -337,7 +337,7 @@ class BayesianOptimizer(Optimizer):
             rng = RNGManager.load_state(config_save['rng_state'])
             fix_random_state = config_save.get('fix_random_state', True)
 
-        seed = config_save.get('seed', None)
+        seed = config_save['opt_attrs'].get('seed', None)
 
         new_opt = cls(X_space=ParamSpace.load_state(config_save['X_space']),
                       surrogate=config_save['surrogate_spec'],

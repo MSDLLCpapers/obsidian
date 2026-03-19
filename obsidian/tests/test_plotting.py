@@ -22,6 +22,9 @@ matplotlib.use('inline')
 
 with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)
+    # Override seeds for determinism with new RNG control
+    obj_dict['seed'] = 114514
+    obj_dict['optimizer']['opt_attrs']['seed'] = 114514
 
 campaign = Campaign.load_state(obj_dict)
 optimizer = campaign.optimizer

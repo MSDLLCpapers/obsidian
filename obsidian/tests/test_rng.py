@@ -21,7 +21,7 @@ def setup_campaign():
     """Set up a basic campaign for testing"""
     X_space = X_sp_default
     target = Target(name="Response", f_transform="Standard", aim="max")
-    simulator = Simulator(X_space, shifted_parab, eps=0.05, rng=42)
+    simulator = Simulator(X_space, shifted_parab, eps=0.05, rng=114514)
 
     return X_space, target, simulator
 
