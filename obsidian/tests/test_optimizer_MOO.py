@@ -24,7 +24,7 @@ def X_space():
 def Z0(X_space):
     designer = ExpDesigner(X_space, seed=0)
     X0 = designer.initialize(m_initial=len(X_space)*2, method='LHS')
-    simulator = Simulator(X_space, two_leaves, eps=0.05)
+    simulator = Simulator(X_space, two_leaves, eps=0.05, rng=0)
     y0 = simulator.simulate(X0)
     Z0 = pd.concat([X0, y0], axis=1)
     return Z0
@@ -71,7 +71,7 @@ base_X_space = X_sp_cont_ndims[2]
 optimizer = BayesianOptimizer(base_X_space, surrogate='GP', seed=0, verbose=0)
 designer = ExpDesigner(base_X_space, seed=0)
 X0 = designer.initialize(m_initial=6, method='LHS')
-simulator = Simulator(base_X_space, two_leaves, eps=0.05)
+simulator = Simulator(base_X_space, two_leaves, eps=0.05, rng=0)
 y0 = simulator.simulate(X0)
 Z0_base = pd.concat([X0, y0], axis=1)
 optimizer.fit(Z0_base, target=target)
