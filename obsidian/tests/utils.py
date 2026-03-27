@@ -51,6 +51,7 @@ def equal_state_dicts(e1: dict | str | float | int,
     return True
 
 
+#TODO: Remove it in a future PR. This is almost entirely redundant given numpy.testing.assert_allclose and numpy.isclose and with bugs
 def approx_equal(x1: ArrayLike | float | int,
                  x2: ArrayLike | float | int,
                  tol: float = 1e-6):

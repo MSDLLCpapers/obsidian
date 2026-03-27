@@ -519,7 +519,11 @@ class Campaign():
         new_campaign.data = pd.DataFrame(obj_dict['data'])
         new_campaign.data.index = new_campaign.data.index.astype('int')
 
-        new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
+        # Handle empty data
+        if len(new_campaign.data) > 0 and 'Iteration' in new_campaign.data.columns:
+            new_campaign.iter = new_campaign.data['Iteration'].astype('int').max()
+        else:
+            new_campaign.iter = 0
 
         # Restore owns_rng flag (gets overwritten during __init__ when rng is passed)
         if 'owns_rng' in obj_dict:

@@ -134,7 +134,8 @@ class Target():
         new_target = cls(**obj_dict['init_attrs'])
 
         # If the transformer has been fit before saving, refit it
-        f = torch.Tensor(obj_dict['f_raw'])
-        new_target.transform_f(f, fit=True)
+        if 'f_raw' in obj_dict:
+            f = torch.Tensor(obj_dict['f_raw'])
+            new_target.transform_f(f, fit=True)
 
         return new_target

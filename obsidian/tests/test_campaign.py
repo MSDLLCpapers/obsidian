@@ -11,9 +11,11 @@ from obsidian.exceptions import IncompatibleObjectiveError, UnfitError
 from obsidian.tests.param_configs import X_sp_cont_ndims, X_sp_default
 from obsidian.tests.utils import DEFAULT_MOO_PATH, DEFAULT_SOO_PATH, equal_state_dicts
 
+from numpy.testing import assert_array_equal
 import pandas as pd
 import pytest
 import json
+import warnings
  
 # Avoid using TkAgg which causes Tcl issues during testing
 import matplotlib
@@ -36,19 +38,19 @@ def test_campaign_basics(X_space, sim_fcn, target, rng_mode):
     X0 = campaign.suggest()
     y0 = simulator.simulate(X0)
     Z0 = pd.concat([X0, y0], axis=1)
-    
+
     # Set an objective, suggest, clear
     campaign.set_objective(Identity_Objective(mo=len(campaign.target) > 1))
     campaign.suggest()
     campaign.clear_objective()
-    
+
     # Add, fit, clear, examine
     campaign.add_data(Z0)
     campaign.fit()
     campaign.clear_data()
     campaign.y
     campaign.__repr__()
-    
+
     # Add with iteration, examine, fit, analyze
     Z0['Iteration'] = 5
     campaign.add_data(Z0)
@@ -62,6 +64,74 @@ def test_campaign_basics(X_space, sim_fcn, target, rng_mode):
     campaign2 = Campaign.load_state(obj_dict)
     obj_dict2 = campaign2.save_state()
     assert equal_state_dicts(obj_dict, obj_dict2), 'Error during serialization'
+
+
+@pytest.mark.parametrize('X_space, sim_fcn, target',
+                         [(X_sp_cont_ndims[2], two_leaves, target_test[0]),
+                          (X_sp_default, shifted_parab, target_test[1])])
+def test_campaign_unfitted_save_load(X_space, sim_fcn, target, rng_mode):
+    """Test that unfitted campaigns can be saved and loaded, then independently fitted"""
+    # Create unfitted campaign
+    campaign1 = Campaign(X_space, target, seed=114514)
+
+    # Save unfitted campaign (will trigger warning from optimizer.load_state)
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        obj_dict = campaign1.save_state()
+
+        # Load unfitted campaign
+        campaign2 = Campaign.load_state(obj_dict)
+
+        # Expect warning from loading unfitted optimizer
+        assert any("unfitted" in str(warning.message).lower() for warning in w)
+
+    # Verify both campaigns are unfitted
+    assert not campaign1.optimizer.is_fit
+    assert not campaign2.optimizer.is_fit
+
+    # Generate same data for both campaigns
+    simulator = Simulator(X_space, sim_fcn, eps=0.05, rng=114514)
+    X0 = campaign1.suggest()
+    y0 = simulator.simulate(X0)
+    Z0 = pd.concat([X0, y0], axis=1)
+
+    # Add iteration column
+    Z0['Iteration'] = 1
+
+    # Fit both campaigns independently with same data
+    campaign1.add_data(Z0)
+    campaign1.fit()
+
+    campaign2.add_data(Z0)
+    campaign2.fit()
+
+    # Both should now be fitted
+    assert campaign1.optimizer.is_fit
+    assert campaign2.optimizer.is_fit
+
+    # Verify they produce the same results
+    # Compare response_max
+    rm1 = campaign1.response_max
+    rm2 = campaign2.response_max
+    if isinstance(rm1, pd.Series) and isinstance(rm2, pd.Series):
+        assert_array_equal(rm1.to_numpy(), rm2.to_numpy())
+    elif not isinstance(rm1, pd.Series) and not isinstance(rm2, pd.Series):
+        assert abs(float(rm1) - float(rm2)) < 1e-6
+    else:
+        raise AssertionError("response_max types don't match between campaigns")
+
+    # Compare X_best (use DataFrame comparison to handle categorical variables)
+    pd.testing.assert_frame_equal(campaign1.X_best, campaign2.X_best)
+
+    # Compare predictions at training points
+    y_pred1 = campaign1.optimizer.predict(campaign1.optimizer.X_train)
+    y_pred2 = campaign2.optimizer.predict(campaign2.optimizer.X_train)
+    assert_array_equal(y_pred1.values, y_pred2.values)
+
+    # Verify round-trip serialization works after fitting
+    obj_dict1 = campaign1.save_state()
+    obj_dict2 = campaign2.save_state()
+    assert equal_state_dicts(obj_dict1, obj_dict2), 'Fitted campaigns should have identical states'
     
     
 # Load default

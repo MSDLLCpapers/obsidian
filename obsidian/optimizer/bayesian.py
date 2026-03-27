@@ -3,7 +3,7 @@
 from typing import Any
 import obsidian
 from obsidian.acquisition.utils import ParserContext
-from obsidian.rng import RNGManager, create_torch_rng, get_new_seed
+from obsidian.rng import RNGManager, create_torch_rng
 from obsidian.utils import TaskType
 from .base import Optimizer
 
@@ -24,8 +24,6 @@ from botorch.sampling.index_sampler import IndexSampler
 from botorch.models.model_list_gp_regression import ModelListGP
 from botorch.models.gpytorch import GPyTorchModel
 from botorch.models.model import ModelList, Model
-from botorch.utils.sampling import draw_sobol_samples
-from botorch.utils.multi_objective.box_decompositions.non_dominated import NondominatedPartitioning
 
 import torch
 from torch import Tensor
@@ -271,37 +269,42 @@ class BayesianOptimizer(Optimizer):
 
     def save_state(self) -> dict:
         """
-        Saves the parameters of the Bayesian Optimizer so that they can be reloaded without fitting.
+        Saves the parameters of the Bayesian Optimizer so that they can be reloaded.
+
+        This method can save both fitted and unfitted optimizers:
+
+        - **Unfitted**: Saves configuration only (X_space, surrogate spec, RNG state)
+        - **Fitted**: Saves configuration + training data + fitted models
 
         Returns:
-            dict: A dictionary containing the fit parameters for later loading.
-        
-        Raises:
-            UnfitError: If the surrogate model has not been fit before saving the optimizer.
-        """
+            dict: A dictionary containing the optimizer state for later loading.
 
-        if not self.is_fit:
-            raise UnfitError('Surrogate model must be fit before saving optimizer')
+        Examples:
+            >>> # Save unfitted optimizer
+            >>> opt = BayesianOptimizer(X_space, seed=42)
+            >>> state = opt.save_state()  # Works without fitting
+
+            >>> # Load and then fit
+            >>> opt2 = BayesianOptimizer.load_state(state)
+            >>> opt2.fit(data, target=target)
+        """
+        # if not self.is_fit:
+        #     raise UnfitError('Surrogate model must be fit before saving optimizer')
 
         # Prepare a dictionary to describe the state
         config_save = {'opt_attrs': {},
                        'X_space': self.X_space.save_state(),
                        'surrogate_spec': [{func: hps} for func, hps in zip(self.surrogate_type, self.surrogate_hps)],
-                       'target': [t.save_state() for t in self.target]}
+                       'is_fitted': self.is_fit}
 
-        # Select some optimizer attributes to save directly
-        opt_attrs = ['X_train', 'y_train',
-                     'y_names', 'n_response',
-                     'seed', 'X_best_f_idx', 'X_best_f']
-        
-        for attr in opt_attrs:
-            if isinstance(getattr(self, attr), (pd.Series, pd.DataFrame)):
-                config_save['opt_attrs'][attr] = getattr(self, attr).to_dict()
-            else:
-                config_save['opt_attrs'][attr] = getattr(self, attr)
+        # Log if saving unfitted optimizer
+        if not self.is_fit and self.verbose:
+            print("Saving unfitted optimizer (configuration only)")
 
+        # Always save basic attributes
+        config_save['opt_attrs']['seed'] = self.seed
         config_save['opt_attrs']['task'] = self.task.value
-        
+
         # Save RNG state if new RNG control is enabled
         if not obsidian.USE_OLD_RNG_CONTROL:
             config_save['rng_state'] = self.rng.save_state()
@@ -309,13 +312,23 @@ class BayesianOptimizer(Optimizer):
             if self.model_generator:
                 config_save['model_generator_state'] = self.model_generator.get_state().cpu().tolist()
 
-        # Unpack the fit parameters of each surrogate model, if present
-        if self.surrogate:
+        # Conditionally save fit-dependent attributes
+        if self.is_fit:
+            config_save['target'] = [t.save_state() for t in self.target]
+
+            # Select optimizer attributes to save
+            fit_attrs = ['X_train', 'y_train', 'y_names', 'n_response', 'X_best_f_idx', 'X_best_f']
+
+            for attr in fit_attrs:
+                if isinstance(getattr(self, attr), (pd.Series, pd.DataFrame)):
+                    config_save['opt_attrs'][attr] = getattr(self, attr).to_dict()
+                else:
+                    config_save['opt_attrs'][attr] = getattr(self, attr)
+
+            # Save surrogate model states
             model_states = []
-            # Save each surrogate model using surrogate.save() methods
             for surrogate in self.surrogate:
                 model_states.append(surrogate.save_state())
-
             config_save['model_states'] = model_states
 
         return config_save
@@ -326,10 +339,12 @@ class BayesianOptimizer(Optimizer):
     @classmethod
     def load_state(cls, config_save: dict):
         """
-        Loads the parameters of the Bayesian Optimizer from a previously fit optimizer.
+        Loads the parameters of the Bayesian Optimizer from a saved state.
+
+        Can load both fitted and unfitted optimizers.
 
         Args:
-            config_save (dict): A dictionary containing the fit parameters for later loading.
+            config_save (dict): A dictionary containing the saved state.
 
         Returns:
             BayesianOptimizer: Loaded optimizer instance
@@ -337,7 +352,26 @@ class BayesianOptimizer(Optimizer):
         Raises:
             ValueError: If the number of saved models does not match the number of named models.
         """
-        
+        import warnings
+
+        # Check for is_fitted flag and handle backward compatibility
+        if 'is_fitted' in config_save:
+            is_fitted = config_save['is_fitted']
+        else:
+            # Legacy save files: infer from presence of model_states
+            is_fitted = 'model_states' in config_save
+            if is_fitted:
+                # Info message for legacy fitted saves (not a warning, just informational)
+                print("Loading state saved with older version (missing 'is_fitted' flag)")
+
+        # Warn when loading unfitted optimizer
+        if not is_fitted:
+            warnings.warn(
+                "Loading unfitted optimizer - call fit() before making predictions",
+                UserWarning,
+                stacklevel=2
+            )
+
         # Restore RNG state if saved
         rng = None
         fix_random_state = True  # Default
@@ -355,12 +389,15 @@ class BayesianOptimizer(Optimizer):
         if 'model_generator_state' in config_save:
             tmp_rng = create_torch_rng(0)
             new_opt.model_generator = tmp_rng.set_state(torch.ByteTensor(config_save['model_generator_state']))
-        new_opt.target = [Target.load_state(t) for t in config_save['target']]
+
+        # Load target if present (fitted optimizer)
+        if 'target' in config_save:
+            new_opt.target = tuple([Target.load_state(t) for t in config_save['target']])
 
         # Directly unpack all of the entries in opt_attrs
         for k, v in config_save['opt_attrs'].items():
             setattr(new_opt, k, v)
-  
+
         # Unpack and encode/transform the data objects if present
         data_objects = ['X_train', 'y_train', 'X_best_f']
         if all(hasattr(new_opt, attr) for attr in data_objects):
@@ -368,18 +405,18 @@ class BayesianOptimizer(Optimizer):
             new_opt.X_t_train = new_opt.X_space.encode(new_opt.X_train)
             new_opt.y_train = pd.DataFrame(new_opt.y_train, columns=new_opt.y_names)
             new_opt.X_best_f = pd.DataFrame(new_opt.X_best_f)
-            
+
             f_train = pd.DataFrame()
             for t, y in zip(new_opt.target, new_opt.y_train.columns):
                 f = t.transform_f(new_opt.y_train[y], fit=True)
                 f_train = pd.concat([f_train, f.to_frame()], axis=1)
             new_opt.f_train = f_train
-            
+
         # Unpack the models and parameteres if present
         if 'model_states' in config_save:
             if len(new_opt.surrogate_type) != len(config_save['model_states']):
                 raise ValueError('The number of saved models does not match the number of named models')
-            
+
             # Reload each surrogate model using surrogate.load() methods
             new_opt.surrogate = []
             for obj_dict in config_save['model_states']:
