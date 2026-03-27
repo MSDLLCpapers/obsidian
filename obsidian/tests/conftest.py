@@ -1,7 +1,16 @@
 """Shared pytest fixtures for obsidian tests"""
 
 import pytest
+import torch
+
 import obsidian
+from obsidian.config import TORCH_DTYPE
+
+
+@pytest.fixture(autouse=True)
+def set_default_dtype():
+    torch.set_default_dtype(TORCH_DTYPE)
+    yield
 
 
 @pytest.fixture(params=[False, True], ids=["new_rng", "old_rng"])
