@@ -118,6 +118,24 @@ class Logit_Scaler(Target_Transform):
         # Scale X into a range from 0-1 with buffer/2 on either side
         self.override_fit = False
         range_response = X.max()-X.min()
+
+        # Handle constant or near-constant data
+        if range_response < 1e-10:
+            warnings.warn(
+                'Cannot fit logit transform to constant or near-constant data. '
+                'All values will be mapped to zero.',
+                UserWarning
+            )
+            # Set parameters that will result in zeros_like output
+            self.params['scale'] = 1.0
+            self.params['loc'] = X.mean().item()
+            self.params['constant_data'] = True
+            # Set mu and sd for inverse transform compatibility
+            self.params['mu'] = 0.0
+            self.params['sd'] = 1.0
+            return
+
+        self.params['constant_data'] = False
         buffer = 0.2
         self.params['scale'] = (1-buffer)/range_response
         self.params['loc'] = X.min() - (buffer/2)*(1/self.params['scale'])
@@ -129,26 +147,59 @@ class Logit_Scaler(Target_Transform):
         # If fit is not called, and the range is valid, transform
         # If the range is invalid, fit the range first and warn
         if not fit or self.override_fit:
+            # Check if transform was fitted on constant data
+            if self.params.get('constant_data', False):
+                return zeros_like(X)
+
             X_s = self.params['scale']*(X - self.params['loc'])
             valid_range = (X_s >= 0).all() and (X_s <= 1).all()
             if not valid_range:
                 warnings.warn('Invalid range provided for logit scaler, proceeding with min-max fit', UserWarning)
                 self._fit_minmax(X)
                 return self.forward(X)
+
+            # Transform using already-fitted parameters
+            X_st = logit(X_s)
+            if self.standardize:
+                self._validate_fit()
+                return (X_st-self.params['mu'])/self.params['sd']
+            else:
+                return X_st
         else:
+            # Fit mode: compute and store parameters
             X_v = X[~X.isnan()]
             self._fit_minmax(X_v)
+
+            # Early return for constant data
+            if self.params.get('constant_data', False):
+                return zeros_like(X)
+
             X_s = self.params['scale']*(X - self.params['loc'])
-        X_st = logit(X_s)
-        if self.standardize:
-            self.params.update({'mu': X_st.mean(), 'sd': X_st.std()})
-            return (X_st-self.params['mu'])/self.params['sd']
-        else:
-            return X_st
+            X_st = logit(X_s)
+
+            if self.standardize:
+                sd = X_st.std()
+                # Handle case where logit-transformed data has zero variance
+                if sd == 0 or sd.isnan() or sd.isinf():
+                    warnings.warn(
+                        'Logit-transformed data has zero variance. Returning zero-centered values.',
+                        UserWarning
+                    )
+                    self.params.update({'mu': X_st.mean(), 'sd': 1.0})
+                    return X_st - X_st.mean()
+                self.params.update({'mu': X_st.mean(), 'sd': sd})
+                return (X_st-self.params['mu'])/self.params['sd']
+            else:
+                return X_st
     
     def inverse(self,
                 X: Tensor):
         """Inverse transform the transformed data X_t"""
+        # Handle constant data case
+        if self.params.get('constant_data', False):
+            # For constant data, forward returns zeros, so inverse should return the original constant
+            return zeros_like(X) + self.params['loc']
+
         if self.standardize:
             self._validate_fit()
             X = X*self.params['sd']+self.params['mu']
