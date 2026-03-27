@@ -1,0 +1,447 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "create_optimization_session",
+      "description": "Create a new Bayesian optimization session.\n\nThis initializes a new optimization campaign with specified parameters and objectives.\nThe session will be in 'configured' status after creation.\n\nUse when:\n- Starting a new optimization campaign\n- Defining parameter space and optimization targets\n- Need to track experiments systematically\n\nReturns a unique session_id to use in subsequent operations.\n\nLimitations:\n- Must provide at least one parameter and one target\n- Categorical/ordinal parameters need at least 2 categories\n- Session persists in ~/.obsidian/sessions/ until deleted",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable name for this session (optional, auto-generated if not provided)"
+          },
+          "parameters": {
+            "type": "array",
+            "description": "List of optimization parameters (must have at least one)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "continuous",
+                    "categorical",
+                    "ordinal",
+                    "observational"
+                  ],
+                  "description": "Parameter type"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Parameter name"
+                },
+                "min": {
+                  "type": "number",
+                  "description": "Minimum value (for continuous/observational only)"
+                },
+                "max": {
+                  "type": "number",
+                  "description": "Maximum value (for continuous/observational only)"
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Categories (for categorical/ordinal, min 2 required)"
+                },
+                "search_min": {
+                  "type": "number",
+                  "description": "Search space minimum (continuous only, optional)"
+                },
+                "search_max": {
+                  "type": "number",
+                  "description": "Search space maximum (continuous only, optional)"
+                },
+                "search_categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Search space categories (categorical/ordinal only, optional)"
+                }
+              },
+              "required": [
+                "type",
+                "name"
+              ]
+            }
+          },
+          "targets": {
+            "type": "array",
+            "description": "List of optimization targets/objectives (must have at least one)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Target/response variable name"
+                },
+                "aim": {
+                  "type": "string",
+                  "enum": [
+                    "min",
+                    "max"
+                  ],
+                  "description": "Optimization direction (default: 'max')"
+                },
+                "f_transform": {
+                  "type": "string",
+                  "description": "Transformation function ('Standard', 'Identity', or null, default: 'Standard')"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          "seed": {
+            "type": "integer",
+            "description": "Random seed for reproducibility (optional)"
+          }
+        },
+        "required": [
+          "parameters",
+          "targets"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "list_optimization_sessions",
+      "description": "List all optimization sessions.\n\nReturns metadata for all sessions, optionally filtered by status.\n\nUse when:\n- Discovering available sessions\n- Checking session states\n- Managing multiple optimization campaigns\n\nStatuses: 'configured', 'initialized', 'fitted', 'suggesting', 'evaluating', 'completed', 'error'",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "status_filter": {
+            "type": "string",
+            "description": "Optional filter by status ('configured', 'initialized', 'fitted', etc.)"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_session_details",
+      "description": "Get detailed information about a session.\n\nReturns comprehensive session metadata including parameter names, target names,\nexperiment count, and current status.\n\nUse when:\n- Inspecting session configuration\n- Checking parameter/target definitions\n- Verifying session state before operations",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "delete_optimization_session",
+      "description": "Delete an optimization session.\n\nPermanently removes the session and all associated data from disk.\nThis operation cannot be undone.\n\nUse when:\n- Cleaning up completed sessions\n- Removing test sessions\n- Managing storage space\n\nWarning: This deletes all experiment data, model state, and history.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session to delete"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "initialize_experiments",
+      "description": "Generate initial experiment design.\n\nCreates an initial set of experiments using design of experiments methods (LHS, Random, etc.).\nThis is typically the first step after creating a session.\n\nUse when:\n- Starting a new optimization campaign\n- Need initial experiments to explore parameter space\n- Before collecting any data\n\nReturns a list of parameter combinations to test experimentally.\n\nMethods: 'LHS' (Latin Hypercube Sampling, default), 'Random'\nTypical m_initial: 10-20 experiments",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "m_initial": {
+            "type": "integer",
+            "description": "Number of initial experiments to generate (default: 10, min: 1)",
+            "default": 10,
+            "minimum": 1
+          },
+          "method": {
+            "type": "string",
+            "description": "Design method ('LHS' or 'Random', default: 'LHS')",
+            "default": "LHS"
+          },
+          "seed": {
+            "type": "integer",
+            "description": "Random seed for reproducibility (optional)"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "add_experimental_data",
+      "description": "Add experimental results to the session.\n\nUploads measured response values for experiments. Each data point must include\nall parameter values and at least one target value.\n\nUse when:\n- Have experimental results to add\n- After running suggested or initial experiments\n- Incrementally building the dataset\n\nData format: List of dicts, each containing parameter names and target names as keys.\nExample: [{\"Temperature\": 25, \"Pressure\": 5, \"Yield\": 85.2}]",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "data": {
+            "type": "array",
+            "description": "List of experimental results (must not be empty)",
+            "items": {
+              "type": "object",
+              "description": "Dictionary with parameter and target values"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "session_id",
+          "data"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "fit_surrogate_model",
+      "description": "Fit surrogate model to experimental data.\n\nTrains Gaussian Process (GP) or Deep Neural Network (DNN) models on collected data.\nThis step is required before generating suggestions or making predictions.\n\nUse when:\n- Have added experimental data\n- Before requesting suggestions\n- After collecting a new batch of experiments\n\nThe model learns relationships between parameters and responses, enabling\nprediction and optimization.\n\nTypical workflow: initialize \u2192 add_data \u2192 fit \u2192 suggest \u2192 (repeat)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "fit_options": {
+            "type": "object",
+            "description": "Optional fitting configuration (advanced use)",
+            "default": {}
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "suggest_next_experiments",
+      "description": "Generate next experiment suggestions using Bayesian optimization.\n\nUses the fitted surrogate model to suggest promising experiments by optimizing\nthe acquisition function (e.g., Expected Improvement, Upper Confidence Bound).\nThis is the core of the Bayesian optimization loop.\n\nUse when:\n- Model is fitted (check with get_model_diagnostics)\n- Want to generate next batch of experiments\n- Continuing an optimization loop\n\nAcquisition functions:\n- 'NEI': Noisy Expected Improvement (default, robust)\n- 'EI': Expected Improvement (classic)\n- 'UCB': Upper Confidence Bound (exploration-exploitation balance)\n- 'Mean': Posterior mean (exploitation only)\n- 'qNEI', 'qEI': Batch variants for parallel experiments\n\nReturns suggested parameter values and optional evaluation metrics.\n\nLimitations:\n- Requires at least one model fit\n- Suggestions are stochastic unless seed is fixed via session creation",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "m_batch": {
+            "type": "integer",
+            "description": "Number of experiments to suggest (default: 1, min: 1)",
+            "default": 1,
+            "minimum": 1
+          },
+          "acquisition": {
+            "type": "array",
+            "description": "Acquisition function(s) to use (default: ['NEI'])",
+            "items": {
+              "type": "string",
+              "enum": [
+                "NEI",
+                "EI",
+                "UCB",
+                "Mean",
+                "qNEI",
+                "qEI"
+              ]
+            },
+            "default": [
+              "NEI"
+            ]
+          },
+          "optim_samples": {
+            "type": "integer",
+            "description": "Optimization samples (higher = better quality, slower, default: 512)",
+            "minimum": 64
+          },
+          "optim_restarts": {
+            "type": "integer",
+            "description": "Optimization restarts (higher = better quality, slower, default: 10)",
+            "minimum": 1
+          },
+          "manual_seed": {
+            "type": "integer",
+            "description": "Manual seed for exploration and reproducibility (optional, default: None uses campaign RNG)"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "evaluate_predictions",
+      "description": "Evaluate (predict) response values at arbitrary parameter points.\n\nUses the fitted surrogate model to predict responses at specified parameter values.\nOptionally returns uncertainty estimates (standard deviation).\n\nUse when:\n- Want predictions at specific points\n- Exploring parameter space\n- Need uncertainty quantification\n- Analyzing model predictions\n\nreturn_std=False (default): Returns mean predictions only\nreturn_std=True: Returns mean predictions + standard deviation for uncertainty\n\nExample use case: Predict yield at Temperature=25, Pressure=5 before running experiment.\n\nLimitations:\n- Requires fitted model\n- Standard deviation is in transformed space (not original scale)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "X": {
+            "type": "array",
+            "description": "Points to evaluate (list of parameter dicts, must not be empty)",
+            "items": {
+              "type": "object",
+              "description": "Dictionary with parameter names as keys"
+            },
+            "minItems": 1
+          },
+          "return_std": {
+            "type": "boolean",
+            "description": "If True, return mean + std; if False, return mean only (default: False)",
+            "default": false
+          }
+        },
+        "required": [
+          "session_id",
+          "X"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_best_results",
+      "description": "Get best results found so far.\n\nReturns the parameter combination with the best observed response value(s).\nFor multi-objective optimization, returns Pareto-optimal solutions.\n\nUse when:\n- Want to know current best parameters\n- Summarizing optimization results\n- Deciding whether to continue optimization\n\nReturns:\n- X_best: Best parameter values\n- response_max: Best response value(s)\n- n_experiments: Total experiments run\n\nNote: Returns observed best from experimental data, not model predictions.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_campaign_data",
+      "description": "Export all experimental data from the campaign.\n\nReturns complete dataset with all experiments, parameters, responses, and iteration tracking.\nThis is the full campaign.data DataFrame converted to JSON.\n\nUse when:\n- Need to analyze all experimental data\n- Want to visualize optimization progress\n- Export data for external analysis\n- LLM needs to examine trends and patterns\n\nReturns:\n- data: List of all experiments (each with parameters, targets, iteration)\n- columns: Column names\n- iterations: Unique iteration numbers\n- metadata: Parameter names, target names, fit status\n\nUseful for comprehensive data analysis and visualization.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_model_diagnostics",
+      "description": "Get surrogate model quality metrics and diagnostics.\n\nReturns comprehensive model diagnostics including R\u00b2 scores, loss values,\ntraining data size, and multi-objective metrics (hypervolume, Pareto points).\n\nUse when:\n- Assessing model quality\n- Deciding if more data is needed\n- Debugging poor suggestions\n- Understanding model confidence\n\nKey metrics:\n- R\u00b2 score: Model fit quality (1.0 = perfect, <0.5 = poor)\n- Loss: Training loss (MLL for GP, MSE for DNN)\n- n_training: Number of training points\n- hypervolume: Multi-objective convergence metric\n- n_pareto_points: Pareto front size\n\nReturns diagnostics per target/response variable.\n\nLimitations:\n- R\u00b2 and loss are None if model not fitted\n- Hypervolume requires multi-objective optimization",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_optimization_history",
+      "description": "Get iteration-by-iteration optimization progress.\n\nReturns per-iteration summary showing how optimization improved over time.\nTracks cumulative best response and mean response per iteration.\n\nUse when:\n- Analyzing convergence\n- Visualizing optimization progress\n- Deciding whether to continue optimization\n- Understanding which iterations improved results\n\nEach iteration summary includes:\n- n_experiments: Experiments in this iteration\n- best_response: Cumulative best for each target\n- mean_response: Mean response in this iteration\n- hypervolume: Multi-objective progress (if applicable)\n\nIteration 0 is typically the initial design (LHS/Random).\nSubsequent iterations are Bayesian optimization suggestions.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "export_state_dictionary",
+      "description": "Export full internal state dictionary.\n\nReturns the complete state dictionary from campaign.save_state() or optimizer.save_state().\nThis contains all internal state including model parameters, hyperparameters, RNG state, etc.\n\nUse when:\n- Need complete state for debugging\n- Want to serialize entire campaign\n- Deep inspection of internal state\n- Backing up campaign state\n\nobject='campaign' (default): Full campaign state (includes optimizer, data, RNG)\nobject='optimizer': Optimizer state only (model, hyperparameters, training data)\n\nReturns raw state dictionary with all internal representations.\n\nNote: This is advanced functionality for debugging and state inspection.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "campaign",
+              "optimizer"
+            ],
+            "description": "Object type to export ('campaign' or 'optimizer', default: 'campaign')",
+            "default": "campaign"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  }
+]

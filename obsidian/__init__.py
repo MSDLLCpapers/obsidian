@@ -2,6 +2,11 @@
 
 __version__ = "0.8.6"
 
+# Set default torch dtype to double for numerical stability
+import torch
+from obsidian.config import TORCH_DTYPE
+torch.set_default_dtype(TORCH_DTYPE)
+
 # Import key objects
 from obsidian.campaign import Campaign
 from obsidian.optimizer import BayesianOptimizer
