@@ -1,0 +1,32 @@
+# Generated requirements for Docker container
+# Strategy: upgrade-patch
+# Python: 3.10.19
+# Source: obsidian core dependencies + API/LLM extras + conda environment
+# Generated: Mon Mar 30 16:33:28 EDT 2026
+
+# PyTorch ecosystem (CPU-only)
+# Keep CPU index for torch ecosystem to avoid CUDA dependencies
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+# SSL certificate workarounds for corporate environments
+--trusted-host download.pytorch.org
+--trusted-host pypi.org
+--trusted-host files.pythonhosted.org
+
+botorch==0.11.3
+gpytorch==1.12
+torch==2.3.0
+
+# Other core dependencies
+fastapi==0.110.3
+matplotlib==3.10.5
+numpy==1.26.4
+openai==2.29.0
+pandas==2.3.2
+plotly==5.24.1
+pydantic==2.12.5
+pyyaml==6.0.2
+requests==2.32.3
+scipy==1.15.3
+shap==0.45.1
+uvicorn==0.27.1

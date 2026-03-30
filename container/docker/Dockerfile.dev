@@ -1,0 +1,48 @@
+# Dockerfile.dev - Development image with editable installs
+#
+# Build args:
+#   BASE_TAG - Tag of obsidian-server-base to use (default: latest)
+#
+# This image:
+# - Builds from base image (has core + API dependencies)
+# - Adds dev dependencies (pytest, jupyter, etc.)
+# - Pre-installs obsidian in editable mode (pip install -e)
+# - Designed for use with volume mounts for live code editing
+# - Volume mounts overlay the pre-installed locations
+# - Result: Python imports work + code changes are immediate!
+#
+# Usage with volume mounts:
+#   docker run -v $(pwd)/obsidian:/opt/obsidian -w /work ...
+
+ARG BASE_TAG=latest
+FROM obsidian-server-base:${BASE_TAG}
+
+ARG MAINTAINER="unknown"
+ARG DEV_TAG="unknown"
+
+LABEL maintainer="${MAINTAINER}"
+LABEL project="obsidian-server"
+
+# Record build metadata
+ARG BASE_TAG
+RUN echo "IMAGE: obsidian-server-dev:${DEV_TAG}" > /opt/version-info.txt && \
+    echo "BUILD TIME: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> /opt/version-info.txt && \
+    echo "" >> /opt/version-info.txt && \
+    sed -e '1s/^/BASE /' -e '3s/^BASE IMAGE:/PYTHON IMAGE:/' /etc/container-build-info.txt >> /opt/version-info.txt
+
+# Install dev dependencies (testing tools, jupyter, etc.)
+# Base image already has core + API dependencies
+COPY container/docker/requirements_docker_dev.txt /tmp/requirements_docker_dev.txt
+RUN pip install --no-cache-dir -r /tmp/requirements_docker_dev.txt && \
+    rm /tmp/requirements_docker_dev.txt
+
+# Create mount points
+RUN mkdir -p /opt/obsidian /work
+
+# Install obsidian in editable mode (--no-deps: dependencies in base)
+COPY . /opt
+WORKDIR /opt/obsidian
+RUN pip install -e . --no-deps
+
+WORKDIR /work
+CMD ["/bin/bash"]

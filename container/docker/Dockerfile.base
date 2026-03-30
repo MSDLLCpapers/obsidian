@@ -1,0 +1,55 @@
+# Dockerfile.base - Base image with Python and dependencies only
+#
+# Build args:
+#   PYTHON_BASE_IMAGE - Python base image with pinned SHA256 digest (required)
+#
+# This image contains:
+# - Python 3.10.x (slim-bookworm, Debian 12 stable)
+# - All dependencies from requirements_docker.txt
+# - Does NOT contain application code (for layer caching)
+#
+# Reproducibility:
+# - Base image pinned via SHA256 digest in python-3.10-slim-digest.lock
+# - Build will fail if PYTHON_BASE_IMAGE not provided (no default)
+
+ARG PYTHON_BASE_IMAGE
+FROM ${PYTHON_BASE_IMAGE}
+
+# Re-declare ARG to make it available after FROM
+ARG PYTHON_BASE_IMAGE
+ARG BASE_TAG="unknown"
+ARG MAINTAINER="unknown"
+
+LABEL maintainer="${MAINTAINER}"
+LABEL project="obsidian-server"
+
+# Document build metadata 
+RUN echo "IMAGE: obsidian-server-base:${BASE_TAG}" > /etc/container-build-info.txt && \
+    echo "BUILD TIME: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> /etc/container-build-info.txt && \
+    echo "BASE IMAGE: ${PYTHON_BASE_IMAGE}" >> /etc/container-build-info.txt
+
+# Environment variables for reproducibility
+ENV PYTHONHASHSEED=0 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy and install Python dependencies
+COPY container/docker/requirements_docker.txt /tmp/requirements_docker.txt
+RUN pip install --no-cache-dir -r /tmp/requirements_docker.txt && \
+    rm /tmp/requirements_docker.txt
+
+# A helper script to show version info
+RUN echo '#!/bin/bash' > /usr/local/bin/show-version && \
+    echo 'cat /opt/version-info.txt 2>/dev/null || cat /etc/container-build-info.txt' >> /usr/local/bin/show-version && \
+    chmod +x /usr/local/bin/show-version
+
+
+WORKDIR /workspace
+CMD ["/bin/bash"]

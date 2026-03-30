@@ -1,0 +1,19 @@
+# Python 3.10 slim-bookworm (Debian 12) base image digests
+# Architecture: linux/amd64
+# Do not edit manually - use container/scripts/update_base_image_digest.sh
+#
+# Format:
+# # Fetched: YYYY-MM-DD HH:MM:SS TZ
+# VERSION=IMAGE@DIGEST
+#
+# Only versions >= 3.10.17 are supported
+
+
+# Fetched: 2026-02-27 15:13:47 EST
+3.10.17=python:3.10.17-slim-bookworm@sha256:ac71103cf5137882806aad2d7ece409bbfe86c075e7478752d36ea073b0934d7
+
+# Fetched: 2026-02-27 15:14:31 EST
+3.10.18=python:3.10.18-slim-bookworm@sha256:b4d66d07136c546f1765eae2bfcce9a64fa95f37c717c02bedd06d0476d1dbbd
+
+# Fetched: 2026-02-27 15:20:41 EST
+3.10.19=python:3.10.19-slim-bookworm@sha256:7de0b3589a2b35452fab55d753aa773d59afcbb88220ab118d6604a398cd65e1

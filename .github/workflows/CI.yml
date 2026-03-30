@@ -15,7 +15,7 @@ jobs:
       with:
         python-version: '3.10'
     - name: Install requirements
-      run: pip install obsidian-apo[dev]
+      run: pip install ".[dev,llm]"
     - name: Run tests and collect coverage
       run: pytest --cov=.
     - name: Upload coverage reports to Codecov with GitHub Action

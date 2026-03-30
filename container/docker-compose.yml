@@ -1,0 +1,54 @@
+version: '3.8'
+
+# Docker Compose for local development
+#
+# Usage:
+#   docker-compose build          # Build images
+#   docker-compose run dev bash   # Start interactive shell
+#   docker-compose run dev python -m acq_func_test_scripts.runner --config task.json
+#
+# Both obsidian and acquisition_functions are mounted as volumes
+# for live code editing without rebuilds.
+
+services:
+  # Development service with volume mounts
+  dev:
+    image: obsidian-server-dev:latest
+    build:
+      context: ..
+      dockerfile: container/docker/Dockerfile.base
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.10}
+    volumes:
+      # Mount obsidian for live editing
+      - ../../obsidian:/opt/obsidian:ro
+      # Mount acquisition_functions for live editing
+      - ..:/workspace
+      # Preserve common cache directories
+      - pip-cache:/root/.cache/pip
+    working_dir: /workspace
+    environment:
+      - PYTHONPATH=/opt/obsidian:/workspace
+      - PYTHONHASHSEED=0
+      - PYTHONUNBUFFERED=1
+    # Keep container running for interactive use
+    stdin_open: true
+    tty: true
+
+  # Production service (for testing production build locally)
+  prod:
+    image: obsidian-server-prod:latest
+    build:
+      context: ..
+      dockerfile: container/docker/Dockerfile.prod
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.10}
+    working_dir: /work
+    environment:
+      - PYTHONHASHSEED=0
+      - PYTHONUNBUFFERED=1
+    stdin_open: true
+    tty: true
+
+volumes:
+  pip-cache:

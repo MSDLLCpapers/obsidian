@@ -1,0 +1,15 @@
+# Generated dev requirements for Docker dev container
+# Strategy: upgrade-patch
+# Python: 3.10.19
+# Source: obsidian dev extras + conda environment
+# Note: Dev container extends base image (core + API/LLM deps already included)
+# Generated: Mon Mar 30 16:33:28 EDT 2026
+
+# Development and testing dependencies (added to base)
+flake8==7.2.0
+ipykernel==6.29.5
+jupyterlab==4.4.3
+pytest==8.3.5
+pytest-cov==5.0.0
+scikit-learn==1.7.1
+xlrd==2.0.1

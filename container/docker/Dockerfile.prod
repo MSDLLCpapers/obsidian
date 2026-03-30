@@ -1,0 +1,52 @@
+# Dockerfile.prod - Production image with baked-in code
+#
+# Build args:
+#   BASE_TAG              - Tag of obsidian-server-base to use (default: latest)
+#   OBSIDIAN_PKG_VERSION  - Package version from pyproject.toml (e.g., 0.8.6)
+#   OBSIDIAN_SHA          - Git SHA for version tracking (e.g., a1b2c3d4)
+#
+# This image:
+# - Installs packages permanently (pip install .)
+# - All code baked in for reproducibility
+# - Ready for HPC deployment via Singularity
+# - No volume mounts needed
+
+ARG BASE_TAG=latest
+FROM obsidian-server-base:${BASE_TAG}
+
+ARG MAINTAINER="unknown"
+ARG BASE_TAG
+ARG PROD_TAG=unknown
+ARG OBSIDIAN_PKG_VERSION=unknown
+ARG OBSIDIAN_SHA=unknown
+
+LABEL maintainer="${MAINTAINER}"
+LABEL project="obsidian-server"
+LABEL obsidian.version="${OBSIDIAN_PKG_VERSION}"
+LABEL obsidian.sha="${OBSIDIAN_SHA}"
+
+# Record build metadata (before installing packages)
+RUN echo "IMAGE: obsidian-server-prod:${PROD_TAG}" > /opt/version-info.txt && \
+    echo "BUILD TIME: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> /opt/version-info.txt && \
+    echo "OBSIDIAN VERSION: ${OBSIDIAN_PKG_VERSION} (${OBSIDIAN_SHA})" >> /opt/version-info.txt && \
+    echo "" >> /opt/version-info.txt && \
+    sed -e '1s/^/BASE /' -e '3s/^BASE IMAGE:/PYTHON IMAGE:/' /etc/container-build-info.txt >> /opt/version-info.txt
+
+# Install obsidian
+COPY . /opt
+WORKDIR /opt/obsidian
+RUN echo "Installing obsidian ${OBSIDIAN_PKG_VERSION} (${OBSIDIAN_SHA})..." && \
+    pip install . --no-deps
+
+# Create entrypoint that shows version on startup
+RUN echo '#!/bin/bash' > /opt/entrypoint.sh && \
+    echo 'echo "=================================================="' >> /opt/entrypoint.sh && \
+    echo 'cat /opt/version-info.txt' >> /opt/entrypoint.sh && \
+    echo 'echo "=================================================="' >> /opt/entrypoint.sh && \
+    echo 'echo ""' >> /opt/entrypoint.sh && \
+    echo 'exec "$@"' >> /opt/entrypoint.sh && \
+    chmod +x /opt/entrypoint.sh
+
+WORKDIR /work
+ENTRYPOINT ["/opt/entrypoint.sh"]
+CMD ["/bin/bash"]
