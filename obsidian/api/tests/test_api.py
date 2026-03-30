@@ -788,3 +788,290 @@ def test_suggest_with_different_manual_seeds(client, sample_session_config):
         assert abs(s1.get("Temperature", 0) - s3.get("Temperature", 0)) < 0.01
         assert abs(s1.get("Concentration", 0) - s3.get("Concentration", 0)) < 0.01
         assert s1.get("Variant") == s3.get("Variant")
+
+
+def test_sample_parameter_space_basic(client, sample_session_config):
+    """Test basic parameter space sampling."""
+    # Create session
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    # Sample 10 points using LHS
+    sample_request = {"n_points": 10, "method": "LHS", "seed": 42}
+    response = client.post(f"/api/v1/sessions/{session_id}/sample", json=sample_request)
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["n_points"] == 10
+    assert data["method"] == "LHS"
+    assert len(data["samples"]) == 10
+
+    # Check that all parameters are present in samples
+    sample = data["samples"][0]
+    assert "Temperature" in sample
+    assert "Concentration" in sample
+    assert "Variant" in sample
+
+    # Check parameter bounds
+    for s in data["samples"]:
+        assert -10 <= s["Temperature"] <= 30
+        assert 10 <= s["Concentration"] <= 150
+        assert s["Variant"] in ["A", "B", "C"]
+
+
+def test_sample_parameter_space_no_state_change(client, sample_session_config):
+    """Test that sampling does not change session state."""
+    # Create session
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    # Check initial status
+    details_before = client.get(f"/api/v1/sessions/{session_id}").json()
+    assert details_before["status"] == "configured"
+    assert details_before["n_experiments"] == 0
+
+    # Sample some points
+    sample_request = {"n_points": 20, "method": "LHS"}
+    response = client.post(f"/api/v1/sessions/{session_id}/sample", json=sample_request)
+    assert response.status_code == 200
+
+    # Check status after sampling - should be unchanged
+    details_after = client.get(f"/api/v1/sessions/{session_id}").json()
+    assert details_after["status"] == "configured"
+    assert details_after["n_experiments"] == 0
+
+    # Verify sampling is stateless - can call multiple times
+    response2 = client.post(f"/api/v1/sessions/{session_id}/sample", json=sample_request)
+    assert response2.status_code == 200
+
+    # Status should still be unchanged
+    details_final = client.get(f"/api/v1/sessions/{session_id}").json()
+    assert details_final["status"] == "configured"
+    assert details_final["n_experiments"] == 0
+
+
+def test_sample_parameter_space_different_methods(client, sample_session_config):
+    """Test different sampling methods."""
+    # Create session
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    methods = ["LHS", "Random", "Sobol"]
+
+    for method in methods:
+        sample_request = {"n_points": 5, "method": method, "seed": 123}
+        response = client.post(f"/api/v1/sessions/{session_id}/sample", json=sample_request)
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["method"] == method
+        assert len(data["samples"]) == 5
+
+
+def test_sample_parameter_space_reproducibility(client, sample_session_config):
+    """Test that same seed produces same samples."""
+    # Create session
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    # Sample with seed 42
+    request1 = {"n_points": 5, "method": "LHS", "seed": 42}
+    response1 = client.post(f"/api/v1/sessions/{session_id}/sample", json=request1)
+    samples1 = response1.json()["samples"]
+
+    # Sample again with same seed
+    request2 = {"n_points": 5, "method": "LHS", "seed": 42}
+    response2 = client.post(f"/api/v1/sessions/{session_id}/sample", json=request2)
+    samples2 = response2.json()["samples"]
+
+    # Should be identical
+    for s1, s2 in zip(samples1, samples2):
+        assert abs(s1["Temperature"] - s2["Temperature"]) < 0.01
+        assert abs(s1["Concentration"] - s2["Concentration"]) < 0.01
+        assert s1["Variant"] == s2["Variant"]
+
+    # Different seed should produce different samples
+    request3 = {"n_points": 5, "method": "LHS", "seed": 99}
+    response3 = client.post(f"/api/v1/sessions/{session_id}/sample", json=request3)
+    samples3 = response3.json()["samples"]
+
+    # Check at least one sample is different
+    differences_found = False
+    for s1, s3 in zip(samples1, samples3):
+        if abs(s1["Temperature"] - s3["Temperature"]) > 0.01 or abs(s1["Concentration"] - s3["Concentration"]) > 0.01:
+            differences_found = True
+            break
+    assert differences_found
+
+
+def test_sample_parameter_space_exploration_workflow(client, sample_session_config):
+    """Test using sample for exploration with evaluate."""
+    # Create session
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    # Initialize and fit model
+    init_response = client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 5, "method": "LHS"})
+    suggestions = init_response.json()["suggestions"]
+
+    # Add synthetic data
+    for s in suggestions:
+        s["Yield"] = 85.0
+
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": suggestions})
+    client.post(f"/api/v1/sessions/{session_id}/fit")
+
+    # Sample points for exploration
+    sample_response = client.post(
+        f"/api/v1/sessions/{session_id}/sample", json={"n_points": 50, "method": "LHS", "seed": 100}
+    )
+    assert sample_response.status_code == 200
+    samples = sample_response.json()["samples"]
+
+    # Evaluate predictions on sampled points
+    eval_response = client.post(
+        f"/api/v1/sessions/{session_id}/evaluate", json={"X": samples, "return_std": True}
+    )
+    assert eval_response.status_code == 200
+    predictions = eval_response.json()["predictions"]
+
+    # Should have predictions for all samples
+    assert len(predictions) == 50
+    assert "Yield (pred)" in predictions[0]
+    assert "Yield (std)" in predictions[0]
+
+
+def test_sample_parameter_space_invalid_method(client, sample_session_config):
+    """Test sampling with invalid method."""
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    sample_request = {"n_points": 10, "method": "InvalidMethod"}
+    response = client.post(f"/api/v1/sessions/{session_id}/sample", json=sample_request)
+
+    # Should fail with 400 (bad request) for invalid method
+    assert response.status_code == 400
+    assert "error" in response.json()["detail"].lower() or "method" in response.json()["detail"].lower()
+
+
+def test_list_acquisition_functions(client):
+    """Test listing acquisition functions."""
+    response = client.get("/api/v1/acquisition-functions")
+
+    assert response.status_code == 200
+    data = response.json()
+
+    # Check response structure
+    assert "functions" in data
+    assert "count" in data
+    assert "single_objective" in data
+    assert "multi_objective" in data
+    assert "universal" in data
+
+    # Check count matches number of functions
+    assert data["count"] == len(data["functions"])
+    assert data["count"] == 12  # Expected number of built-in functions
+
+    # Check function structure
+    func = data["functions"][0]
+    assert "name" in func
+    assert "modalities" in func
+    assert "task_types" in func
+    assert "hyperparameters" in func
+    assert "description" in func
+
+    # Check categorization
+    assert len(data["single_objective"]) > 0
+    assert len(data["multi_objective"]) > 0
+    assert len(data["universal"]) > 0
+
+    # Verify universal functions appear in both lists
+    for universal_func in data["universal"]:
+        # Count how many times it appears
+        appears_in_single = universal_func in data["single_objective"]
+        appears_in_multi = universal_func in data["multi_objective"]
+        assert appears_in_single and appears_in_multi
+
+
+def test_list_acquisition_functions_known_functions(client):
+    """Test that specific known acquisition functions are present."""
+    response = client.get("/api/v1/acquisition-functions")
+    data = response.json()
+
+    function_names = [f["name"] for f in data["functions"]]
+
+    # Check for key single-objective functions
+    assert "NEI" in function_names
+    assert "EI" in function_names
+    assert "UCB" in function_names
+    assert "PI" in function_names
+
+    # Check for key multi-objective functions
+    assert "NEHVI" in function_names
+    assert "EHVI" in function_names
+    assert "NParEGO" in function_names
+
+    # Check for universal functions
+    assert "Mean" in function_names
+    assert "RS" in function_names
+    assert "SF" in function_names
+
+
+def test_list_acquisition_functions_metadata(client):
+    """Test acquisition function metadata is complete."""
+    response = client.get("/api/v1/acquisition-functions")
+    data = response.json()
+
+    # Find NEI function
+    nei = next(f for f in data["functions"] if f["name"] == "NEI")
+
+    assert nei["modalities"] == ["single"]
+    assert nei["task_types"] == ["optimization"]
+    assert "Noisy Expected Improvement" in nei["description"]
+    assert isinstance(nei["hyperparameters"], dict)
+
+    # Find UCB function (has hyperparameters)
+    ucb = next(f for f in data["functions"] if f["name"] == "UCB")
+
+    assert "beta" in ucb["hyperparameters"]
+    assert ucb["hyperparameters"]["beta"]["default"] == 1
+    assert ucb["hyperparameters"]["beta"]["type"] == "float"
+    assert ucb["hyperparameters"]["beta"]["optional"] is True
+
+    # Find EHVI function (multi-objective with hyperparameters)
+    ehvi = next(f for f in data["functions"] if f["name"] == "EHVI")
+
+    assert "multi" in ehvi["modalities"]
+    assert "ref_point" in ehvi["hyperparameters"]
+
+
+def test_acquisition_functions_single_objective_categorization(client):
+    """Test single-objective functions are correctly categorized."""
+    response = client.get("/api/v1/acquisition-functions")
+    data = response.json()
+
+    single_objective_names = data["single_objective"]
+
+    # NEI should be single-objective only
+    assert "NEI" in single_objective_names
+
+    # Check that single-objective functions have correct modality
+    for func_name in single_objective_names:
+        func = next(f for f in data["functions"] if f["name"] == func_name)
+        assert "single" in func["modalities"]
+
+
+def test_acquisition_functions_multi_objective_categorization(client):
+    """Test multi-objective functions are correctly categorized."""
+    response = client.get("/api/v1/acquisition-functions")
+    data = response.json()
+
+    multi_objective_names = data["multi_objective"]
+
+    # NEHVI should be multi-objective
+    assert "NEHVI" in multi_objective_names
+
+    # Check that multi-objective functions have correct modality
+    for func_name in multi_objective_names:
+        func = next(f for f in data["functions"] if f["name"] == func_name)
+        assert "multi" in func["modalities"]

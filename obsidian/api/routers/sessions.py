@@ -16,6 +16,8 @@ from obsidian.api.models import (
     SessionDetail,
     InitializeRequest,
     InitializeResponse,
+    SampleRequest,
+    SampleResponse,
     DataRequest,
     DataResponse,
     FitRequest,
@@ -179,6 +181,61 @@ def initialize_session(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Failed to initialize: {str(e)}")
 
 
+@router.post("/sessions/{session_id}/sample", response_model=SampleResponse)
+def sample_parameter_space(
+    session_id: str, request: SampleRequest, manager: SessionManager = Depends(get_session_manager)
+):
+    """
+    Sample points from the parameter space without initializing the session.
+
+    This is a stateless operation that generates random points according to the
+    specified sampling method (LHS, Random, Sobol, etc.) without changing the
+    session status. Useful for:
+    - Exploring the parameter space
+    - Generating test points for visualization
+    - Understanding parameter bounds
+    - Creating custom experimental designs
+
+    Unlike /initialize, this does NOT:
+    - Change session status to "initialized"
+    - Store points in the session
+    - Affect subsequent workflow operations
+
+    Args:
+        session_id: Session ID
+        request: Sampling parameters (n_points, method, seed)
+
+    Returns:
+        Sampled points from parameter space
+    """
+    try:
+        session = manager.get_session(session_id)
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Session {session_id} not found")
+
+    try:
+        # Use the designer directly without changing session state
+        # Temporarily override seed if provided
+        original_seed = session.campaign.designer.seed
+        if request.seed is not None:
+            session.campaign.designer.seed = request.seed
+
+        try:
+            # Generate samples using the designer
+            samples = session.campaign.designer.initialize(m_initial=request.n_points, method=request.method)
+
+            return SampleResponse(samples=samples.to_dict(orient="records"), n_points=len(samples), method=request.method)
+        finally:
+            # Restore original seed
+            session.campaign.designer.seed = original_seed
+
+    except KeyError as e:
+        # KeyError from designer (invalid method)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid sampling method: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Failed to sample: {str(e)}")
+
+
 @router.post("/sessions/{session_id}/data", response_model=DataResponse)
 def add_data(session_id: str, request: DataRequest, manager: SessionManager = Depends(get_session_manager)):
     """
@@ -227,12 +284,21 @@ def fit_model(
     try:
         session = manager.get_session(session_id)
 
-        session.fit(fit_options=request.fit_options)
+        # Temporarily override optimizer verbosity if requested (for LLM agents)
+        original_verbose = session.campaign.optimizer.verbose
+        if request.verbose is not None:
+            session.campaign.optimizer.verbose = request.verbose
 
-        # Save session state
-        manager.save_session(session_id)
+        try:
+            session.fit(fit_options=request.fit_options)
 
-        return FitResponse(status=str(session.status), message="Model fitted successfully")
+            # Save session state
+            manager.save_session(session_id)
+
+            return FitResponse(status=str(session.status), message="Model fitted successfully")
+        finally:
+            # Always restore original verbosity
+            session.campaign.optimizer.verbose = original_verbose
 
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Session {session_id} not found")
@@ -257,27 +323,36 @@ def suggest_experiments(
     try:
         session = manager.get_session(session_id)
 
-        # Build kwargs
-        optim_kwargs = {}
-        if request.optim_samples:
-            optim_kwargs["optim_samples"] = request.optim_samples
-        if request.optim_restarts:
-            optim_kwargs["optim_restarts"] = request.optim_restarts
-        if request.manual_seed is not None:
-            optim_kwargs["manual_seed"] = request.manual_seed
+        # Temporarily override optimizer verbosity if requested (for LLM agents)
+        original_verbose = session.campaign.optimizer.verbose
+        if request.verbose is not None:
+            session.campaign.optimizer.verbose = request.verbose
 
-        X_suggest, eval_suggest = session.suggest(
-            m_batch=request.m_batch, acquisition=request.acquisition, **optim_kwargs
-        )
+        try:
+            # Build kwargs
+            optim_kwargs = {}
+            if request.optim_samples:
+                optim_kwargs["optim_samples"] = request.optim_samples
+            if request.optim_restarts:
+                optim_kwargs["optim_restarts"] = request.optim_restarts
+            if request.manual_seed is not None:
+                optim_kwargs["manual_seed"] = request.manual_seed
 
-        # Save session state
-        manager.save_session(session_id)
+            X_suggest, eval_suggest = session.suggest(
+                m_batch=request.m_batch, acquisition=request.acquisition, **optim_kwargs
+            )
 
-        return SuggestResponse(
-            suggestions=X_suggest.to_dict(orient="records"),
-            evaluation=eval_suggest.to_dict(orient="records") if eval_suggest is not None else None,
-            n_suggestions=len(X_suggest),
-        )
+            # Save session state
+            manager.save_session(session_id)
+
+            return SuggestResponse(
+                suggestions=X_suggest.to_dict(orient="records"),
+                evaluation=eval_suggest.to_dict(orient="records") if eval_suggest is not None else None,
+                n_suggestions=len(X_suggest),
+            )
+        finally:
+            # Always restore original verbosity
+            session.campaign.optimizer.verbose = original_verbose
 
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Session {session_id} not found")
@@ -302,12 +377,21 @@ def evaluate_points(session_id: str, request: EvaluateRequest, manager: SessionM
     try:
         session = manager.get_session(session_id)
 
-        # Convert to DataFrame
-        X = pd.DataFrame(request.X)
+        # Temporarily override optimizer verbosity if requested (for LLM agents)
+        original_verbose = session.campaign.optimizer.verbose
+        if request.verbose is not None:
+            session.campaign.optimizer.verbose = request.verbose
 
-        predictions = session.evaluate(X, return_std=request.return_std)
+        try:
+            # Convert to DataFrame
+            X = pd.DataFrame(request.X)
 
-        return EvaluateResponse(predictions=predictions.to_dict(orient="records"), n_points=len(predictions))
+            predictions = session.evaluate(X, return_std=request.return_std)
+
+            return EvaluateResponse(predictions=predictions.to_dict(orient="records"), n_points=len(predictions))
+        finally:
+            # Always restore original verbosity
+            session.campaign.optimizer.verbose = original_verbose
 
     except KeyError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Session {session_id} not found")

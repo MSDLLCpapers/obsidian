@@ -90,7 +90,7 @@ See [examples/basic_openai_client.py](examples/basic_openai_client.py) for a com
 │  - Generates function arguments                 │
 └─────────────┬───────────────────────────────────┘
               │
-              ├──> tool_definitions.py (14 function schemas)
+              ├──> tool_definitions.py (16 function schemas)
               │
               ├──> openai_tools.json (generated JSON)
               │
@@ -103,7 +103,7 @@ See [examples/basic_openai_client.py](examples/basic_openai_client.py) for a com
 
 ### Files
 
-- **`tool_definitions.py`** - Python dictionary with 14 function definitions
+- **`tool_definitions.py`** - Python dictionary with 16 function definitions
 - **`openai_tools.json`** - Generated JSON in OpenAI format (loaded by LLM clients)
 - **`tool_executor.py`** - HTTP client that maps function calls to API endpoints
 - **`generator.py`** - Script to regenerate JSON from Python definitions
@@ -120,15 +120,18 @@ See [examples/basic_openai_client.py](examples/basic_openai_client.py) for a com
 | `get_session_details` | Inspect session configuration | session_id |
 | `delete_optimization_session` | Clean up session | session_id |
 
-### Workflow Operations (5 functions)
+### Workflow Operations (6 functions)
 
 | Function | Purpose | Key Parameters |
 |----------|---------|----------------|
 | `initialize_experiments` | Generate initial design | session_id, m_initial, method |
+| `sample_parameter_space` | Sample points without initializing | session_id, n_points, method |
 | `add_experimental_data` | Upload results | session_id, data |
 | `fit_surrogate_model` | Train model | session_id |
 | `suggest_next_experiments` | Bayesian optimization | session_id, m_batch, acquisition |
 | `evaluate_predictions` | Predict at arbitrary points | session_id, X, return_std |
+
+**Note on sampling:** `sample_parameter_space` is stateless and does NOT change session status or store points. Use it for exploration, visualization, or custom designs. `initialize_experiments` commits to initialization and changes session status.
 
 ### Analysis & Results (5 functions)
 
@@ -140,6 +143,48 @@ See [examples/basic_openai_client.py](examples/basic_openai_client.py) for a com
 | `get_optimization_history` | Iteration-by-iteration progress | session_id |
 | `export_state_dictionary` | Full state dump | session_id, object |
 
+### Informational (1 function)
+
+| Function                        | Purpose                                  | Key Parameters |
+|---------------------------------|------------------------------------------|----------------|
+| `list_acquisition_functions`    | Discover valid acquisition functions     | None           |
+
+This endpoint returns metadata about all built-in acquisition functions including:
+
+- Name (e.g., "NEI", "EHVI", "UCB")
+- Modalities (single-objective, multi-objective, or universal)
+- Task types (optimization, characterization)
+- Hyperparameters with defaults and types
+- Human-readable descriptions
+
+**Use cases:**
+
+- Agent needs to choose appropriate acquisition function dynamically
+- User asks "what acquisition functions are available?"
+- Understanding hyperparameter options
+- Filtering by single vs multi-objective
+
+**Example response:**
+
+```json
+{
+  "count": 12,
+  "single_objective": ["NEI", "EI", "UCB", "PI", "SR", ...],
+  "multi_objective": ["NEHVI", "EHVI", "NParEGO", ...],
+  "universal": ["Mean", "RS", "SF"],
+  "functions": [
+    {
+      "name": "NEI",
+      "description": "Noisy Expected Improvement - EI variant for noisy observations",
+      "modalities": ["single"],
+      "task_types": ["optimization"],
+      "hyperparameters": {}
+    },
+    ...
+  ]
+}
+```
+
 ## Loading Tool Definitions
 
 ### Recommended: Use `get_tools()` Helper
@@ -149,7 +194,7 @@ The easiest way to load tool definitions is using the `get_tools()` helper funct
 ```python
 from obsidian.api.llm import get_tools
 
-# Get all 14 tool definitions in OpenAI format
+# Get all 16 tool definitions in OpenAI format
 tools = get_tools()
 
 # Use with any OpenAI-compatible client
@@ -616,7 +661,7 @@ if r2 < 0.7:
 
 Each function call consumes tokens:
 
-- Tool definitions in prompt: ~3-5K tokens (all 14 functions)
+- Tool definitions in prompt: ~3-5K tokens (all 16 functions)
 - Function call response: ~100-500 tokens
 - Full conversation (10 turns): ~10-20K tokens
 

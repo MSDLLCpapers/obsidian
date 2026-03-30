@@ -189,6 +189,22 @@ class InitializeResponse(BaseModel):
     method: str
 
 
+class SampleRequest(BaseModel):
+    """Request to sample points from parameter space."""
+
+    n_points: int = Field(default=10, ge=1, description="Number of points to sample")
+    method: str = Field(default="LHS", description="Sampling method (LHS, Random, Sobol, etc.)")
+    seed: Optional[int] = None
+
+
+class SampleResponse(BaseModel):
+    """Response from sample operation."""
+
+    samples: list[dict[str, Any]]  # List of sampled points
+    n_points: int
+    method: str
+
+
 class DataRequest(BaseModel):
     """Request to add experimental data."""
 
@@ -213,6 +229,12 @@ class FitRequest(BaseModel):
     """Request to fit surrogate model."""
 
     fit_options: dict[str, Any] = Field(default_factory=dict)
+    verbose: Optional[int] = Field(
+        default=None,
+        ge=0,
+        le=3,
+        description="Optimizer verbosity (0=none, 1=summary, 2=detailed, 3=debug)"
+    )
 
 
 class FitResponse(BaseModel):
@@ -232,6 +254,12 @@ class SuggestRequest(BaseModel):
     manual_seed: Optional[int] = Field(
         default=None, description="Manual seed for exploration (optional, for reproducibility)"
     )
+    verbose: Optional[int] = Field(
+        default=None,
+        ge=0,
+        le=3,
+        description="Optimizer verbosity (0=none, 1=summary, 2=detailed, 3=debug)"
+    )
 
 
 class SuggestResponse(BaseModel):
@@ -247,6 +275,12 @@ class EvaluateRequest(BaseModel):
 
     X: list[dict[str, Any]]  # Points to evaluate
     return_std: bool = Field(default=False, description="If True, return mean + std; if False, return mean only")
+    verbose: Optional[int] = Field(
+        default=None,
+        ge=0,
+        le=3,
+        description="Optimizer verbosity (0=none, 1=summary, 2=detailed, 3=debug)"
+    )
 
     @field_validator("X")
     @classmethod
@@ -359,6 +393,31 @@ class StateExportResponse(BaseModel):
 
     state: dict[str, Any]  # Full state dictionary from save_state()
     object_type: str  # "campaign" or "optimizer"
+
+
+# ============================================================================
+# Informational Models
+# ============================================================================
+
+
+class AcquisitionFunctionInfo(BaseModel):
+    """Information about a single acquisition function."""
+
+    name: str
+    modalities: list[str]  # ["single"], ["multi"], or ["single", "multi"]
+    task_types: list[str]  # ["optimization"], ["characterization"], or both
+    hyperparameters: dict[str, Any]  # {param_name: {default, type, optional}}
+    description: str
+
+
+class AcquisitionFunctionsResponse(BaseModel):
+    """Response from acquisition functions listing."""
+
+    functions: list[AcquisitionFunctionInfo]
+    count: int
+    single_objective: list[str]  # List of names for single-objective functions
+    multi_objective: list[str]  # List of names for multi-objective functions
+    universal: list[str]  # List of names that work for both
 
 
 # ============================================================================

@@ -176,7 +176,7 @@ Warning: This deletes all experiment data, model state, and history."""
         },
     },
     # ============================================================================
-    # Workflow Operation Functions (5)
+    # Workflow Operation Functions (6)
     # ============================================================================
     "initialize_experiments": {
         "name": "initialize_experiments",
@@ -210,6 +210,61 @@ Typical m_initial: 10-20 experiments"""
                     "type": "string",
                     "description": "Design method ('LHS' or 'Random', default: 'LHS')",
                     "default": "LHS",
+                },
+                "seed": {"type": "integer", "description": "Random seed for reproducibility (optional)"},
+            },
+            "required": ["session_id"],
+        },
+    },
+    "sample_parameter_space": {
+        "name": "sample_parameter_space",
+        "description": (
+            """Sample random points from parameter space without initializing session.
+
+This is a stateless operation that generates points according to the specified
+sampling method WITHOUT changing the session status or storing the points.
+
+Use when:
+- Exploring parameter space bounds and structure
+- Generating test points for visualization or analysis
+- Understanding the design space before committing to initialization
+- Creating custom experimental designs for evaluation
+- Agent wants to explore surfaces without building full arrays
+
+Key differences from initialize_experiments:
+- Does NOT change session status to 'initialized'
+- Does NOT store points in the session
+- Does NOT affect subsequent workflow operations
+- Purely exploratory - no side effects
+
+Methods available:
+- 'LHS': Latin Hypercube Sampling (space-filling design)
+- 'Random': Uniform random sampling
+- 'Sobol': Sobol sequence (quasi-random low-discrepancy)
+
+Returns a DataFrame of sampled points that can be:
+- Passed to evaluate_predictions to explore surrogate surfaces
+- Used for visualization
+- Inspected to understand parameter ranges
+- Modified before actual initialization
+
+Typical use: Generate 50-100 points to explore fitted surrogate model."""
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "session_id": {"type": "string", "description": "Unique identifier of the session"},
+                "n_points": {
+                    "type": "integer",
+                    "description": "Number of points to sample (default: 10, min: 1)",
+                    "default": 10,
+                    "minimum": 1,
+                },
+                "method": {
+                    "type": "string",
+                    "description": "Sampling method ('LHS', 'Random', 'Sobol', default: 'LHS')",
+                    "default": "LHS",
+                    "enum": ["LHS", "Random", "Sobol"],
                 },
                 "seed": {"type": "integer", "description": "Random seed for reproducibility (optional)"},
             },
@@ -272,6 +327,13 @@ Typical workflow: initialize → add_data → fit → suggest → (repeat)"""
                     "type": "object",
                     "description": "Optional fitting configuration (advanced use)",
                     "default": {},
+                },
+                "verbose": {
+                    "type": "integer",
+                    "description": "Optimizer verbosity level (0=none, 1=summary, 2=detailed, 3=debug). Default 3 for LLM agents.",
+                    "minimum": 0,
+                    "maximum": 3,
+                    "default": 3,
                 },
             },
             "required": ["session_id"],
@@ -336,6 +398,13 @@ Limitations:
                         "Manual seed for exploration and reproducibility (optional, default: None uses campaign RNG)"
                     ),
                 },
+                "verbose": {
+                    "type": "integer",
+                    "description": "Optimizer verbosity level (0=none, 1=summary, 2=detailed, 3=debug). Default 3 for LLM agents.",
+                    "minimum": 0,
+                    "maximum": 3,
+                    "default": 3,
+                },
             },
             "required": ["session_id"],
         },
@@ -377,6 +446,13 @@ Limitations:
                     "type": "boolean",
                     "description": "If True, return mean + std; if False, return mean only (default: False)",
                     "default": False,
+                },
+                "verbose": {
+                    "type": "integer",
+                    "description": "Optimizer verbosity level (0=none, 1=summary, 2=detailed, 3=debug). Default 3 for LLM agents.",
+                    "minimum": 0,
+                    "maximum": 3,
+                    "default": 3,
                 },
             },
             "required": ["session_id", "X"],
@@ -534,6 +610,47 @@ Note: This is advanced functionality for debugging and state inspection."""
                 },
             },
             "required": ["session_id"],
+        },
+    },
+    # ============================================================================
+    # Informational Functions (1)
+    # ============================================================================
+    "list_acquisition_functions": {
+        "name": "list_acquisition_functions",
+        "description": (
+            """List all valid acquisition functions with metadata.
+
+Retrieves comprehensive information about all built-in acquisition functions including:
+- Name (short code like 'NEI', 'EHVI', 'UCB')
+- Modalities (single-objective, multi-objective, or both)
+- Task types (optimization, characterization, or both)
+- Hyperparameters with defaults and types
+- Human-readable descriptions
+
+Use when:
+- Need to discover valid acquisition function names dynamically
+- Choosing appropriate acquisition function for optimization problem
+- Understanding acquisition function capabilities
+- Learning hyperparameter options
+
+Returns categorized lists:
+- single_objective: Functions for single-objective optimization (e.g., NEI, EI, UCB)
+- multi_objective: Functions for multi-objective optimization (e.g., NEHVI, EHVI)
+- universal: Functions that work for both (e.g., RS, SF, Mean)
+
+Common acquisition functions:
+- NEI: Noisy Expected Improvement (recommended for single-objective)
+- NEHVI: Noisy Expected Hypervolume Improvement (recommended for multi-objective)
+- UCB: Upper Confidence Bound (exploration-exploitation tradeoff)
+- RS: Random Sampling (baseline)
+
+This is particularly useful for LLM agents that need to discover options
+dynamically rather than having them hard-coded."""
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": [],
         },
     },
 }

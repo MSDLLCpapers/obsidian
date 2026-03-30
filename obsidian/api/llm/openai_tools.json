@@ -199,6 +199,45 @@
   {
     "type": "function",
     "function": {
+      "name": "sample_parameter_space",
+      "description": "Sample random points from parameter space without initializing session.\n\nThis is a stateless operation that generates points according to the specified\nsampling method WITHOUT changing the session status or storing the points.\n\nUse when:\n- Exploring parameter space bounds and structure\n- Generating test points for visualization or analysis\n- Understanding the design space before committing to initialization\n- Creating custom experimental designs for evaluation\n- Agent wants to explore surfaces without building full arrays\n\nKey differences from initialize_experiments:\n- Does NOT change session status to 'initialized'\n- Does NOT store points in the session\n- Does NOT affect subsequent workflow operations\n- Purely exploratory - no side effects\n\nMethods available:\n- 'LHS': Latin Hypercube Sampling (space-filling design)\n- 'Random': Uniform random sampling\n- 'Sobol': Sobol sequence (quasi-random low-discrepancy)\n\nReturns a DataFrame of sampled points that can be:\n- Passed to evaluate_predictions to explore surrogate surfaces\n- Used for visualization\n- Inspected to understand parameter ranges\n- Modified before actual initialization\n\nTypical use: Generate 50-100 points to explore fitted surrogate model.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "n_points": {
+            "type": "integer",
+            "description": "Number of points to sample (default: 10, min: 1)",
+            "default": 10,
+            "minimum": 1
+          },
+          "method": {
+            "type": "string",
+            "description": "Sampling method ('LHS', 'Random', 'Sobol', default: 'LHS')",
+            "default": "LHS",
+            "enum": [
+              "LHS",
+              "Random",
+              "Sobol"
+            ]
+          },
+          "seed": {
+            "type": "integer",
+            "description": "Random seed for reproducibility (optional)"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
       "name": "add_experimental_data",
       "description": "Add experimental results to the session.\n\nUploads measured response values for experiments. Each data point must include\nall parameter values and at least one target value.\n\nUse when:\n- Have experimental results to add\n- After running suggested or initial experiments\n- Incrementally building the dataset\n\nData format: List of dicts, each containing parameter names and target names as keys.\nExample: [{\"Temperature\": 25, \"Pressure\": 5, \"Yield\": 85.2}]",
       "parameters": {
@@ -241,6 +280,13 @@
             "type": "object",
             "description": "Optional fitting configuration (advanced use)",
             "default": {}
+          },
+          "verbose": {
+            "type": "integer",
+            "description": "Optimizer verbosity level (0=none, 1=summary, 2=detailed, 3=debug). Default 3 for LLM agents.",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 3
           }
         },
         "required": [
@@ -298,6 +344,13 @@
           "manual_seed": {
             "type": "integer",
             "description": "Manual seed for exploration and reproducibility (optional, default: None uses campaign RNG)"
+          },
+          "verbose": {
+            "type": "integer",
+            "description": "Optimizer verbosity level (0=none, 1=summary, 2=detailed, 3=debug). Default 3 for LLM agents.",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 3
           }
         },
         "required": [
@@ -331,6 +384,13 @@
             "type": "boolean",
             "description": "If True, return mean + std; if False, return mean only (default: False)",
             "default": false
+          },
+          "verbose": {
+            "type": "integer",
+            "description": "Optimizer verbosity level (0=none, 1=summary, 2=detailed, 3=debug). Default 3 for LLM agents.",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 3
           }
         },
         "required": [
@@ -441,6 +501,18 @@
         "required": [
           "session_id"
         ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "list_acquisition_functions",
+      "description": "List all valid acquisition functions with metadata.\n\nRetrieves comprehensive information about all built-in acquisition functions including:\n- Name (short code like 'NEI', 'EHVI', 'UCB')\n- Modalities (single-objective, multi-objective, or both)\n- Task types (optimization, characterization, or both)\n- Hyperparameters with defaults and types\n- Human-readable descriptions\n\nUse when:\n- Need to discover valid acquisition function names dynamically\n- Choosing appropriate acquisition function for optimization problem\n- Understanding acquisition function capabilities\n- Learning hyperparameter options\n\nReturns categorized lists:\n- single_objective: Functions for single-objective optimization (e.g., NEI, EI, UCB)\n- multi_objective: Functions for multi-objective optimization (e.g., NEHVI, EHVI)\n- universal: Functions that work for both (e.g., RS, SF, Mean)\n\nCommon acquisition functions:\n- NEI: Noisy Expected Improvement (recommended for single-objective)\n- NEHVI: Noisy Expected Hypervolume Improvement (recommended for multi-objective)\n- UCB: Upper Confidence Bound (exploration-exploitation tradeoff)\n- RS: Random Sampling (baseline)\n\nThis is particularly useful for LLM agents that need to discover options\ndynamically rather than having them hard-coded.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
       }
     }
   }

@@ -210,7 +210,7 @@ Delete a session and all associated data.
 
 ---
 
-### Workflow Operations (5 endpoints)
+### Workflow Operations (6 endpoints)
 
 #### POST `/api/v1/sessions/{session_id}/initialize`
 
@@ -235,6 +235,49 @@ Generate initial experiment design using Latin Hypercube Sampling (LHS) or Rando
     {"Temperature": 67.4, "Pressure": 8.1}
   ],
   "n_suggestions": 10,
+  "method": "LHS"
+}
+```
+
+#### POST `/api/v1/sessions/{session_id}/sample`
+
+Sample random points from parameter space without initializing the session.
+
+**Purpose:** Generate exploratory points for visualization, analysis, or custom designs without changing session state.
+
+**Key differences from `/initialize`:**
+
+- Does NOT change session status
+- Does NOT store points in session
+- Purely stateless/exploratory operation
+- Can be called multiple times with different methods
+
+**Request Body:**
+
+```json
+{
+  "n_points": 50,
+  "method": "LHS",
+  "seed": 123
+}
+```
+
+**Methods available:**
+
+- `LHS` - Latin Hypercube Sampling (space-filling)
+- `Random` - Uniform random sampling
+- `Sobol` - Sobol sequence (low-discrepancy)
+
+**Response:** `200 OK`
+
+```json
+{
+  "samples": [
+    {"Temperature": 90.0, "Pressure": 5.5},
+    {"Temperature": 30.0, "Pressure": 9.1},
+    {"Temperature": 50.0, "Pressure": 1.9}
+  ],
+  "n_points": 50,
   "method": "LHS"
 }
 ```
@@ -487,6 +530,49 @@ Export internal state dictionary for checkpointing or debugging.
     "data": {...}
   },
   "object_type": "campaign"
+}
+```
+
+---
+
+### Informational (1 endpoint)
+
+#### GET `/api/v1/acquisition-functions`
+
+List all valid acquisition functions with metadata.
+
+**Purpose:** Enables dynamic discovery of acquisition functions, particularly useful for LLM agents that need to choose appropriate functions based on problem characteristics.
+
+**Response:** `200 OK`
+
+```json
+{
+  "count": 12,
+  "single_objective": ["NEI", "EI", "UCB", "PI", "SR", "NIPV", "Mean", "RS", "SF"],
+  "multi_objective": ["NEHVI", "EHVI", "NParEGO", "Mean", "RS", "SF"],
+  "universal": ["Mean", "RS", "SF"],
+  "functions": [
+    {
+      "name": "NEI",
+      "description": "Noisy Expected Improvement - EI variant for noisy observations (recommended for most cases)",
+      "modalities": ["single"],
+      "task_types": ["optimization"],
+      "hyperparameters": {}
+    },
+    {
+      "name": "UCB",
+      "description": "Upper Confidence Bound - Balances exploitation and exploration via beta parameter",
+      "modalities": ["single"],
+      "task_types": ["optimization"],
+      "hyperparameters": {
+        "beta": {
+          "default": 1,
+          "type": "float",
+          "optional": true
+        }
+      }
+    }
+  ]
 }
 ```
 
