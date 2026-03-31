@@ -225,6 +225,11 @@ def test_target_validation():
     # Invalid aim
     with pytest.raises(ValueError):
         Target('Response1', aim='maximize')
+
+    # Tracking-only target is valid and keeps neutral multiplier for max aim
+    tracking_target = Target('Response1', aim='max', tracking_only=True)
+    assert tracking_target.multiplier == 1
+    assert tracking_target.tracking_only == True
     
     # Invalid f_transform
     with pytest.raises(KeyError):
@@ -264,6 +269,20 @@ def test_target_validation():
     # Corner case for Logit_Scaler
     transform_func = Logit_Scaler(standardize=False)
     transform_func.forward(test_response, fit=True)
+
+
+@pytest.mark.fast
+def test_target_save_load_tracking_only_state():
+    target = Target('Response1', f_transform='Standard', aim='min', tracking_only=True)
+    obj_dict = target.save_state()
+
+    assert obj_dict['init_attrs']['tracking_only'] == True
+    target_loaded = Target.load_state(obj_dict)
+
+    assert target_loaded.name == target.name
+    assert target_loaded.aim == target.aim
+    assert target_loaded.multiplier == -1
+    assert target_loaded.tracking_only == True
 
 
 if __name__ == '__main__':

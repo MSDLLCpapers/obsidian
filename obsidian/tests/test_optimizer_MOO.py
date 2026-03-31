@@ -7,7 +7,6 @@ from obsidian.experiment import ExpDesigner, Simulator
 from obsidian.optimizer import BayesianOptimizer
 from obsidian.experiment.benchmark import two_leaves
 from obsidian.tests.utils import equal_state_dicts
-
 from botorch.models.ensemble import EnsembleModel
 
 from numpy.testing import assert_array_equal
@@ -136,6 +135,87 @@ def test_optimizer_aqs(aq):
 def test_optimizer_maximize():
     X_suggest, eval_suggest = optimizer.maximize(**test_config)
     df_suggest = pd.concat([X_suggest, eval_suggest], axis=1)
+
+
+@pytest.mark.fast
+def test_suggest_ignores_tracking_targets_by_default():
+    optimizer_tracking = BayesianOptimizer(base_X_space, surrogate='GP', seed=0, verbose=0)
+    tracking_targets = [
+        Target(name='Response 1', f_transform='Standard', aim='max'),
+        Target(name='Response 2', f_transform='Standard', aim='max', tracking_only=True),
+    ]
+    optimizer_tracking.fit(Z0_base, target=tracking_targets)
+
+    _, eval_suggest = optimizer_tracking.suggest(m_batch=1, **test_config)
+    assert eval_suggest['aq Method'].iloc[0] == 'NEI'
+
+
+@pytest.mark.fast
+def test_suggest_warns_tracking_only_target_when_explicitly_requested():
+    optimizer_tracking = BayesianOptimizer(base_X_space, surrogate='GP', seed=0, verbose=0)
+    tracking_targets = [
+        Target(name='Response 1', f_transform='Standard', aim='max'),
+        Target(name='Response 2', f_transform='Standard', aim='max', tracking_only=True),
+    ]
+    optimizer_tracking.fit(Z0_base, target=tracking_targets)
+
+    with pytest.warns(UserWarning, match='tracking-only'):
+        _, eval_suggest = optimizer_tracking.suggest(
+            m_batch=1,
+            target=Target(name='Response 2', f_transform='Standard', aim='max', tracking_only=True),
+            **test_config,
+        )
+    assert eval_suggest['aq Method'].iloc[0] == 'NEI'
+
+
+@pytest.mark.fast
+def test_suggest_rejects_unknown_target_when_target_provided():
+    optimizer_tracking = BayesianOptimizer(base_X_space, surrogate='GP', seed=0, verbose=0)
+    tracking_targets = [
+        Target(name='Response 1', f_transform='Standard', aim='max'),
+        Target(name='Response 2', f_transform='Standard', aim='max', tracking_only=True),
+    ]
+    optimizer_tracking.fit(Z0_base, target=tracking_targets)
+
+    with pytest.raises(NameError):
+        optimizer_tracking.suggest(
+            m_batch=1,
+            target=Target(name='Response 3', f_transform='Standard', aim='max'),
+            **test_config,
+        )
+
+
+def test_maximize_includes_tracking_only_without_warning():
+    optimizer_tracking = BayesianOptimizer(base_X_space, surrogate='GP', seed=0, verbose=0)
+    tracking_targets = [
+        Target(name='Response 1', f_transform='Standard', aim='max'),
+        Target(name='Response 2', f_transform='Standard', aim='max', tracking_only=True),
+    ]
+    optimizer_tracking.fit(Z0_base, target=tracking_targets)
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('always')
+        X_all, _ = optimizer_tracking.maximize(**test_config)
+    assert X_all.shape[0] == 2
+    assert not any('tracking-only' in str(w_i.message).lower() for w_i in w)
+
+
+@pytest.mark.fast
+def test_save_load_preserves_tracking_only_targets():
+    optimizer_tracking = BayesianOptimizer(base_X_space, surrogate='GP', seed=0, verbose=0)
+    tracking_targets = [
+        Target(name='Response 1', f_transform='Standard', aim='max'),
+        Target(name='Response 2', f_transform='Standard', aim='max', tracking_only=True),
+    ]
+    optimizer_tracking.fit(Z0_base, target=tracking_targets)
+
+    state = optimizer_tracking.save_state()
+    optimizer_loaded = BayesianOptimizer.load_state(state)
+
+    assert optimizer_loaded.target[1].tracking_only == True
+
+    X_all, _ = optimizer_loaded.maximize(**test_config)
+    assert X_all.shape[0] == 2
 
 
 @pytest.mark.fast
