@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 import logging
 
-from obsidian.api.routers import sessions, info
+from obsidian.api.routers import sessions, info, analysis
 from obsidian.orchestration import SessionManager
 
 # Configure logging
@@ -139,6 +139,7 @@ async def custom_redoc_html():
 # Include routers
 app.include_router(sessions.router, prefix="/api/v1", tags=["Sessions"])
 app.include_router(info.router, prefix="/api/v1", tags=["Information"])
+app.include_router(analysis.router, prefix="/api/v1", tags=["Analysis"])
 
 
 if __name__ == "__main__":

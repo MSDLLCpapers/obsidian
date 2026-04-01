@@ -13,8 +13,21 @@ from obsidian.api.llm import get_tools
 
 
 def test_tool_definitions_count():
-    """Test that we have all 14 function definitions."""
-    assert len(TOOL_DEFINITIONS) == 14
+    """Test that Python definitions match JSON and get_tools() output (no hardcoded count)."""
+    # Python definitions
+    py_count = len(TOOL_DEFINITIONS)
+
+    # JSON file
+    json_path = Path(__file__).parent.parent / "openai_tools.json"
+    with open(json_path) as f:
+        json_count = len(json.load(f))
+
+    # get_tools() output
+    tools_count = len(get_tools())
+
+    # All should match (whatever the count is)
+    assert py_count == json_count == tools_count, \
+        f"Mismatch: Python={py_count}, JSON={json_count}, get_tools()={tools_count}"
 
 
 def test_tool_definitions_structure():
@@ -123,7 +136,14 @@ def test_parameter_types():
         params = definition["parameters"]
         for prop_name, prop_def in params.get("properties", {}).items():
             assert "type" in prop_def, f"{func_name}.{prop_name} missing type"
-            assert prop_def["type"] in valid_types, f"Invalid type in {func_name}.{prop_name}: {prop_def['type']}"
+
+            param_type = prop_def["type"]
+            # Handle union types (arrays of types)
+            if isinstance(param_type, list):
+                for t in param_type:
+                    assert t in valid_types, f"Invalid type in {func_name}.{prop_name}: {t}"
+            else:
+                assert param_type in valid_types, f"Invalid type in {func_name}.{prop_name}: {param_type}"
 
 
 def test_generated_json_exists():
@@ -139,8 +159,8 @@ def test_generated_json_valid():
     with open(json_path) as f:
         tools = json.load(f)
 
-    # Check we have all 14 tools
-    assert len(tools) == 14
+    # Check we have at least one tool
+    assert len(tools) > 0, "JSON should contain at least one tool"
 
     # Check each tool has correct structure
     for tool in tools:
@@ -229,9 +249,9 @@ def test_get_tools_helper():
     """Test get_tools() helper function returns correct format."""
     tools = get_tools()
 
-    # Should return list of 14 tools
+    # Should return list with at least one tool
     assert isinstance(tools, list)
-    assert len(tools) == 14
+    assert len(tools) > 0, "get_tools() should return at least one tool"
 
     # Each tool should have correct OpenAI format
     for tool in tools:

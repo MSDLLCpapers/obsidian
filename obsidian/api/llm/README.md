@@ -115,10 +115,12 @@ See [examples/basic_openai_client.py](examples/basic_openai_client.py) for a com
 
 | Function | Purpose | Key Parameters |
 |----------|---------|----------------|
-| `create_optimization_session` | Start new campaign | parameters, targets, name, seed |
+| `create_optimization_session` | Start new campaign | parameters, targets, name, seed, **surrogate** |
 | `list_optimization_sessions` | Discover existing sessions | status_filter (optional) |
 | `get_session_details` | Inspect session configuration | session_id |
 | `delete_optimization_session` | Clean up session | session_id |
+
+**New in surrogate selection:** Choose between GP, DNN, DKL, and other surrogate models at session creation. Pass as string (`"GP"`), dict with hyperparameters (`{"DNN": {"p_dropout": 0.3}}`), or list for multi-output (`["GP", {"DNN": {...}}]`).
 
 ### Workflow Operations (6 functions)
 
@@ -128,12 +130,19 @@ See [examples/basic_openai_client.py](examples/basic_openai_client.py) for a com
 | `sample_parameter_space` | Sample points without initializing | session_id, n_points, method |
 | `add_experimental_data` | Upload results | session_id, data |
 | `fit_surrogate_model` | Train model | session_id |
-| `suggest_next_experiments` | Bayesian optimization | session_id, m_batch, acquisition |
+| `suggest_next_experiments` | Bayesian optimization | session_id, m_batch, acquisition, **fixed_var**, **optim_sequential**, **X_pending** |
 | `evaluate_predictions` | Predict at arbitrary points | session_id, X, return_std |
+
+**New in advanced suggest options:**
+
+- **Acquisition hyperparameters**: Pass acquisition as dict to customize behavior (e.g., `[{"UCB": {"beta": 2.0}}]` for more exploration, `[{"NEHVI": {"ref_point": [50, 100]}}]` for multi-objective reference point)
+- **fixed_var**: Lock specific parameters at constant values for sensitivity analysis (e.g., `{"Temperature": 25.0}`)
+- **optim_sequential**: Toggle between sequential (faster) and joint (better batch quality) optimization
+- **X_pending**: Account for experiments already queued/running to avoid redundant suggestions
 
 **Note on sampling:** `sample_parameter_space` is stateless and does NOT change session status or store points. Use it for exploration, visualization, or custom designs. `initialize_experiments` commits to initialization and changes session status.
 
-### Analysis & Results (5 functions)
+### Analysis & Results (7 functions)
 
 | Function | Purpose | Key Parameters |
 |----------|---------|----------------|
@@ -142,6 +151,8 @@ See [examples/basic_openai_client.py](examples/basic_openai_client.py) for a com
 | `get_model_diagnostics` | Model quality metrics | session_id |
 | `get_optimization_history` | Iteration-by-iteration progress | session_id |
 | `export_state_dictionary` | Full state dump | session_id, object |
+| `analyze_shap` | **NEW:** SHAP feature importance | session_id, target_name, n_samples, reference_point, seed |
+| `analyze_sensitivity` | **NEW:** Gradient-based sensitivity | session_id, reference_point, perturbation |
 
 ### Informational (1 function)
 
@@ -349,6 +360,281 @@ response = client.chat.completions.create(
 ```
 
 See [examples/databricks_example.py](examples/databricks_example.py) for complete example.
+
+## Advanced Features (New)
+
+### Surrogate Model Selection
+
+Choose between different surrogate models when creating sessions:
+
+```python
+# Gaussian Process (default)
+session = executor.execute_tool_call("create_optimization_session", {
+    "parameters": [...],
+    "targets": [...],
+    "surrogate": "GP"
+})
+
+# Deep Neural Network with custom hyperparameters
+session = executor.execute_tool_call("create_optimization_session", {
+    "parameters": [...],
+    "targets": [...],
+    "surrogate": {"DNN": {"p_dropout": 0.3, "h_width": 32, "h_layers": 3}}
+})
+
+# Deep Kernel Learning
+session = executor.execute_tool_call("create_optimization_session", {
+    "parameters": [...],
+    "targets": [...],
+    "surrogate": "DKL"
+})
+
+# Multi-output with mixed surrogates
+session = executor.execute_tool_call("create_optimization_session", {
+    "parameters": [...],
+    "targets": [{"name": "Yield", "aim": "max"}, {"name": "Purity", "aim": "max"}],
+    "surrogate": ["GP", {"DNN": {"p_dropout": 0.2}}]
+})
+```
+
+**Available surrogates**: `GP` (Gaussian Process), `DNN` (Deep Neural Network), `DKL` (Deep Kernel Learning), `MixedGP` (for mixed parameter types), `GPflat`, `GPprior`, `MTGP` (Multi-task).
+
+### Acquisition Function Hyperparameters
+
+Customize acquisition function behavior:
+
+```python
+# UCB with high exploration (beta controls exploration-exploitation tradeoff)
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 3,
+    "acquisition": [{"UCB": {"beta": 2.0}}]  # >1 = more exploration
+})
+
+# Multi-objective with reference point
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 5,
+    "acquisition": [{"NEHVI": {"ref_point": [-100, -50]}}]  # For hypervolume calculation
+})
+
+# Mixed acquisition functions (returns 6 suggestions: 2 per function)
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 2,
+    "acquisition": ["NEI", {"UCB": {"beta": 1.5}}, "SF"]  # 3 functions × 2 batch = 6
+})
+```
+
+**Common hyperparameters**:
+
+- `UCB`: `beta` (float, exploration weight, default: 1.0)
+- `EHVI/NEHVI`: `ref_point` (list[float], reference point for hypervolume)
+- `NParEGO`: `scalarization_weights` (list[float])
+- `EI/PI`: `inflate` (float, inflation factor, default: 0)
+
+### Advanced Suggest Options
+
+#### Fixed Variables (Sensitivity Analysis)
+
+Lock specific parameters at constant values:
+
+```python
+# Fix Temperature at 25°C, only vary other parameters
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 5,
+    "fixed_var": {"Temperature": 25.0}
+})
+
+# Fix multiple parameters (continuous and categorical)
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 3,
+    "fixed_var": {"Temperature": 25.0, "Catalyst": "TypeA"}
+})
+```
+
+**Use cases**: Sensitivity analysis, constrained optimization, parameter sweeps at fixed conditions.
+
+#### Batch Optimization Strategy
+
+Control sequential vs joint optimization:
+
+```python
+# Sequential optimization (default, faster)
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 5,
+    "optim_sequential": True  # Optimize one at a time
+})
+
+# Joint optimization (slower but better batch designs)
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 5,
+    "optim_sequential": False  # Jointly optimize all 5 points
+})
+```
+
+**Trade-off**: Sequential is ~5x faster but joint produces better space-filling batch designs.
+
+#### Pending Experiments
+
+Account for experiments already queued/running:
+
+```python
+# Specify experiments that are pending
+pending = [
+    {"Temperature": 50, "Pressure": 5, "Catalyst": "A"},
+    {"Temperature": 75, "Pressure": 8, "Catalyst": "B"}
+]
+
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 3,
+    "X_pending": pending
+})
+
+# Returns 5 total suggestions: 2 pending + 3 new
+# Acquisition function accounts for pending points to avoid redundancy
+```
+
+**Use case**: Parallel experimentation where some experiments are already running.
+
+#### Combined Advanced Options
+
+Use all options together:
+
+```python
+suggestions = executor.execute_tool_call("suggest_next_experiments", {
+    "session_id": session_id,
+    "m_batch": 3,
+    "acquisition": [{"UCB": {"beta": 1.8}}],
+    "fixed_var": {"Catalyst": "TypeB"},
+    "optim_sequential": False,
+    "X_pending": [{"Temperature": 50, "Pressure": 5, "Catalyst": "TypeB"}]
+})
+```
+
+### Model Interpretation & Analysis (New)
+
+#### SHAP Analysis
+
+Understand which parameters most influence the optimization target using SHAP (SHapley Additive exPlanations):
+
+```python
+# Compute SHAP values for a target
+shap_result = executor.execute_tool_call("analyze_shap", {
+    "session_id": session_id,
+    "target_name": "Yield",
+    "n_samples": 100,  # Number of samples for SHAP computation
+    "seed": 42
+})
+
+# Returns feature importance ranking
+for feature in shap_result["feature_importance"]:
+    print(f"{feature['rank']}. {feature['parameter']}: {feature['importance']:.3f}")
+
+# Mean SHAP values (positive = increases prediction)
+print("SHAP values:", shap_result["shap_values_mean"])
+# Example: {"Temperature": 5.2, "Pressure": -2.1, "Catalyst": 0.8}
+
+# Model prediction at reference point
+print(f"Predicted: {shap_result['predicted_value']}")
+print(f"Expected (baseline): {shap_result['expected_value']}")
+```
+
+**Interpretation:**
+- Positive SHAP value → parameter increases the predicted response
+- Negative SHAP value → parameter decreases the predicted response  
+- Larger absolute value → stronger effect on prediction
+- Feature importance ranks parameters by mean absolute SHAP value
+
+**Custom reference point:**
+
+```python
+# Analyze at specific operating conditions
+shap_result = executor.execute_tool_call("analyze_shap", {
+    "session_id": session_id,
+    "target_name": "Yield",
+    "reference_point": {"Temperature": 50, "Pressure": 5, "Catalyst": "A"},
+    "n_samples": 200
+})
+```
+
+**Use cases:**
+- Understanding which parameters drive optimization
+- Deciding which parameters to fix or vary
+- Explaining model predictions to stakeholders
+- Identifying key optimization levers
+
+#### Sensitivity Analysis
+
+Fast gradient-based sensitivity for local parameter effects:
+
+```python
+# Compute dy/dx at best point (default)
+sens_result = executor.execute_tool_call("analyze_sensitivity", {
+    "session_id": session_id
+})
+
+# Access raw sensitivities (dy/dx)
+for target, param_sens in sens_result["sensitivity"].items():
+    print(f"\n{target}:")
+    for param, grad in param_sens.items():
+        print(f"  d{target}/d{param} = {grad:.4f}")
+
+# Access normalized sensitivities (0-1 scale for comparison)
+normalized = sens_result["sensitivity_normalized"]["Yield"]
+print("Normalized:", normalized)
+# Example: {"Temperature": 1.0, "Pressure": 0.42, "Catalyst": 0.18}
+```
+
+**Interpretation:**
+- Positive gradient → increasing parameter increases response
+- Negative gradient → increasing parameter decreases response
+- Normalized values → relative importance (1.0 = most sensitive parameter)
+
+**Custom reference point:**
+
+```python
+# Analyze at specific conditions
+sens_result = executor.execute_tool_call("analyze_sensitivity", {
+    "session_id": session_id,
+    "reference_point": {"Temperature": 75, "Pressure": 8},
+    "perturbation": 1e-5  # Smaller perturbation for more accurate gradients
+})
+```
+
+**SHAP vs Sensitivity comparison:**
+
+| Feature | SHAP | Sensitivity |
+|---------|------|-------------|
+| **Speed** | Slower (~100 samples) | Fast (single gradient) |
+| **Scope** | Global (averaged over space) | Local (one point) |
+| **Output** | All targets separately | All targets together |
+| **Best for** | Understanding overall importance | Quick local checks |
+
+**Combined workflow:**
+
+```python
+# 1. Quick sensitivity check
+sens = executor.execute_tool_call("analyze_sensitivity", {"session_id": sid})
+top_param = max(sens["sensitivity_normalized"]["Yield"], key=lambda x: x[1])
+
+# 2. Deep dive with SHAP on important parameter
+shap = executor.execute_tool_call("analyze_shap", {
+    "session_id": sid,
+    "target_name": "Yield",
+    "n_samples": 200
+})
+
+# 3. Decide whether to fix less important parameters
+if shap["feature_importance"][-1]["importance"] < 0.1:
+    # Fix least important parameter, focus on others
+    fixed_param = shap["feature_importance"][-1]["parameter"]
+```
 
 ## Usage Patterns
 

@@ -65,12 +65,21 @@ def create_session(session_data: SessionCreate, manager: SessionManager = Depend
         X_space = build_param_space(session_data.parameters)
         targets = build_targets(session_data.targets)
 
+        # Create optimizer with surrogate selection
+        from obsidian.optimizer import BayesianOptimizer
+        optimizer = BayesianOptimizer(
+            X_space=X_space,
+            surrogate=session_data.surrogate,
+            seed=session_data.seed,
+        )
+
         # Create session
         session = manager.create_session(
             X_space=X_space,
             target=targets if len(targets) > 1 else targets[0],
             name=session_data.name,
             seed=session_data.seed,
+            optimizer=optimizer,
         )
 
         return SessionMetadata(**session.to_dict())
@@ -337,6 +346,16 @@ def suggest_experiments(
                 optim_kwargs["optim_restarts"] = request.optim_restarts
             if request.manual_seed is not None:
                 optim_kwargs["manual_seed"] = request.manual_seed
+
+            # Add new parameters
+            if request.fixed_var is not None:
+                optim_kwargs["fixed_var"] = request.fixed_var
+            optim_kwargs["optim_sequential"] = request.optim_sequential
+
+            # Convert X_pending to DataFrame if provided
+            if request.X_pending is not None:
+                import pandas as pd
+                optim_kwargs["X_pending"] = pd.DataFrame(request.X_pending)
 
             X_suggest, eval_suggest = session.suggest(
                 m_batch=request.m_batch, acquisition=request.acquisition, **optim_kwargs

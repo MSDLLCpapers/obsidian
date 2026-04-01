@@ -8,12 +8,13 @@ The Obsidian API provides HTTP endpoints for managing optimization campaigns, ge
 
 **Key Features:**
 
-- **14 REST endpoints** covering the full optimization workflow
+- **18 REST endpoints** covering the full optimization workflow
 - **OpenAPI documentation** with interactive Swagger UI
-- **LLM integration** via OpenAI function calling (for autonomous optimization agents)
+- **LLM integration** via OpenAI function calling (18 tool definitions for autonomous optimization agents)
 - **Session management** with persistent storage
 - **Multi-objective optimization** with Pareto frontier analysis
 - **Real-time diagnostics** including R², hypervolume, and model quality metrics
+- **Model interpretation** with SHAP and sensitivity analysis endpoints
 
 **Architecture:** The API uses a thin adapter pattern - HTTP endpoints delegate business logic to the [orchestration layer](../orchestration/README.md), which manages sessions and campaign lifecycles.
 
@@ -146,7 +147,37 @@ Create a new optimization session.
       "f_transform": "none"
     }
   ],
+  "surrogate": "GP",
   "seed": 42
+}
+```
+
+**Surrogate Models (optional):**
+
+Choose the surrogate model type:
+
+- **String form** (uses defaults): `"GP"`, `"DNN"`, `"DKL"`, `"MixedGP"`, `"GPflat"`, `"GPprior"`, `"MTGP"`
+- **Dict form** (with hyperparameters): `{"DNN": {"p_dropout": 0.3, "h_width": 32, "h_layers": 3}}`
+- **List form** (multi-output, mixed surrogates): `["GP", {"DNN": {"p_dropout": 0.2}}]`
+
+**Available surrogates:**
+
+- `GP` - Gaussian Process (default, recommended for most cases)
+- `DNN` - Deep Neural Network (good for high-dimensional spaces)
+  - Hyperparameters: `p_dropout` (0-1, default: 0.2), `h_width` (int, default: 16), `h_layers` (int, default: 2)
+- `DKL` - Deep Kernel Learning (combines DNN + GP)
+- `MixedGP` - GP for mixed continuous/categorical parameters
+- `GPflat` - GP with flat prior
+- `GPprior` - GP with informative prior
+- `MTGP` - Multi-task GP
+
+**Example with DNN surrogate:**
+
+```json
+{
+  "parameters": [...],
+  "targets": [...],
+  "surrogate": {"DNN": {"p_dropout": 0.3, "h_width": 32, "h_layers": 3}}
 }
 ```
 
@@ -339,7 +370,10 @@ Suggest next experiments using Bayesian optimization.
   "acquisition": ["NEI"],
   "optim_samples": 512,
   "optim_restarts": 10,
-  "manual_seed": 42
+  "manual_seed": 42,
+  "fixed_var": null,
+  "optim_sequential": true,
+  "X_pending": null
 }
 ```
 
@@ -361,12 +395,59 @@ Suggest next experiments using Bayesian optimization.
 
 **Acquisition Functions:**
 
+Pass acquisition functions as strings (uses defaults) or dicts (with hyperparameters):
+
 - `NEI` - Noisy Expected Improvement (default, handles noise)
 - `EI` - Expected Improvement
-- `UCB` - Upper Confidence Bound
+- `UCB` - Upper Confidence Bound (hyperparameter: `beta` for exploration control)
 - `Mean` - Posterior mean (exploitation only)
 - `qNEI` - Batch Noisy Expected Improvement
 - `qEI` - Batch Expected Improvement
+- `NEHVI` - Noisy Expected Hypervolume Improvement (multi-objective, hyperparameter: `ref_point`)
+- `EHVI` - Expected Hypervolume Improvement (multi-objective, hyperparameter: `ref_point`)
+
+**Acquisition with Hyperparameters:**
+
+```json
+{
+  "m_batch": 3,
+  "acquisition": [{"UCB": {"beta": 2.0}}]
+}
+```
+
+```json
+{
+  "m_batch": 5,
+  "acquisition": [{"NEHVI": {"ref_point": [-100, -50]}}]
+}
+```
+
+**Advanced Options:**
+
+- **`fixed_var`** (optional): Lock parameters at constant values. Useful for sensitivity analysis.
+
+  ```json
+  {
+    "m_batch": 5,
+    "fixed_var": {"Temperature": 25.0, "Catalyst": "TypeA"}
+  }
+  ```
+
+- **`optim_sequential`** (optional, default: `true`): Batch optimization strategy.
+  - `true` - Sequential optimization (faster, ~5x speedup)
+  - `false` - Joint optimization (slower but better space-filling batch designs)
+
+- **`X_pending`** (optional): Experiments already queued/running. Acquisition accounts for these to avoid redundancy.
+
+  ```json
+  {
+    "m_batch": 3,
+    "X_pending": [
+      {"Temperature": 50, "Pressure": 5},
+      {"Temperature": 75, "Pressure": 8}
+    ]
+  }
+  ```
 
 #### POST `/api/v1/sessions/{session_id}/evaluate`
 
@@ -408,7 +489,7 @@ Evaluate model predictions at arbitrary points (with optional uncertainty quanti
 
 ---
 
-### Analysis & Results (5 endpoints)
+### Analysis & Results (7 endpoints)
 
 #### GET `/api/v1/sessions/{session_id}/best`
 
@@ -532,6 +613,121 @@ Export internal state dictionary for checkpointing or debugging.
   "object_type": "campaign"
 }
 ```
+
+#### POST `/api/v1/sessions/{session_id}/analysis/shap`
+
+Compute SHAP (SHapley Additive exPlanations) values for feature importance analysis.
+
+Uses Kernel SHAP to explain which parameters have the strongest effect on the predicted response. Returns structured JSON data (not plots) that can be visualized or analyzed programmatically.
+
+**Request Body:**
+
+```json
+{
+  "target_name": "Yield",
+  "n_samples": 100,
+  "reference_point": null,
+  "seed": 42
+}
+```
+
+**Parameters:**
+
+- `target_name` (required): Name of the target response to explain
+- `n_samples` (optional, default: 100): Number of samples for SHAP computation (10-1000)
+- `reference_point` (optional): Dictionary with parameter values. If null, uses best observed point
+- `seed` (optional): Random seed for reproducibility
+
+**Response:** `200 OK`
+
+```json
+{
+  "target_name": "Yield",
+  "reference_point": {"Temperature": 78.9, "Pressure": 6.3},
+  "predicted_value": 91.2,
+  "expected_value": 82.5,
+  "shap_values_mean": {
+    "Temperature": 5.2,
+    "Pressure": -2.1
+  },
+  "feature_importance": [
+    {"parameter": "Temperature", "importance": 5.8, "rank": 1},
+    {"parameter": "Pressure", "importance": 2.3, "rank": 2}
+  ],
+  "n_samples": 100,
+  "samples": [
+    {"Temperature": 45.2, "Pressure": 5.1},
+    {"Temperature": 67.3, "Pressure": 7.8}
+  ]
+}
+```
+
+**Interpretation:**
+
+- **shap_values_mean**: Mean SHAP value for each parameter (positive = increases prediction, negative = decreases)
+- **feature_importance**: Parameters ranked by mean absolute SHAP value (importance)
+- **predicted_value**: Model prediction at reference point
+- **expected_value**: Baseline/average prediction
+
+**Use cases:**
+
+- Understanding which parameters drive optimization
+- Deciding which parameters to focus on or fix
+- Explaining model predictions to stakeholders
+
+#### POST `/api/v1/sessions/{session_id}/analysis/sensitivity`
+
+Compute gradient-based sensitivity analysis (dy/dx) for local parameter effects.
+
+Calculates numerical gradients at a reference point. Faster than SHAP but only provides local information.
+
+**Request Body:**
+
+```json
+{
+  "reference_point": null,
+  "perturbation": 1e-6
+}
+```
+
+**Parameters:**
+
+- `reference_point` (optional): Dictionary with parameter values. If null, uses best observed point
+- `perturbation` (optional, default: 1e-6): Perturbation size (dx) for gradient calculation
+
+**Response:** `200 OK`
+
+```json
+{
+  "reference_point": {"Temperature": 78.9, "Pressure": 6.3},
+  "predictions_at_reference": {"Yield": 91.2},
+  "sensitivity": {
+    "Yield": {
+      "Temperature": 0.345,
+      "Pressure": -0.128
+    }
+  },
+  "sensitivity_normalized": {
+    "Yield": {
+      "Temperature": 1.0,
+      "Pressure": 0.37
+    }
+  },
+  "perturbation": 1e-6
+}
+```
+
+**Interpretation:**
+
+- **sensitivity**: dy/dx for each parameter (positive = increasing parameter increases response)
+- **sensitivity_normalized**: Absolute sensitivities normalized to [0,1] for comparison
+- Largest normalized value = most sensitive parameter at this point
+
+**Use cases:**
+
+- Quick parameter importance ranking
+- Analyzing local behavior around specific operating conditions
+- Understanding gradient information at optimal points
 
 ---
 
@@ -666,7 +862,7 @@ The API includes OpenAI function calling support for LLM agents (GPT-4, Claude v
 
 **Features:**
 
-- 14 tool definitions (one per API endpoint)
+- 18 tool definitions (one per API endpoint)
 - ObsidianToolExecutor HTTP client wrapper
 - Examples for OpenAI and Databricks
 - Autonomous optimization agents
@@ -757,8 +953,8 @@ pytest obsidian/api/llm/tests/test_integration.py -v
 
 **Test Coverage:**
 
-- 28 API endpoint tests
-- 32 LLM tool definition tests
+- 63 API endpoint tests (including 10 analysis tests)
+- 17 LLM tool definition tests
 - 8 integration tests
 - All passing ✓
 

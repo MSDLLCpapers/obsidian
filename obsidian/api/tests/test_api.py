@@ -1075,3 +1075,395 @@ def test_acquisition_functions_multi_objective_categorization(client):
     for func_name in multi_objective_names:
         func = next(f for f in data["functions"] if f["name"] == func_name)
         assert "multi" in func["modalities"]
+
+
+# ============================================================================
+# Surrogate Selection Tests
+# ============================================================================
+
+
+def test_create_session_with_default_gp_surrogate(client, sample_session_config):
+    """Test session creation with default GP surrogate (implicit)."""
+    # Don't specify surrogate - should default to GP
+    response = client.post("/api/v1/sessions", json=sample_session_config)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert "session_id" in data
+
+    # Create session should succeed with default GP surrogate
+    assert data["status"] == "configured"
+
+
+def test_create_session_with_explicit_gp_surrogate(client, sample_session_config):
+    """Test session creation with explicit GP surrogate."""
+    config = sample_session_config.copy()
+    config["surrogate"] = "GP"
+
+    response = client.post("/api/v1/sessions", json=config)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "configured"
+
+
+def test_create_session_with_dnn_surrogate(client, sample_session_config):
+    """Test session creation with DNN surrogate."""
+    config = sample_session_config.copy()
+    config["surrogate"] = "DNN"
+
+    response = client.post("/api/v1/sessions", json=config)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "configured"
+
+
+def test_create_session_with_dnn_hyperparameters(client, sample_session_config):
+    """Test session creation with DNN surrogate and custom hyperparameters."""
+    config = sample_session_config.copy()
+    config["surrogate"] = {"DNN": {"p_dropout": 0.3, "h_width": 32, "h_layers": 3}}
+
+    response = client.post("/api/v1/sessions", json=config)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "configured"
+
+
+def test_create_session_with_dkl_surrogate(client, sample_session_config):
+    """Test session creation with DKL (Deep Kernel Learning) surrogate."""
+    config = sample_session_config.copy()
+    config["surrogate"] = "DKL"
+
+    response = client.post("/api/v1/sessions", json=config)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "configured"
+
+
+def test_create_session_with_multi_output_surrogates(client):
+    """Test session creation with mixed surrogates for multi-output."""
+    config = {
+        "name": "Multi-Output Test",
+        "parameters": [
+            {"type": "continuous", "name": "Temperature", "min": -10, "max": 30},
+        ],
+        "targets": [{"name": "Yield", "aim": "max"}, {"name": "Purity", "aim": "max"}],
+        "surrogate": ["GP", {"DNN": {"p_dropout": 0.2}}],
+        "seed": 42,
+    }
+
+    response = client.post("/api/v1/sessions", json=config)
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["status"] == "configured"
+    assert data["n_targets"] == 2
+
+
+def test_dnn_surrogate_end_to_end_workflow(client, sample_session_config):
+    """Test DNN surrogate through complete workflow (init, data, fit, suggest)."""
+    # Create session with DNN
+    config = sample_session_config.copy()
+    config["surrogate"] = {"DNN": {"p_dropout": 0.2, "h_width": 16, "h_layers": 2}}
+
+    create_response = client.post("/api/v1/sessions", json=config)
+    assert create_response.status_code == 201
+    session_id = create_response.json()["session_id"]
+
+    # Initialize
+    init_response = client.post(
+        f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10, "method": "LHS"}
+    )
+    assert init_response.status_code == 200
+
+    # Add data
+    data_points = [
+        {"Temperature": 0, "Concentration": 50, "Variant": "A", "Yield": 75.0},
+        {"Temperature": 10, "Concentration": 100, "Variant": "B", "Yield": 80.0},
+        {"Temperature": 20, "Concentration": 75, "Variant": "C", "Yield": 85.0},
+        {"Temperature": -5, "Concentration": 120, "Variant": "A", "Yield": 70.0},
+        {"Temperature": 15, "Concentration": 60, "Variant": "B", "Yield": 82.0},
+        {"Temperature": 25, "Concentration": 90, "Variant": "C", "Yield": 88.0},
+        {"Temperature": 5, "Concentration": 110, "Variant": "A", "Yield": 77.0},
+        {"Temperature": -10, "Concentration": 140, "Variant": "B", "Yield": 68.0},
+        {"Temperature": 30, "Concentration": 80, "Variant": "C", "Yield": 90.0},
+        {"Temperature": 12, "Concentration": 95, "Variant": "A", "Yield": 83.0},
+    ]
+
+    data_response = client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+    assert data_response.status_code == 200
+
+    # Fit
+    fit_response = client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+    assert fit_response.status_code == 200
+
+    # Suggest
+    suggest_response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest", json={"m_batch": 2, "acquisition": ["NEI"]}
+    )
+    assert suggest_response.status_code == 200
+    suggestions = suggest_response.json()
+    assert len(suggestions["suggestions"]) == 2
+
+
+# ============================================================================
+# Acquisition Hyperparameters Tests
+# ============================================================================
+
+
+def test_suggest_with_ucb_beta_hyperparameter(client, sample_session_config):
+    """Test suggest with UCB acquisition function and custom beta."""
+    # Setup session with data
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    # Initialize
+    client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10})
+
+    # Add data
+    data_points = [
+        {"Temperature": i * 2, "Concentration": 50 + i * 10, "Variant": "A", "Yield": 70.0 + i * 2}
+        for i in range(10)
+    ]
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+
+    # Fit
+    client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+
+    # Suggest with UCB beta=2.0 (more exploration)
+    response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest",
+        json={"m_batch": 3, "acquisition": [{"UCB": {"beta": 2.0}}]},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["suggestions"]) == 3
+
+
+def test_suggest_with_mixed_acquisition_functions(client, sample_session_config):
+    """Test suggest with mixed string and dict acquisition functions.
+
+    Note: Multiple acquisition functions generate m_batch suggestions per function.
+    E.g., 3 acquisition functions with m_batch=2 yields 6 total suggestions.
+    """
+    # Setup session with data
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10})
+
+    data_points = [
+        {"Temperature": i * 2, "Concentration": 50 + i * 10, "Variant": "A", "Yield": 70.0 + i * 2}
+        for i in range(10)
+    ]
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+    client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+
+    # Mixed: string form NEI + dict form UCB with beta + string form SF
+    # 3 acquisition functions × m_batch=2 = 6 total suggestions
+    response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest",
+        json={"m_batch": 2, "acquisition": ["NEI", {"UCB": {"beta": 1.5}}, "SF"]},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["suggestions"]) == 6  # 3 acquisition functions × 2 batch = 6
+
+
+def test_suggest_with_nehvi_ref_point(client):
+    """Test multi-objective suggest with NEHVI and reference point."""
+    # Create multi-objective session
+    config = {
+        "name": "Multi-Objective",
+        "parameters": [
+            {"type": "continuous", "name": "Temperature", "min": 0, "max": 100},
+            {"type": "continuous", "name": "Pressure", "min": 1, "max": 10},
+        ],
+        "targets": [{"name": "Yield", "aim": "max"}, {"name": "Cost", "aim": "min"}],
+        "seed": 42,
+    }
+
+    create_response = client.post("/api/v1/sessions", json=config)
+    session_id = create_response.json()["session_id"]
+
+    # Initialize and add data
+    client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10})
+
+    data_points = [
+        {"Temperature": 10 * i, "Pressure": 1 + i, "Yield": 60.0 + i * 3, "Cost": 100.0 - i * 5}
+        for i in range(10)
+    ]
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+    client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+
+    # Suggest with NEHVI and reference point
+    response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest",
+        json={"m_batch": 2, "acquisition": [{"NEHVI": {"ref_point": [50.0, 150.0]}}]},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["suggestions"]) == 2
+
+
+# ============================================================================
+# Advanced Suggest Options Tests
+# ============================================================================
+
+
+def test_suggest_with_fixed_var(client, sample_session_config):
+    """Test suggest with fixed_var to lock a parameter."""
+    # Setup session with data
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10})
+
+    data_points = [
+        {"Temperature": i * 2, "Concentration": 50 + i * 10, "Variant": "A", "Yield": 70.0 + i * 2}
+        for i in range(10)
+    ]
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+    client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+
+    # Fix Temperature at 25.0, only vary Concentration and Variant
+    response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest",
+        json={"m_batch": 3, "acquisition": ["NEI"], "fixed_var": {"Temperature": 25.0}},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    suggestions = data["suggestions"]
+    assert len(suggestions) == 3
+
+    # All suggestions should have Temperature = 25.0
+    for suggestion in suggestions:
+        assert suggestion["Temperature"] == 25.0
+        assert "Concentration" in suggestion
+        assert "Variant" in suggestion
+
+
+def test_suggest_with_optim_sequential_false(client, sample_session_config):
+    """Test suggest with joint batch optimization (optim_sequential=False)."""
+    # Setup session with data
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10})
+
+    data_points = [
+        {"Temperature": i * 2, "Concentration": 50 + i * 10, "Variant": "A", "Yield": 70.0 + i * 2}
+        for i in range(10)
+    ]
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+    client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+
+    # Use joint optimization (slower but better batch design)
+    response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest",
+        json={"m_batch": 3, "acquisition": ["NEI"], "optim_sequential": False},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["suggestions"]) == 3
+
+
+def test_suggest_with_x_pending(client, sample_session_config):
+    """Test suggest with X_pending to account for pending experiments.
+
+    Note: X_pending represents experiments already queued/running.
+    The optimizer returns pending points + new suggestions (m_batch + len(X_pending) total).
+    """
+    # Setup session with data
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10})
+
+    data_points = [
+        {"Temperature": i * 2, "Concentration": 50 + i * 10, "Variant": "A", "Yield": 70.0 + i * 2}
+        for i in range(10)
+    ]
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+    client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+
+    # Specify pending experiments
+    pending = [
+        {"Temperature": 15.0, "Concentration": 100.0, "Variant": "B"},
+        {"Temperature": 20.0, "Concentration": 80.0, "Variant": "C"},
+    ]
+
+    response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest",
+        json={"m_batch": 3, "acquisition": ["NEI"], "X_pending": pending},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    # Total suggestions = m_batch (3) + len(X_pending) (2) = 5
+    assert len(data["suggestions"]) == 5
+
+    # First 2 should be the pending points
+    suggestions = data["suggestions"]
+    assert suggestions[0]["Temperature"] == 15.0
+    assert suggestions[0]["Concentration"] == 100.0
+    assert suggestions[0]["Variant"] == "B"
+
+    assert suggestions[1]["Temperature"] == 20.0
+    assert suggestions[1]["Concentration"] == 80.0
+    assert suggestions[1]["Variant"] == "C"
+
+
+def test_suggest_with_all_advanced_options(client, sample_session_config):
+    """Test suggest with all advanced options combined.
+
+    Note: X_pending returns pending points + new suggestions.
+    With m_batch=2 and 1 pending point, expect 3 total suggestions.
+    """
+    # Setup session with data
+    create_response = client.post("/api/v1/sessions", json=sample_session_config)
+    session_id = create_response.json()["session_id"]
+
+    client.post(f"/api/v1/sessions/{session_id}/initialize", json={"m_initial": 10})
+
+    data_points = [
+        {"Temperature": i * 2, "Concentration": 50 + i * 10, "Variant": "A", "Yield": 70.0 + i * 2}
+        for i in range(10)
+    ]
+    client.post(f"/api/v1/sessions/{session_id}/data", json={"data": data_points})
+    client.post(f"/api/v1/sessions/{session_id}/fit", json={"verbose": 0})
+
+    # Combine all options: acquisition hyperparameters, fixed_var, optim_sequential, X_pending
+    # Note: fixed_var must be compatible with X_pending (both use Variant=B)
+    pending = [{"Temperature": 10.0, "Concentration": 90.0, "Variant": "B"}]
+
+    response = client.post(
+        f"/api/v1/sessions/{session_id}/suggest",
+        json={
+            "m_batch": 2,
+            "acquisition": [{"UCB": {"beta": 1.8}}],
+            "fixed_var": {"Variant": "B"},
+            "optim_sequential": False,
+            "X_pending": pending,
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    suggestions = data["suggestions"]
+
+    # m_batch (2) + len(X_pending) (1) = 3 total suggestions
+    assert len(suggestions) == 3
+
+    # All suggestions should have Variant = B (fixed)
+    for suggestion in suggestions:
+        assert suggestion["Variant"] == "B"

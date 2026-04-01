@@ -101,6 +101,9 @@ class ObsidianToolExecutor:
             "get_model_diagnostics": ("GET", "/sessions/{session_id}/diagnostics"),
             "get_optimization_history": ("GET", "/sessions/{session_id}/history"),
             "export_state_dictionary": ("GET", "/sessions/{session_id}/state_dict"),
+            # Analysis
+            "analyze_shap": ("POST", "/sessions/{session_id}/analysis/shap"),
+            "analyze_sensitivity": ("POST", "/sessions/{session_id}/analysis/sensitivity"),
             # Informational
             "list_acquisition_functions": ("GET", "/acquisition-functions"),
         }

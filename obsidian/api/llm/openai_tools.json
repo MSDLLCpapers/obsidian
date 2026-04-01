@@ -99,6 +99,15 @@
           "seed": {
             "type": "integer",
             "description": "Random seed for reproducibility (optional)"
+          },
+          "surrogate": {
+            "type": [
+              "string",
+              "array",
+              "object"
+            ],
+            "description": "Surrogate model type(s). Options:\n- String: 'GP' (Gaussian Process, default), 'DNN' (Deep Neural Network), 'DKL' (Deep Kernel Learning), 'MixedGP' (mixed continuous/categorical), 'GPflat' (GP with flat prior), 'GPprior' (GP with informative prior), 'MTGP' (Multi-task GP)\n- Object for hyperparameters: {'DNN': {'p_dropout': 0.2, 'h_width': 32, 'h_layers': 2}}\n- Array for multi-output: ['GP', {'DNN': {...}}]\nDNN hyperparameters: p_dropout (float, 0-1), h_width (int, hidden layer width), h_layers (int, number of hidden layers)",
+            "default": "GP"
           }
         },
         "required": [
@@ -299,7 +308,7 @@
     "type": "function",
     "function": {
       "name": "suggest_next_experiments",
-      "description": "Generate next experiment suggestions using Bayesian optimization.\n\nUses the fitted surrogate model to suggest promising experiments by optimizing\nthe acquisition function (e.g., Expected Improvement, Upper Confidence Bound).\nThis is the core of the Bayesian optimization loop.\n\nUse when:\n- Model is fitted (check with get_model_diagnostics)\n- Want to generate next batch of experiments\n- Continuing an optimization loop\n\nAcquisition functions:\n- 'NEI': Noisy Expected Improvement (default, robust)\n- 'EI': Expected Improvement (classic)\n- 'UCB': Upper Confidence Bound (exploration-exploitation balance)\n- 'Mean': Posterior mean (exploitation only)\n- 'qNEI', 'qEI': Batch variants for parallel experiments\n\nReturns suggested parameter values and optional evaluation metrics.\n\nLimitations:\n- Requires at least one model fit\n- Suggestions are stochastic unless seed is fixed via session creation",
+      "description": "Generate next experiment suggestions using Bayesian optimization.\n\nUses the fitted surrogate model to suggest promising experiments by optimizing\nthe acquisition function (e.g., Expected Improvement, Upper Confidence Bound).\nThis is the core of the Bayesian optimization loop.\n\nUse when:\n- Model is fitted (check with get_model_diagnostics)\n- Want to generate next batch of experiments\n- Continuing an optimization loop\n\nAcquisition functions (single-objective):\n- 'NEI': Noisy Expected Improvement (default, robust)\n- 'EI': Expected Improvement (classic)\n- 'UCB': Upper Confidence Bound (exploration-exploitation balance, use beta hyperparameter)\n- 'Mean': Posterior mean (exploitation only)\n- 'SR': Simple Regret\n- 'NIPV': Negative Integrated Posterior Variance (characterization)\n\nAcquisition functions (multi-objective):\n- 'NEHVI': Noisy Expected Hypervolume Improvement (recommended, requires ref_point)\n- 'EHVI': Expected Hypervolume Improvement (requires ref_point)\n- 'NParEGO': Noisy ParEGO (scalarization-based)\n\nUniversal acquisition functions:\n- 'RS': Random Sampling (baseline)\n- 'SF': Space Filling\n- 'Mean': Posterior Mean\n\nAdvanced options:\n- fixed_var: Lock specific parameters at constant values\n- optim_sequential: Control batch optimization strategy\n- X_pending: Account for experiments already queued/running\n\nReturns suggested parameter values and optional evaluation metrics.\n\nLimitations:\n- Requires at least one model fit\n- Suggestions are stochastic unless seed is fixed via session creation",
       "parameters": {
         "type": "object",
         "properties": {
@@ -315,16 +324,15 @@
           },
           "acquisition": {
             "type": "array",
-            "description": "Acquisition function(s) to use (default: ['NEI'])",
+            "description": "Acquisition function(s) to use. Options:\n- String form (uses defaults): 'NEI', 'EI', 'UCB', 'EHVI', 'NEHVI', 'NParEGO', 'Mean', 'RS', 'SF'\n- Object form for hyperparameters: {'UCB': {'beta': 2.0}}, {'NEHVI': {'ref_point': [-100, -50]}}\n- Mixed: ['NEI', {'UCB': {'beta': 1.5}}, 'SF']\nCommon hyperparameters:\n  - UCB: beta (float, exploration weight, >1 = more exploration, default: 1.0)\n  - EHVI/NEHVI: ref_point (list[float], reference point for hypervolume)\n  - NParEGO: scalarization_weights (list[float], scalarization weights)\n  - EI/PI: inflate (float, inflation factor, default: 0)\nDefault: ['NEI']",
             "items": {
-              "type": "string",
-              "enum": [
-                "NEI",
-                "EI",
-                "UCB",
-                "Mean",
-                "qNEI",
-                "qEI"
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object"
+                }
               ]
             },
             "default": [
@@ -351,6 +359,23 @@
             "minimum": 0,
             "maximum": 3,
             "default": 3
+          },
+          "fixed_var": {
+            "type": "object",
+            "description": "Fix specific parameters during optimization (optional). Only other parameters will be varied in suggestions. Example: {'Temperature': 25.0} locks Temperature at 25.0. Useful for sensitivity analysis or when certain parameters must remain constant."
+          },
+          "optim_sequential": {
+            "type": "boolean",
+            "description": "Sequential (True) vs joint (False) batch optimization. True (default): Optimize suggestions one-by-one (faster, good for most cases). False: Jointly optimize all batch suggestions together (slower but better batch designs, recommended for m_batch > 1).",
+            "default": true
+          },
+          "X_pending": {
+            "type": "array",
+            "description": "Experiments already queued or running (optional). Acquisition function will account for these pending points to avoid redundant suggestions. Format: list of parameter dicts, e.g., [{'Temperature': 50, 'Pressure': 5}, {'Temperature': 75, 'Pressure': 8}]. Useful for parallel experimentation workflows.",
+            "items": {
+              "type": "object",
+              "description": "Dictionary with parameter names as keys"
+            }
           }
         },
         "required": [
@@ -496,6 +521,73 @@
             ],
             "description": "Object type to export ('campaign' or 'optimizer', default: 'campaign')",
             "default": "campaign"
+          }
+        },
+        "required": [
+          "session_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "analyze_shap",
+      "description": "Compute SHAP (SHapley Additive exPlanations) values for feature importance.\n\nUses Kernel SHAP to explain which parameters have the strongest effect on the\npredicted response. This provides global feature importance and helps understand\nwhich parameters most influence the optimization target.\n\nUse when:\n- Model is fitted (check with get_model_diagnostics)\n- Need to understand parameter importance\n- Deciding which parameters to focus on or fix\n- Explaining model predictions to stakeholders\n\nReturns structured data including:\n- shap_values_mean: Mean SHAP value for each parameter (positive = increases prediction)\n- feature_importance: Parameters ranked by importance (mean absolute SHAP)\n- reference_point: Point where SHAP values are computed (default: best point)\n- predicted_value: Model prediction at reference point\n- expected_value: Baseline/average prediction\n- samples: Sample points used for SHAP computation\n\nNote: SHAP values explain predictions, not raw observations. They show how\nthe model thinks each parameter affects the outcome.\n\nLimitations:\n- Requires fitted model\n- Computational cost scales with n_samples (default: 100)\n- Only explains one target at a time (multi-objective needs separate calls)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "target_name": {
+            "type": "string",
+            "description": "Name of the target response to explain (e.g., 'Yield')"
+          },
+          "n_samples": {
+            "type": "integer",
+            "description": "Number of samples for SHAP computation (10-1000, default: 100)",
+            "default": 100,
+            "minimum": 10,
+            "maximum": 1000
+          },
+          "reference_point": {
+            "type": "object",
+            "description": "Reference point for SHAP baseline (optional, defaults to best observed point). Dictionary with parameter names as keys."
+          },
+          "seed": {
+            "type": "integer",
+            "description": "Random seed for reproducibility (optional)"
+          }
+        },
+        "required": [
+          "session_id",
+          "target_name"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "analyze_sensitivity",
+      "description": "Compute gradient-based sensitivity analysis (dy/dx).\n\nCalculates local sensitivity (numerical gradient) for each parameter at a\nreference point. Shows how small changes in each parameter affect the response.\nThis is faster than SHAP but only provides local information at one point.\n\nUse when:\n- Model is fitted (check with get_model_diagnostics)\n- Need quick parameter importance ranking\n- Analyzing local behavior around a specific point\n- Understanding parameter sensitivities at optimal conditions\n\nReturns structured data including:\n- sensitivity: dy/dx for each target and parameter (signed values)\n- sensitivity_normalized: Absolute sensitivities normalized to [0,1] for comparison\n- reference_point: Point where sensitivity is computed (default: best point)\n- predictions_at_reference: Model predictions at the reference point\n\nInterpretation:\n- Positive sensitivity: Increasing parameter increases response\n- Negative sensitivity: Increasing parameter decreases response\n- Large absolute value: Parameter has strong local effect\n- Near-zero: Parameter has weak local effect\n\nCompared to SHAP:\n- Faster (no sampling required)\n- Local only (one point vs global average)\n- Simpler interpretation (just gradients)\n- All targets computed simultaneously\n\nLimitations:\n- Requires fitted model with continuous outputs\n- Only local information (may not generalize)\n- Gradient computed numerically (small perturbation)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier of the session"
+          },
+          "reference_point": {
+            "type": "object",
+            "description": "Reference point for sensitivity calculation (optional, defaults to best point). Dictionary with parameter names as keys."
+          },
+          "perturbation": {
+            "type": "number",
+            "description": "Perturbation size (dx) for numerical gradient calculation (default: 1e-6)",
+            "default": 1e-06
           }
         },
         "required": [

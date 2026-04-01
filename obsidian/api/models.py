@@ -132,6 +132,12 @@ class SessionCreate(BaseModel):
     parameters: list[ParameterDefinition]
     targets: list[TargetDefinition]
     seed: Optional[int] = None
+    surrogate: str | dict | list[str | dict] = Field(
+        default="GP",
+        description="Surrogate model type(s). String: 'GP'|'DNN'|'DKL'|'MixedGP'|'GPflat'|'GPprior'|'MTGP'. "
+                    "Dict for hyperparameters: {'DNN': {'p_dropout': 0.2, 'h_width': 32, 'h_layers': 2}}. "
+                    "List for multi-output: ['GP', {'DNN': {...}}]"
+    )
 
     @field_validator("parameters")
     @classmethod
@@ -248,7 +254,11 @@ class SuggestRequest(BaseModel):
     """Request to suggest next experiments."""
 
     m_batch: int = Field(default=1, ge=1, description="Number of experiments to suggest")
-    acquisition: list[str] = Field(default=["NEI"], description="Acquisition function(s)")
+    acquisition: list[str | dict[str, dict]] = Field(
+        default=["NEI"],
+        description="Acquisition function(s). String: 'NEI'|'EI'|'UCB'|... "
+                    "Dict for hyperparameters: {'UCB': {'beta': 2.0}}, {'EHVI': {'ref_point': [-350, -20]}}"
+    )
     optim_samples: Optional[int] = None
     optim_restarts: Optional[int] = None
     manual_seed: Optional[int] = Field(
@@ -259,6 +269,18 @@ class SuggestRequest(BaseModel):
         ge=0,
         le=3,
         description="Optimizer verbosity (0=none, 1=summary, 2=detailed, 3=debug)"
+    )
+    fixed_var: Optional[dict[str, Union[float, str]]] = Field(
+        default=None,
+        description="Fix specific parameters during optimization. E.g., {'Temperature': 25.0, 'Variant': 'A'}"
+    )
+    optim_sequential: bool = Field(
+        default=True,
+        description="Sequential (True) vs joint (False) batch optimization. False is better for batch designs but slower."
+    )
+    X_pending: Optional[list[dict[str, Any]]] = Field(
+        default=None,
+        description="Experiments already queued/running. Acquisition will account for these."
     )
 
 
@@ -463,3 +485,85 @@ def build_targets(targets: list[TargetDefinition]) -> list[Target]:
         List of Target objects
     """
     return [t.to_obsidian() for t in targets]
+
+
+# ============================================================================
+# Analysis Request/Response Models
+# ============================================================================
+
+
+class ShapAnalysisRequest(BaseModel):
+    """Request for SHAP analysis."""
+
+    target_name: str = Field(description="Name of the target response to explain")
+    n_samples: int = Field(
+        default=100,
+        ge=10,
+        le=1000,
+        description="Number of samples to generate for SHAP values (10-1000)"
+    )
+    reference_point: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Reference point for SHAP baseline. If null, uses best point from optimization."
+    )
+    seed: Optional[int] = Field(
+        default=None,
+        description="Random seed for reproducibility"
+    )
+
+
+class FeatureImportance(BaseModel):
+    """Feature importance entry."""
+
+    parameter: str
+    importance: float
+    rank: int
+
+
+class ShapAnalysisResponse(BaseModel):
+    """Response from SHAP analysis."""
+
+    target_name: str
+    reference_point: dict[str, Any]
+    predicted_value: float = Field(description="Model prediction at reference point")
+    expected_value: float = Field(description="Expected value (baseline/average prediction)")
+    shap_values_mean: dict[str, float] = Field(
+        description="Mean SHAP value for each parameter (positive = increases prediction)"
+    )
+    feature_importance: list[FeatureImportance] = Field(
+        description="Parameters ranked by importance (mean absolute SHAP value)"
+    )
+    n_samples: int
+    samples: list[dict[str, Any]] = Field(
+        description="Sample of points used for SHAP computation (up to 50 points)"
+    )
+
+
+class SensitivityAnalysisRequest(BaseModel):
+    """Request for sensitivity analysis."""
+
+    reference_point: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Reference point for sensitivity calculation. If null, uses best point."
+    )
+    perturbation: float = Field(
+        default=1e-6,
+        gt=0,
+        description="Perturbation size (dx) for numerical gradient calculation"
+    )
+
+
+class SensitivityAnalysisResponse(BaseModel):
+    """Response from sensitivity analysis."""
+
+    reference_point: dict[str, Any]
+    predictions_at_reference: dict[str, float] = Field(
+        description="Model predictions at the reference point"
+    )
+    sensitivity: dict[str, dict[str, float]] = Field(
+        description="Sensitivity values (dy/dx) for each target and parameter"
+    )
+    sensitivity_normalized: dict[str, dict[str, float]] = Field(
+        description="Sensitivity values normalized to [0,1] for comparison"
+    )
+    perturbation: float
