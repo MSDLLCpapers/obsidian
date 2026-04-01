@@ -352,8 +352,6 @@ class BayesianOptimizer(Optimizer):
         Raises:
             ValueError: If the number of saved models does not match the number of named models.
         """
-        import warnings
-
         # Check for is_fitted flag and handle backward compatibility
         if 'is_fitted' in config_save:
             is_fitted = config_save['is_fitted']
@@ -655,6 +653,43 @@ class BayesianOptimizer(Optimizer):
         
         return model, o_dim, target_locs, target
 
+    @property
+    def non_tracking_targets(self) -> list[Target]:
+        """Targets eligible for suggestion (all non-tracking targets)."""
+        return [t for t in self.target if not t.tracking_only]
+
+    def _validate_suggestion_target(
+            self,
+            target: Target | list[Target] | None = None,
+        ) -> list[Target]:
+        """Validate and normalize targets for suggestion-only operations."""
+        if target is None:
+            non_tracking_targets = self.non_tracking_targets
+            if not non_tracking_targets:
+                raise UnsupportedError('No suggestible targets available: all fitted targets are tracking-only')
+            return non_tracking_targets
+
+        target = self._validate_target(target)
+        fitted_targets = {t.name: t for t in self.target}
+        selected_targets: list[Target] = []
+        warned_tracking = set()
+
+        for t in target:
+            if t.name not in fitted_targets:
+                raise NameError(f'Specified target {t.name} is not present in fitted targets')
+
+            target_fit = fitted_targets[t.name]
+            if target_fit.tracking_only and t.name not in warned_tracking:
+                warnings.warn(
+                    f'Target {t.name} is tracking-only and was explicitly requested for suggestion.',
+                    UserWarning,
+                    stacklevel=3,
+                )
+                warned_tracking.add(t.name)
+            selected_targets.append(target_fit)
+
+        return selected_targets
+
     def _setup_constraints(
             self,
             eq_constraints: Linear_Constraint | list[Linear_Constraint] | None,
@@ -870,7 +905,7 @@ class BayesianOptimizer(Optimizer):
 
         Args:
             m_batch (int, optional): The number of experiments to suggest at once. The default is ``1``.
-            target (Target or list of Target, optional): The response(s) to be used for optimization,
+            target (Target or list of Target, optional): The response(s) to be used for optimization.
             acquisition (list of str or list of dict, optional): Indicator for the desired acquisition function(s).
                 A list will propose experiments for each acquisition function based on ``optim_sequential``.
                 
@@ -943,6 +978,8 @@ class BayesianOptimizer(Optimizer):
         
         if self.verbose >= 2:
             print(f'Optimizing {m_batch} experiments [...]')
+
+        target = self._validate_suggestion_target(target)
         
         # Setup model and objective
         model, o_dim, target_locs, target = self._setup_model_and_objective(target, objective)
@@ -1150,6 +1187,7 @@ class BayesianOptimizer(Optimizer):
         return eval_suggest
 
     def maximize(self,
+                 acquisition=['Mean'],
                  optim_samples=1026,
                  optim_restarts=50,
                  fixed_var: dict[str, float | str] | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -1172,12 +1210,19 @@ class BayesianOptimizer(Optimizer):
         X_suggest = pd.DataFrame()
         eval_suggest = pd.DataFrame()
 
-        for target in self.target:
-            X_suggest_i, eval_suggest_i = self.suggest(
-                m_batch=1, acquisition=['Mean'], optim_samples=optim_samples, optim_restarts=optim_restarts,
-                target=target, fixed_var=fixed_var)
-            X_suggest = pd.concat([X_suggest, X_suggest_i], axis=0)
-            eval_suggest = pd.concat([eval_suggest, eval_suggest_i], axis=0)
+        # Maximize intentionally evaluates all targets, so suppress tracking-only warnings in suggest
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                'ignore',
+                message=r'Target .* is tracking-only and was explicitly requested for suggestion\.',
+                category=UserWarning,
+            )
+            for target in self.target:
+                X_suggest_i, eval_suggest_i = self.suggest(
+                    m_batch=1, acquisition=acquisition, optim_samples=optim_samples, optim_restarts=optim_restarts,
+                    target=target, fixed_var=fixed_var)
+                X_suggest = pd.concat([X_suggest, X_suggest_i], axis=0)
+                eval_suggest = pd.concat([eval_suggest, eval_suggest_i], axis=0)
         
         return X_suggest, eval_suggest
 

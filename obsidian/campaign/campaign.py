@@ -219,7 +219,14 @@ class Campaign():
             self._target = [target]
         else:
             self._target = target
-
+        if all(t.tracking_only for t in self._target):
+            warnings.warn(
+                "All targets are tracking-only. Campaign will not optimize towards any target by default. "
+                "Only use this campaign for analyzing data or informational purposes. "
+                "Pass tracking-only targets explicitly to `suggest` to optimize towards them if this is truly intended.",
+                UserWarning,
+                stacklevel=2,
+            )
         self.y_names = [t.name for t in self._target]
         self.n_response = len(self.y_names)
 

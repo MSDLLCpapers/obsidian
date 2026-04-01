@@ -17,7 +17,8 @@ class Target():
     def __init__(self,
                  name: str,
                  f_transform: str | None = 'Standard',
-                 aim: str = 'max'):
+                 aim: str = 'max',
+                 tracking_only: bool = False):
 
         self.name = name
         if aim not in ['min', 'max']:
@@ -27,6 +28,7 @@ class Target():
         else:
             self.multiplier = 1
         self.aim = aim
+        self.tracking_only = tracking_only
         
         # Ouput scoring, used for transformation OR to create a cost function of multiple outputs/inputs
         if f_transform is not None:
@@ -109,7 +111,7 @@ class Target():
         obj_dict = {'init_attrs': {}}
 
         # Select some optimizer attributes to save directly
-        init_attrs = ['name', 'aim', 'f_transform']
+        init_attrs = ['name', 'aim', 'f_transform', 'tracking_only']
         for attr in init_attrs:
             obj_dict['init_attrs'][attr] = getattr(self, attr)
 

@@ -224,6 +224,13 @@ def test_campaign_validation():
 
 
 @pytest.mark.fast
+def test_campaign_warns_all_tracking_only_targets(rng_mode):
+    tracking_only_target = Target(name='Response', f_transform='Standard', aim='max', tracking_only=True)
+    with pytest.warns(UserWarning, match='All targets are tracking-only'):
+        Campaign(X_sp_default, tracking_only_target, seed=114514)
+
+
+@pytest.mark.fast
 def test_explainer_validation():
     
     # Unfit optimizer
