@@ -1,0 +1,6 @@
+calculate\_max\_mixed\_correlation
+==================================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: calculate_max_mixed_correlation

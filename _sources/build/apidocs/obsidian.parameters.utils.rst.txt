@@ -1,0 +1,18 @@
+utils
+=====
+
+.. automodule:: obsidian.parameters.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~transform_with_type
+   
+
+
+
+

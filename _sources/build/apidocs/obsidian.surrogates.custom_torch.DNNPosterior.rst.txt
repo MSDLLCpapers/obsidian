@@ -1,0 +1,40 @@
+DNNPosterior
+============
+
+.. currentmodule:: obsidian.surrogates.custom_torch
+
+.. autoclass:: DNNPosterior
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DNNPosterior.__init__
+      ~DNNPosterior.density
+      ~DNNPosterior.quantile
+      ~DNNPosterior.rsample
+      ~DNNPosterior.rsample_from_base_samples
+      ~DNNPosterior.sample
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DNNPosterior.base_sample_shape
+      ~DNNPosterior.batch_range
+      ~DNNPosterior.device
+      ~DNNPosterior.dtype
+      ~DNNPosterior.ensemble_size
+      ~DNNPosterior.mean
+      ~DNNPosterior.variance
+      ~DNNPosterior.weights
+   
+   

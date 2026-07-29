@@ -1,0 +1,21 @@
+plotly
+======
+
+.. automodule:: obsidian.plotting.plotly
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+   
+      ~MDS_plot
+      ~factor_plot
+      ~optim_progress
+      ~parity_plot
+      ~surface_plot
+      ~visualize_inputs
+   
+
+
+

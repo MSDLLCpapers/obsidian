@@ -1,0 +1,6 @@
+cramers\_v\_np
+==============
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: cramers_v_np

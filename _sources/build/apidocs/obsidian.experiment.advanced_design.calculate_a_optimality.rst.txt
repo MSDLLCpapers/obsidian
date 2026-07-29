@@ -1,0 +1,6 @@
+calculate\_a\_optimality
+========================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: calculate_a_optimality

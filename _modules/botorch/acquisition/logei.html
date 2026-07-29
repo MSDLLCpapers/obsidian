@@ -1,0 +1,1079 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>botorch.acquisition.logei &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/botorch/acquisition/logei';</script>
+    <link rel="icon" href="../../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">botorch.acqu...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for botorch.acquisition.logei</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Meta Platforms, Inc. and affiliates.</span>
+<span class="c1">#</span>
+<span class="c1"># This source code is licensed under the MIT license found in the</span>
+<span class="c1"># LICENSE file in the root directory of this source tree.</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Monte-Carlo variants of the LogEI family of improvements-based acquisition functions,</span>
+<span class="sd">see [Ament2023logei]_ for details.</span>
+
+<span class="sd">References</span>
+
+<span class="sd">.. [Ament2023logei]</span>
+<span class="sd">    S. Ament, S. Daulton, D. Eriksson, M. Balandat, and E. Bakshy.</span>
+<span class="sd">    Unexpected Improvements to Expected Improvement for Bayesian Optimization. Advances</span>
+<span class="sd">    in Neural Information Processing Systems 36, 2023.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.cached_cholesky</span><span class="w"> </span><span class="kn">import</span> <span class="n">CachedCholeskyMCSamplerMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.monte_carlo</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleReducingMCAcquisitionFunction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.objective</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConstrainedMCObjective</span><span class="p">,</span>
+    <span class="n">MCAcquisitionObjective</span><span class="p">,</span>
+    <span class="n">PosteriorTransform</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_best_feasible_objective</span><span class="p">,</span>
+    <span class="n">prune_inferior_points</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.exceptions.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">BotorchError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.models.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.sampling.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCSampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.safe_math</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">fatmax</span><span class="p">,</span>
+    <span class="n">log_fatplus</span><span class="p">,</span>
+    <span class="n">log_softplus</span><span class="p">,</span>
+    <span class="n">logmeanexp</span><span class="p">,</span>
+    <span class="n">smooth_amax</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">match_batch_shape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">NOTE: On the default temperature parameters:</span>
+
+<span class="sd">tau_relu: It is generally important to set `tau_relu` to be very small, in particular,</span>
+<span class="sd">smaller than the expected improvement value. Otherwise, the optimization can stagnate.</span>
+<span class="sd">By setting `tau_relu=1e-6` by default, stagnation is exceedingly unlikely to occur due</span>
+<span class="sd">to the smooth ReLU approximation for practical applications of BO.</span>
+<span class="sd">IDEA: We could consider shrinking `tau_relu` with the progression of the optimization.</span>
+
+<span class="sd">tau_max: This is only relevant for the batch (`q &gt; 1`) case, and `tau_max=1e-2` is</span>
+<span class="sd">sufficient to get a good approximation to the maximum improvement in the batch of</span>
+<span class="sd">candidates. If `fat=False`, the smooth approximation to the maximum can saturate</span>
+<span class="sd">numerically. It is therefore recommended to use `fat=True` when optimizing batches</span>
+<span class="sd">of `q &gt; 1` points.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">TAU_RELU</span> <span class="o">=</span> <span class="mf">1e-6</span>
+<span class="n">TAU_MAX</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<span class="n">FloatOrTensor</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;FloatOrTensor&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LogImprovementMCAcquisitionFunction</span><span class="p">(</span><span class="n">SampleReducingMCAcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for Monte-Carlo-based batch LogEI acquisition functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCSampler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objective</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCAcquisitionObjective</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PosteriorTransform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constraints</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eta</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">fat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">tau_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_MAX</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            model: A fitted model.</span>
+<span class="sd">            sampler: The sampler used to draw base samples. If not given,</span>
+<span class="sd">                a sampler is generated using `get_sampler`.</span>
+<span class="sd">                NOTE: For posteriors that do not support base samples,</span>
+<span class="sd">                a sampler compatible with intended use case must be provided.</span>
+<span class="sd">                See `ForkedRNGSampler` and `StochasticSampler` as examples.</span>
+<span class="sd">            objective: The MCAcquisitionObjective under which the samples are</span>
+<span class="sd">                evaluated. Defaults to `IdentityMCObjective()`.</span>
+<span class="sd">            posterior_transform: A PosteriorTransform (optional).</span>
+<span class="sd">            X_pending: A `batch_shape, m x d`-dim Tensor of `m` design points</span>
+<span class="sd">                that have points that have been submitted for function evaluation</span>
+<span class="sd">                but have not yet been evaluated.</span>
+<span class="sd">            constraints: A list of constraint callables which map a Tensor of posterior</span>
+<span class="sd">                samples of dimension `sample_shape x batch-shape x q x m`-dim to a</span>
+<span class="sd">                `sample_shape x batch-shape x q`-dim Tensor. The associated constraints</span>
+<span class="sd">                are satisfied if `constraint(samples) &lt; 0`.</span>
+<span class="sd">            eta: Temperature parameter(s) governing the smoothness of the sigmoid</span>
+<span class="sd">                approximation to the constraint indicators. See the docs of</span>
+<span class="sd">                `compute_(log_)constraint_indicator` for more details on this parameter.</span>
+<span class="sd">            fat: Toggles the logarithmic / linear asymptotic behavior of the smooth</span>
+<span class="sd">                approximation to the ReLU.</span>
+<span class="sd">            tau_max: Temperature parameter controlling the sharpness of the</span>
+<span class="sd">                approximation to the `max` operator over the `q` candidate points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">ConstrainedMCObjective</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">BotorchError</span><span class="p">(</span>
+                <span class="s2">&quot;Log-Improvement should not be used with `ConstrainedMCObjective`.&quot;</span>
+                <span class="s2">&quot;Please pass the `constraints` directly to the constructor of the &quot;</span>
+                <span class="s2">&quot;acquisition function.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">q_reduction</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">fatmax</span> <span class="k">if</span> <span class="n">fat</span> <span class="k">else</span> <span class="n">smooth_amax</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau_max</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+            <span class="n">sample_reduction</span><span class="o">=</span><span class="n">logmeanexp</span><span class="p">,</span>
+            <span class="n">q_reduction</span><span class="o">=</span><span class="n">q_reduction</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+            <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
+            <span class="n">fat</span><span class="o">=</span><span class="n">fat</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_max</span> <span class="o">=</span> <span class="n">tau_max</span>
+
+
+<div class="viewcode-block" id="qLogExpectedImprovement">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.botorch.html#obsidian.acquisition.botorch.qLogExpectedImprovement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qLogExpectedImprovement</span><span class="p">(</span><span class="n">LogImprovementMCAcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;MC-based batch Log Expected Improvement.</span>
+
+<span class="sd">    This computes qLogEI by</span>
+<span class="sd">    (1) sampling the joint posterior over q points,</span>
+<span class="sd">    (2) evaluating the smoothed log improvement over the current best for each sample,</span>
+<span class="sd">    (3) smoothly maximizing over q, and</span>
+<span class="sd">    (4) averaging over the samples in log space.</span>
+
+<span class="sd">    See [Ament2023logei]_ for details. Formally,</span>
+
+<span class="sd">    `qLogEI(X) ~ log(qEI(X)) = log(E(max(max Y - best_f, 0)))`.</span>
+
+<span class="sd">    where `Y ~ f(X)`, and `X = (x_1,...,x_q)`, .</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; model = SingleTaskGP(train_X, train_Y)</span>
+<span class="sd">        &gt;&gt;&gt; best_f = train_Y.max()[0]</span>
+<span class="sd">        &gt;&gt;&gt; sampler = SobolQMCNormalSampler(1024)</span>
+<span class="sd">        &gt;&gt;&gt; qLogEI = qLogExpectedImprovement(model, best_f, sampler)</span>
+<span class="sd">        &gt;&gt;&gt; qei = qLogEI(test_X)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">best_f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">],</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCSampler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objective</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCAcquisitionObjective</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PosteriorTransform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constraints</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eta</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">fat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">tau_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_MAX</span><span class="p">,</span>
+        <span class="n">tau_relu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_RELU</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;q-Log Expected Improvement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: A fitted model.</span>
+<span class="sd">            best_f: The best objective value observed so far (assumed noiseless). Can be</span>
+<span class="sd">                a scalar, or a `batch_shape`-dim tensor. In case of a batched model, the</span>
+<span class="sd">                tensor can specify different values for each element of the batch.</span>
+<span class="sd">            sampler: The sampler used to draw base samples. See `MCAcquisitionFunction`</span>
+<span class="sd">                more details.</span>
+<span class="sd">            objective: The MCAcquisitionObjective under which the samples are evaluated.</span>
+<span class="sd">                Defaults to `IdentityMCObjective()`.</span>
+<span class="sd">            posterior_transform: A PosteriorTransform (optional).</span>
+<span class="sd">            X_pending:  A `m x d`-dim Tensor of `m` design points that have been</span>
+<span class="sd">                submitted for function evaluation but have not yet been evaluated.</span>
+<span class="sd">                Concatenated into `X` upon forward call. Copied and set to have no</span>
+<span class="sd">                gradient.</span>
+<span class="sd">            constraints: A list of constraint callables which map a Tensor of posterior</span>
+<span class="sd">                samples of dimension `sample_shape x batch-shape x q x m`-dim to a</span>
+<span class="sd">                `sample_shape x batch-shape x q`-dim Tensor. The associated constraints</span>
+<span class="sd">                are satisfied if `constraint(samples) &lt; 0`.</span>
+<span class="sd">            eta: Temperature parameter(s) governing the smoothness of the sigmoid</span>
+<span class="sd">                approximation to the constraint indicators. See the docs of</span>
+<span class="sd">                `compute_(log_)smoothed_constraint_indicator` for details.</span>
+<span class="sd">            fat: Toggles the logarithmic / linear asymptotic behavior of the smooth</span>
+<span class="sd">                approximation to the ReLU.</span>
+<span class="sd">            tau_max: Temperature parameter controlling the sharpness of the smooth</span>
+<span class="sd">                approximations to max.</span>
+<span class="sd">            tau_relu: Temperature parameter controlling the sharpness of the smooth</span>
+<span class="sd">                approximations to ReLU.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+            <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
+            <span class="n">tau_max</span><span class="o">=</span><span class="n">check_tau</span><span class="p">(</span><span class="n">tau_max</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau_max&quot;</span><span class="p">),</span>
+            <span class="n">fat</span><span class="o">=</span><span class="n">fat</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;best_f&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">best_f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_relu</span> <span class="o">=</span> <span class="n">check_tau</span><span class="p">(</span><span class="n">tau_relu</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tau_relu&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate qLogExpectedImprovement on the candidate set `X`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: `mc_shape x batch_shape x q`-dim Tensor of MC objective values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `mc_shape x batch_shape x q`-dim Tensor of expected improvement values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">li</span> <span class="o">=</span> <span class="n">_log_improvement</span><span class="p">(</span>
+            <span class="n">Y</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span>
+            <span class="n">best_f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_f</span><span class="p">,</span>
+            <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau_relu</span><span class="p">,</span>
+            <span class="n">fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">li</span></div>
+
+
+
+<div class="viewcode-block" id="qLogNoisyExpectedImprovement">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.botorch.html#obsidian.acquisition.botorch.qLogNoisyExpectedImprovement">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qLogNoisyExpectedImprovement</span><span class="p">(</span>
+    <span class="n">LogImprovementMCAcquisitionFunction</span><span class="p">,</span> <span class="n">CachedCholeskyMCSamplerMixin</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;MC-based batch Log Noisy Expected Improvement.</span>
+
+<span class="sd">    This function does not assume a `best_f` is known (which would require</span>
+<span class="sd">    noiseless observations). Instead, it uses samples from the joint posterior</span>
+<span class="sd">    over the `q` test points and previously observed points. A smooth approximation</span>
+<span class="sd">    to the canonical improvement over previously observed points is computed</span>
+<span class="sd">    for each sample and the logarithm of the average is returned.</span>
+
+<span class="sd">    See [Ament2023logei]_ for details. Formally,</span>
+
+<span class="sd">    `qLogNEI(X) ~ log(qNEI(X)) = Log E(max(max Y - max Y_baseline, 0))`,</span>
+
+<span class="sd">    where `(Y, Y_baseline) ~ f((X, X_baseline)), X = (x_1,...,x_q)`.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; model = SingleTaskGP(train_X, train_Y)</span>
+<span class="sd">        &gt;&gt;&gt; sampler = SobolQMCNormalSampler(1024)</span>
+<span class="sd">        &gt;&gt;&gt; qLogNEI = qLogNoisyExpectedImprovement(model, train_X, sampler)</span>
+<span class="sd">        &gt;&gt;&gt; acqval = qLogNEI(test_X)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">X_baseline</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCSampler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objective</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCAcquisitionObjective</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PosteriorTransform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">constraints</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eta</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">fat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prune_baseline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">cache_root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">tau_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_MAX</span><span class="p">,</span>
+        <span class="n">tau_relu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">TAU_RELU</span><span class="p">,</span>
+        <span class="n">marginalize_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;q-Noisy Expected Improvement.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: A fitted model.</span>
+<span class="sd">            X_baseline: A `batch_shape x r x d`-dim Tensor of `r` design points</span>
+<span class="sd">                that have already been observed. These points are considered as</span>
+<span class="sd">                the potential best design point.</span>
+<span class="sd">            sampler: The sampler used to draw base samples. See `MCAcquisitionFunction`</span>
+<span class="sd">                more details.</span>
+<span class="sd">            objective: The MCAcquisitionObjective under which the samples are</span>
+<span class="sd">                evaluated. Defaults to `IdentityMCObjective()`.</span>
+<span class="sd">            posterior_transform: A PosteriorTransform (optional).</span>
+<span class="sd">            X_pending: A `batch_shape x m x d`-dim Tensor of `m` design points</span>
+<span class="sd">                that have points that have been submitted for function evaluation</span>
+<span class="sd">                but have not yet been evaluated. Concatenated into `X` upon</span>
+<span class="sd">                forward call. Copied and set to have no gradient.</span>
+<span class="sd">            constraints: A list of constraint callables which map a Tensor of posterior</span>
+<span class="sd">                samples of dimension `sample_shape x batch-shape x q x m`-dim to a</span>
+<span class="sd">                `sample_shape x batch-shape x q`-dim Tensor. The associated constraints</span>
+<span class="sd">                are satisfied if `constraint(samples) &lt; 0`.</span>
+<span class="sd">            eta: Temperature parameter(s) governing the smoothness of the sigmoid</span>
+<span class="sd">                approximation to the constraint indicators. See the docs of</span>
+<span class="sd">                `compute_(log_)smoothed_constraint_indicator` for details.</span>
+<span class="sd">            fat: Toggles the logarithmic / linear asymptotic behavior of the smooth</span>
+<span class="sd">                approximation to the ReLU.</span>
+<span class="sd">            prune_baseline: If True, remove points in `X_baseline` that are</span>
+<span class="sd">                highly unlikely to be the best point. This can significantly</span>
+<span class="sd">                improve performance and is generally recommended. In order to</span>
+<span class="sd">                customize pruning parameters, instead manually call</span>
+<span class="sd">                `botorch.acquisition.utils.prune_inferior_points` on `X_baseline`</span>
+<span class="sd">                before instantiating the acquisition function.</span>
+<span class="sd">            cache_root: A boolean indicating whether to cache the root</span>
+<span class="sd">                decomposition over `X_baseline` and use low-rank updates.</span>
+<span class="sd">            tau_max: Temperature parameter controlling the sharpness of the smooth</span>
+<span class="sd">                approximations to max.</span>
+<span class="sd">            tau_relu: Temperature parameter controlling the sharpness of the smooth</span>
+<span class="sd">                approximations to ReLU.</span>
+<span class="sd">            marginalize_dim: The dimension to marginalize over.</span>
+
+<span class="sd">        TODO: similar to qNEHVI, when we are using sequential greedy candidate</span>
+<span class="sd">        selection, we could incorporate pending points X_baseline and compute</span>
+<span class="sd">        the incremental q(Log)NEI from the new point. This would greatly increase</span>
+<span class="sd">        efficiency for large batches.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: separate out baseline variables initialization and other functions</span>
+        <span class="c1"># in qNEI to avoid duplication of both code and work at runtime.</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="o">=</span><span class="n">constraints</span><span class="p">,</span>
+            <span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
+            <span class="n">fat</span><span class="o">=</span><span class="n">fat</span><span class="p">,</span>
+            <span class="n">tau_max</span><span class="o">=</span><span class="n">tau_max</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_relu</span> <span class="o">=</span> <span class="n">tau_relu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_baseline</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">X_baseline</span><span class="o">=</span><span class="n">X_baseline</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">prune_baseline</span><span class="o">=</span><span class="n">prune_baseline</span><span class="p">,</span>
+            <span class="n">cache_root</span><span class="o">=</span><span class="n">cache_root</span><span class="p">,</span>
+            <span class="n">marginalize_dim</span><span class="o">=</span><span class="n">marginalize_dim</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate qLogNoisyExpectedImprovement per sample on the candidate set `X`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: `mc_shape x batch_shape x q`-dim Tensor of MC objective values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `sample_shape x batch_shape x q`-dim Tensor of log noisy expected smoothed</span>
+<span class="sd">            improvement values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_log_improvement</span><span class="p">(</span>
+            <span class="n">Y</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span>
+            <span class="n">best_f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_best_f</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span>
+            <span class="n">tau</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tau_relu</span><span class="p">,</span>
+            <span class="n">fat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fat</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_baseline</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">X_baseline</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCSampler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">objective</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MCAcquisitionObjective</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PosteriorTransform</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prune_baseline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">cache_root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">marginalize_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">CachedCholeskyMCSamplerMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">cache_root</span><span class="o">=</span><span class="n">cache_root</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">prune_baseline</span><span class="p">:</span>
+            <span class="n">X_baseline</span> <span class="o">=</span> <span class="n">prune_inferior_points</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">X</span><span class="o">=</span><span class="n">X_baseline</span><span class="p">,</span>
+                <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+                <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+                <span class="n">marginalize_dim</span><span class="o">=</span><span class="n">marginalize_dim</span><span class="p">,</span>
+                <span class="n">constraints</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;X_baseline&quot;</span><span class="p">,</span> <span class="n">X_baseline</span><span class="p">)</span>
+        <span class="c1"># registering buffers for _get_samples_and_objectives in the next `if` block</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;baseline_samples&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;baseline_obj&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_root</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_in</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="c1"># set baseline samples</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>  <span class="c1"># this is _get_samples_and_objectives(X_baseline)</span>
+                <span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">posterior</span><span class="p">(</span>
+                    <span class="n">X_baseline</span><span class="p">,</span> <span class="n">posterior_transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_transform</span>
+                <span class="p">)</span>
+                <span class="c1"># Note: The root decomposition is cached in two different places. It</span>
+                <span class="c1"># may be confusing to have two different caches, but this is not</span>
+                <span class="c1"># trivial to change since each is needed for a different reason:</span>
+                <span class="c1"># - LinearOperator caching to `posterior.mvn` allows for reuse within</span>
+                <span class="c1">#   this function, which may be helpful if the same root decomposition</span>
+                <span class="c1">#   is produced by the calls to `self.base_sampler` and</span>
+                <span class="c1">#   `self._cache_root_decomposition`.</span>
+                <span class="c1"># - self._baseline_L allows a root decomposition to be persisted outside</span>
+                <span class="c1">#   this method.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">baseline_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_posterior_samples</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">baseline_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_samples</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X_baseline</span><span class="p">)</span>
+
+            <span class="c1"># We make a copy here because we will write an attribute `base_samples`</span>
+            <span class="c1"># to `self.base_sampler.base_samples`, and we don&#39;t want to mutate</span>
+            <span class="c1"># `self.sampler`.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_sampler</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span>
+                <span class="s2">&quot;_baseline_best_f&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_compute_best_feasible_objective</span><span class="p">(</span>
+                    <span class="n">samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_samples</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_obj</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_baseline_L</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_root_decomposition</span><span class="p">(</span><span class="n">posterior</span><span class="o">=</span><span class="n">posterior</span><span class="p">)</span>
+
+<div class="viewcode-block" id="qLogNoisyExpectedImprovement.compute_best_f">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.botorch.html#obsidian.acquisition.botorch.qLogNoisyExpectedImprovement.compute_best_f">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_best_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the best (feasible) noisy objective value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            obj: `sample_shape x batch_shape x q`-dim Tensor of objectives in forward.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `sample_shape x batch_shape`-dim Tensor of best feasible objectives.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_root</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_baseline_best_f</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_best_feasible_objective</span><span class="p">(</span>
+                <span class="n">samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_samples</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">baseline_obj</span>
+            <span class="p">)</span>
+        <span class="c1"># ensuring shape, dtype, device compatibility with obj</span>
+        <span class="n">n_sample_dims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_shape</span><span class="p">)</span>
+        <span class="n">view_shape</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="o">*</span><span class="n">val</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="n">n_sample_dims</span><span class="p">],</span>  <span class="c1"># sample dimensions</span>
+                <span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="n">val</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># pad to match obj without `q`-dim</span>
+                <span class="o">*</span><span class="n">val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">n_sample_dims</span><span class="p">:],</span>  <span class="c1"># the rest</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">view_shape</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="c1"># obj.shape[:-1], i.e. without `q`-dim`</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_samples_and_objectives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute samples at new points, using the cached root decomposition.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X: A `batch_shape x q x d`-dim tensor of inputs.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A two-tuple `(samples, obj)`, where `samples` is a tensor of posterior</span>
+<span class="sd">            samples with shape `sample_shape x batch_shape x q x m`, and `obj` is a</span>
+<span class="sd">            tensor of MC objective values with shape `sample_shape x batch_shape x q`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_baseline</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_baseline</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">X_full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">match_batch_shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_baseline</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="n">X</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># TODO: Implement more efficient way to compute posterior over both training and</span>
+        <span class="c1"># test points in GPyTorch (https://github.com/cornellius-gp/gpytorch/issues/567)</span>
+        <span class="n">posterior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">posterior</span><span class="p">(</span>
+            <span class="n">X_full</span><span class="p">,</span> <span class="n">posterior_transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_transform</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_root</span><span class="p">:</span>
+            <span class="n">samples_full</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_posterior_samples</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span>
+            <span class="n">obj_full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">samples_full</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X_full</span><span class="p">)</span>
+            <span class="c1"># assigning baseline buffers so `best_f` can be computed in _sample_forward</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">baseline_samples</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">samples_full</span><span class="o">.</span><span class="n">split</span><span class="p">([</span><span class="n">n_baseline</span><span class="p">,</span> <span class="n">q</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">baseline_obj</span><span class="p">,</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">obj_full</span><span class="o">.</span><span class="n">split</span><span class="p">([</span><span class="n">n_baseline</span><span class="p">,</span> <span class="n">q</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">samples</span><span class="p">,</span> <span class="n">obj</span>
+
+        <span class="c1"># handle one-to-many input transforms</span>
+        <span class="n">n_plus_q</span> <span class="o">=</span> <span class="n">X_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">n_w</span> <span class="o">=</span> <span class="n">posterior</span><span class="o">.</span><span class="n">_extended_shape</span><span class="p">()[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="n">n_plus_q</span>
+        <span class="n">q_in</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="n">n_w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_sampler</span><span class="p">(</span><span class="n">q_in</span><span class="o">=</span><span class="n">q_in</span><span class="p">,</span> <span class="n">posterior</span><span class="o">=</span><span class="n">posterior</span><span class="p">)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_f_X_samples</span><span class="p">(</span><span class="n">posterior</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span> <span class="n">q_in</span><span class="o">=</span><span class="n">q_in</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X_full</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="n">q</span><span class="p">:,</span> <span class="p">:])</span>
+        <span class="k">return</span> <span class="n">samples</span><span class="p">,</span> <span class="n">obj</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_best_feasible_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes best feasible objective value from samples.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            samples: `sample_shape x batch_shape x q x m`-dim posterior samples.</span>
+<span class="sd">            obj: A `sample_shape x batch_shape x q`-dim Tensor of MC objective values.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `sample_shape x batch_shape`-dim Tensor of best feasible objectives.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">compute_best_feasible_objective</span><span class="p">(</span>
+            <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+            <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span>
+            <span class="n">constraints</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraints</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_baseline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X_baseline</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">###################################### utils ##########################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_improvement</span><span class="p">(</span>
+    <span class="n">Y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">best_f</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">tau</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">],</span>
+    <span class="n">fat</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the logarithm of the softplus-smoothed improvement, i.e.</span>
+<span class="sd">    `log_softplus(Y - best_f, beta=(1 / tau))`.</span>
+<span class="sd">    Note that softplus is an approximation to the regular ReLU objective whose maximum</span>
+<span class="sd">    pointwise approximation error is linear with respect to tau as tau goes to zero.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: `mc_samples x batch_shape x q`-dim Tensor of output samples.</span>
+<span class="sd">        best_f: Best previously observed objective value(s), broadcastable with</span>
+<span class="sd">            `mc_samples x batch_shape`-dim Tensor, i.e. `obj`&#39;s dims without `q`.</span>
+<span class="sd">        tau: Temperature parameter for smooth approximation of ReLU.</span>
+<span class="sd">            as `tau -&gt; 0`, maximum pointwise approximation error is linear w.r.t. `tau`.</span>
+<span class="sd">        fat: Toggles the logarithmic / linear asymptotic behavior of the</span>
+<span class="sd">            smooth approximation to ReLU.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A `mc_samples x batch_shape x q`-dim Tensor of improvement values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_soft_clamp</span> <span class="o">=</span> <span class="n">log_fatplus</span> <span class="k">if</span> <span class="n">fat</span> <span class="k">else</span> <span class="n">log_softplus</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">-</span> <span class="n">best_f</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">log_soft_clamp</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span>  <span class="c1"># ~ ((Y - best_f) / Y_std).clamp(0)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check_tau</span><span class="p">(</span><span class="n">tau</span><span class="p">:</span> <span class="n">FloatOrTensor</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatOrTensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks the validity of the tau arguments of the functions below, and returns</span>
+<span class="sd">    `tau` if it is valid.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tau</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; is not a scalar: </span><span class="si">{</span><span class="n">tau</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span><span class="w"> </span><span class="si">= }</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tau</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; is non-positive: </span><span class="si">{</span><span class="n">tau</span><span class="w"> </span><span class="si">= }</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tau</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

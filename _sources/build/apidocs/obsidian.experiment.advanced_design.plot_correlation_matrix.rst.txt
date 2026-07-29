@@ -1,0 +1,6 @@
+plot\_correlation\_matrix
+=========================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: plot_correlation_matrix

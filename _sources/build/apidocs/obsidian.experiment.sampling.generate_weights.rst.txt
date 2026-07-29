@@ -1,0 +1,6 @@
+generate\_weights
+=================
+
+.. currentmodule:: obsidian.experiment.sampling
+
+.. autofunction:: generate_weights

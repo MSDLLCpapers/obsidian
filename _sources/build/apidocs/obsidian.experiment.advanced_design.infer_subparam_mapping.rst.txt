@@ -1,0 +1,6 @@
+infer\_subparam\_mapping
+========================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: infer_subparam_mapping

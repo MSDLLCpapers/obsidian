@@ -1,0 +1,36 @@
+Param\_Observational
+====================
+
+.. currentmodule:: obsidian.parameters.continuous
+
+.. autoclass:: Param_Observational
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Param_Observational.__init__
+      ~Param_Observational.decode
+      ~Param_Observational.encode
+      ~Param_Observational.load_state
+      ~Param_Observational.open_search
+      ~Param_Observational.save_state
+      ~Param_Observational.set_search
+      ~Param_Observational.unit_demap
+      ~Param_Observational.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Param_Observational.range
+   
+   

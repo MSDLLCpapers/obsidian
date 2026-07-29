@@ -1,0 +1,6 @@
+calculate\_pairwise\_distance\_uniformity
+=========================================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: calculate_pairwise_distance_uniformity

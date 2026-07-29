@@ -1,0 +1,20 @@
+utils
+=====
+
+.. automodule:: obsidian.experiment.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~central_composite_DOE
+      ~factorial_DOE
+      ~factorial_DOE_n_level
+   
+
+
+
+

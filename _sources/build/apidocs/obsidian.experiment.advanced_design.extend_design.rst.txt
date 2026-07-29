@@ -1,0 +1,6 @@
+extend\_design
+==============
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: extend_design

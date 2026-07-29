@@ -1,0 +1,848 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>obsidian.experiment.utils &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/obsidian/experiment/utils';</script>
+    <link rel="icon" href="../../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">obsidian.exp...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for obsidian.experiment.utils</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">obsidian.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnsupportedError</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fractional_factorial_2_level</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper function to create Resolution IV+ fractional factorial designs for 2-level experiments.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        d (int): Number of dimensions (2-12)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        ndarray: Fractional factorial design in (-1, 1) domain</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    
+    <span class="c1"># Create a dictionary that allows us to use letters</span>
+    <span class="n">term_codes</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">alphabet</span> <span class="o">=</span> <span class="s1">&#39;ABCDEFGHJKLMNOPQRSTUVWXYZ&#39;</span>  <span class="c1"># DESIGN EXPERT SKIPS I!!!</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alphabet</span><span class="p">):</span>
+        <span class="n">term_codes</span><span class="p">[</span><span class="n">letter</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+    
+    <span class="c1"># Resolution IV+ alias structure</span>
+    <span class="n">res4_aliases</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">{},</span> <span class="mi">3</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="s1">&#39;ABC&#39;</span><span class="p">},</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCD&#39;</span><span class="p">},</span> 
+        <span class="mi">6</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="s1">&#39;ABC&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="s1">&#39;BCD&#39;</span><span class="p">},</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCD&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCE&#39;</span><span class="p">},</span> 
+        <span class="mi">8</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="s1">&#39;ABC&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="s1">&#39;ABD&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;BCDE&#39;</span><span class="p">},</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCD&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;ACEF&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">:</span> <span class="s1">&#39;CDEF&#39;</span><span class="p">},</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCD&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCE&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">:</span> <span class="s1">&#39;ADEF&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="s1">&#39;BDEF&#39;</span><span class="p">},</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCD&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCE&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">:</span> <span class="s1">&#39;ABDE&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="s1">&#39;ACDEF&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="s1">&#39;BCDEF&#39;</span><span class="p">},</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;ABC&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">:</span> <span class="s1">&#39;ADEF&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">:</span> <span class="s1">&#39;BDEG&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="s1">&#39;CDFG&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="s1">&#39;ABCEFG&#39;</span><span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># Determine the resolved dimensions (base design size)</span>
+    <span class="k">if</span> <span class="n">res4_aliases</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">==</span> <span class="p">{}:</span>
+        <span class="n">d_resolved</span> <span class="o">=</span> <span class="n">d</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">decoded_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">term_codes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res4_aliases</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="n">d_resolved</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">decoded_keys</span><span class="p">)</span>
+    
+    <span class="c1"># Create base design</span>
+    <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="p">(</span><span class="n">d_resolved</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">axes</span><span class="p">)))</span>
+    
+    <span class="c1"># Generate aliased columns</span>
+    <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">generator</span> <span class="ow">in</span> <span class="n">res4_aliases</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">decoded_generator</span> <span class="o">=</span> <span class="p">[</span><span class="n">term_codes</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">generator</span><span class="p">)]</span>
+        <span class="n">aliased_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">decoded_generator</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">aliased_term</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">X</span>
+
+
+<div class="viewcode-block" id="factorial_DOE_n_level">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.experiment.utils.factorial_DOE_n_level.html#obsidian.experiment.utils.factorial_DOE_n_level">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">factorial_DOE_n_level</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">levels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+                          <span class="n">n_CP</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                          <span class="n">seed</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a statistically designed factorial experiment (DOE).</span>
+<span class="sd">    Supports n-level designs (2-level, 3-level, etc.).</span>
+<span class="sd">    Uses the range (0,1) for low-high.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d (int): Number of dimensions/inputs in the design.</span>
+<span class="sd">        levels (int, optional): Number of levels per factor (e.g., 2, 3, 4). Default is ``2``.</span>
+<span class="sd">        n_CP (int | None, optional): Number of replicate centerpoints, for estimating pure error</span>
+<span class="sd">            and testing curvature/lack-of-fit. Default (``None``) is ``3`` for all levels, since</span>
+<span class="sd">            replication is what provides pure-error degrees of freedom. Use ``n_CP=0`` for a</span>
+<span class="sd">            deterministic, noise-free grid comparison.</span>
+<span class="sd">        shuffle (bool, optional): Whether or not to shuffle the design or leave them in the default run</span>
+<span class="sd">            order. Default is ``True``.</span>
+<span class="sd">        seed (Generator | int | None, optional): Controls the run-order shuffle. A ``Generator``</span>
+<span class="sd">            is used directly; an int seeds an isolated ``default_rng`` (reproducible, without</span>
+<span class="sd">            touching global RNG state); ``None`` (default) defers to the ambient global</span>
+<span class="sd">            ``np.random`` stream (e.g. one set by ``with_tmp_seed``). Global state is never reseeded.</span>
+<span class="sd">        full (bool, optional): Whether or not to run the full DOE. Default is ``False``, which</span>
+<span class="sd">            will lead to an efficient Res4+ design (2-level only).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ndarray: An (m)-by-(d) array of experiments in the (0,1) domain</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        UnsupportedError: If the number of dimensions exceeds 12</span>
+<span class="sd">        ValueError: If d &lt; 1, levels &lt; 2, n_CP &lt; 0, or a fractional factorial is</span>
+<span class="sd">            requested with levels != 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of dimensions must be at least 1&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnsupportedError</span><span class="p">(</span><span class="s1">&#39;The number of dimensions must be 12 or fewer for DOE (currently)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">levels</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of levels must be at least 2&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">full</span> <span class="ow">and</span> <span class="n">levels</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Fractional factorial designs only supported for 2-level. Use full=True for n-level designs.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Replicate center runs; default to 3 for all levels.</span>
+    <span class="k">if</span> <span class="n">n_CP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_CP</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">if</span> <span class="n">n_CP</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of centerpoints must be non-negative&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Generate centerpoints (only if needed)</span>
+    <span class="k">if</span> <span class="n">n_CP</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">CP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_CP</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+
+    <span class="c1"># Create design based on type. A single factor cannot be fractionated, so fall back</span>
+    <span class="c1"># to the full factorial branch (which yields the same 2-run design) to avoid the</span>
+    <span class="c1"># fractional-factorial helper, which is only defined for d &gt;= 2.</span>
+    <span class="k">if</span> <span class="n">levels</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">full</span> <span class="ow">and</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># Use fractional factorial for efficiency</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">_fractional_factorial_2_level</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Full factorial for any number of levels</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">levels</span><span class="p">)</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">axes</span><span class="p">)))</span>
+
+    <span class="c1"># Add centerpoints if any</span>
+    <span class="k">if</span> <span class="n">n_CP</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="n">CP</span><span class="p">))</span>
+
+    <span class="c1"># Shuffle the run order. Only resolve an RNG when actually shuffling.</span>
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">Generator</span><span class="p">):</span>
+            <span class="n">rng</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">seed</span>  <span class="c1"># use the provided generator directly</span>
+        <span class="k">elif</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span>  <span class="c1"># read the ambient global stream; never reseed it</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># isolated + reproducible; global untouched</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="c1"># Rescale from (-1,1) to [0,1], keeping interior points (incl. center) exact.</span>
+    <span class="c1"># The upper edge is nudged just below 1 so discrete unit_demap (int(X*nc))</span>
+    <span class="c1"># does not overflow the top category, without shifting the rest of the design.</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">X</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-6</span>
+
+    <span class="k">return</span> <span class="n">X</span></div>
+
+
+
+<span class="c1"># Uniform-precision center-point counts for rotatable CCDs (Box &amp; Hunter).</span>
+<span class="c1"># Falls back to 3 for dimensions not tabulated.</span>
+<span class="n">_CCD_UNIFORM_PRECISION_CP</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="mi">21</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="central_composite_DOE">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.experiment.utils.central_composite_DOE.html#obsidian.experiment.utils.central_composite_DOE">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">central_composite_DOE</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;rotatable&#39;</span><span class="p">,</span>
+                          <span class="n">n_CP</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="n">face_core_full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                          <span class="n">inscribe</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                          <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                          <span class="n">seed</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a classical Central Composite Design (CCD) for response surface methodology (RSM).</span>
+
+<span class="sd">    A CCD combines a two-level factorial (or fractional-factorial) core to estimate main</span>
+<span class="sd">    effects and two-factor interactions, axial (&quot;star&quot;) points to estimate quadratic</span>
+<span class="sd">    curvature, and replicated center points to estimate pure error. It is the standard</span>
+<span class="sd">    &quot;old school&quot; design for fitting a full second-order (quadratic) response surface.</span>
+
+<span class="sd">    Because obsidian generates designs in the (0,1) unit cube (which is then mapped onto</span>
+<span class="sd">    the real parameter bounds), the design is by default *inscribed* (``inscribe=True``):</span>
+<span class="sd">    when the axial distance exceeds the cube (``alpha &gt; 1``), the whole design is scaled by</span>
+<span class="sd">    ``1/alpha`` so the axial points sit on the cube faces and the factorial core is pulled</span>
+<span class="sd">    inward, guaranteeing every point falls within the parameter bounds (at the cost of</span>
+<span class="sd">    running the core at a fraction of the full range). When ``alpha &lt;= 1`` (e.g. ``&#39;faced&#39;``)</span>
+<span class="sd">    the design already fits inside the cube, so no scaling is applied. Set ``inscribe=False``</span>
+<span class="sd">    to instead keep the factorial core at the box corners and clip axials to the bounds,</span>
+<span class="sd">    which breaks rotatability -- equivalent to a face-centered design.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d (int): Number of dimensions/inputs in the design.</span>
+<span class="sd">        alpha (float | str, optional): Axial distance in coded (-1, 1) units. Either a</span>
+<span class="sd">            positive float, or one of:</span>
+<span class="sd">            - ``&#39;rotatable&#39;`` (default): ``alpha = n_factorial ** 0.25``, giving a</span>
+<span class="sd">              rotatable design (constant prediction variance at fixed distance from center).</span>
+<span class="sd">            - ``&#39;faced&#39;``: ``alpha = 1`` (face-centered, &quot;CCF&quot;); axials lie on the cube faces</span>
+<span class="sd">              and only three levels per factor are used.</span>
+<span class="sd">        n_CP (int | None, optional): Number of center points. If ``None`` (default), uses</span>
+<span class="sd">            standard uniform-precision values (e.g. 5/6/7 for d=2/3/4), falling back to 3.</span>
+<span class="sd">        face_core_full (bool, optional): Whether the factorial core is a full ``2**d``</span>
+<span class="sd">            design (default) or an efficient Resolution IV+ fractional factorial. Full cores</span>
+<span class="sd">            are recommended for RSM (Resolution V+) but grow quickly with d.</span>
+<span class="sd">        inscribe (bool, optional): Whether to inscribe the design in the unit cube so all</span>
+<span class="sd">            points respect the parameter bounds. Default is ``True``.</span>
+<span class="sd">        shuffle (bool, optional): Whether to shuffle the run order. Default is ``True``.</span>
+<span class="sd">        seed (Generator | int | None, optional): Controls the run-order shuffle. A ``Generator``</span>
+<span class="sd">            is used directly; an int seeds an isolated ``default_rng`` (reproducible, without</span>
+<span class="sd">            touching global RNG state); ``None`` (default) defers to the ambient global</span>
+<span class="sd">            ``np.random`` stream (e.g. one set by ``with_tmp_seed``). Global state is never reseeded.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ndarray: An (m)-by-(d) array of experiments in the (0,1) domain.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        UnsupportedError: If the number of dimensions exceeds 12.</span>
+<span class="sd">        ValueError: If d &lt; 1, n_CP &lt; 0, or ``alpha`` is an unrecognized string or a</span>
+<span class="sd">            non-positive value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of dimensions must be at least 1&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnsupportedError</span><span class="p">(</span><span class="s1">&#39;The number of dimensions must be 12 or fewer for DOE (currently)&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Factorial core in coded (-1, 1) units, without center points or (0,1) rescaling.</span>
+    <span class="c1"># A single factor cannot be fractionated, so use the full core for d == 1.</span>
+    <span class="k">if</span> <span class="n">face_core_full</span> <span class="ow">or</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">core</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">axes</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">core</span> <span class="o">=</span> <span class="n">_fractional_factorial_2_level</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">n_factorial</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Resolve the axial distance</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="s1">&#39;rotatable&#39;</span><span class="p">:</span>
+            <span class="n">alpha_val</span> <span class="o">=</span> <span class="n">n_factorial</span> <span class="o">**</span> <span class="mf">0.25</span>
+        <span class="k">elif</span> <span class="n">alpha</span> <span class="o">==</span> <span class="s1">&#39;faced&#39;</span><span class="p">:</span>
+            <span class="n">alpha_val</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;alpha must be a positive float, &#39;rotatable&#39;, or &#39;faced&#39;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">alpha_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">alpha_val</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;alpha must be a positive value&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Axial (&quot;star&quot;) points: +/- alpha along each individual axis</span>
+    <span class="n">axial</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha_val</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha_val</span><span class="p">])</span>
+
+    <span class="c1"># Center points</span>
+    <span class="k">if</span> <span class="n">n_CP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_CP</span> <span class="o">=</span> <span class="n">_CCD_UNIFORM_PRECISION_CP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_CP</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of centerpoints must be non-negative&#39;</span><span class="p">)</span>
+    <span class="n">CP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_CP</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span> <span class="k">if</span> <span class="n">n_CP</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">core</span><span class="p">,</span> <span class="n">axial</span><span class="p">,</span> <span class="n">CP</span><span class="p">))</span>
+
+    <span class="c1"># Fit the design within the unit cube</span>
+    <span class="k">if</span> <span class="n">inscribe</span><span class="p">:</span>
+        <span class="c1"># Scale so the axial points sit on the cube faces (coded +/- 1)</span>
+        <span class="k">if</span> <span class="n">alpha_val</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">/</span> <span class="n">alpha_val</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Keep the factorial core at the corners; clip axials to the box faces</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Shuffle the run order. Only resolve an RNG when actually shuffling.</span>
+    <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">Generator</span><span class="p">):</span>
+            <span class="n">rng</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">seed</span>  <span class="c1"># use the provided generator directly</span>
+        <span class="k">elif</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span>  <span class="c1"># read the ambient global stream; never reseed it</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># isolated + reproducible; global untouched</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="c1"># Rescale from (-1,1) to [0,1], keeping interior points (incl. center) exact.</span>
+    <span class="c1"># The upper edge is nudged just below 1 so discrete unit_demap (int(X*nc))</span>
+    <span class="c1"># does not overflow the top category, without shifting the rest of the design.</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">X</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-6</span>
+
+    <span class="k">return</span> <span class="n">X</span></div>
+
+
+
+<div class="viewcode-block" id="factorial_DOE">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.experiment.utils.factorial_DOE.html#obsidian.experiment.utils.factorial_DOE">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">factorial_DOE</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                  <span class="n">n_CP</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                  <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="n">seed</span><span class="p">:</span> <span class="n">Generator</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a statistically designed factorial experiment (DOE).</span>
+<span class="sd">    Specifically for 2-level designs only.</span>
+<span class="sd">    Uses the range (0,1) for low-high instead of the typical (-1,1),</span>
+<span class="sd">    although (-1,1) is used for calculations during alias design.</span>
+<span class="sd">    </span>
+<span class="sd">    For n-level designs (3-level, 4-level, etc.), use `factorial_DOE_n_level`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d (int): Number of dimensions/inputs in the design.</span>
+<span class="sd">        n_CP (int, optional): The number of centerpoints to include in the design, for estimating</span>
+<span class="sd">            uncertainty and curvature. Default is ``3``.</span>
+<span class="sd">        shuffle (bool, optional): Whether or not to shuffle the design or leave them in the default run</span>
+<span class="sd">            order. Default is ``True``.</span>
+<span class="sd">        seed (Generator | int | None, optional): Controls the run-order shuffle. A ``Generator``</span>
+<span class="sd">            is used directly; an int seeds an isolated ``default_rng`` (reproducible, without</span>
+<span class="sd">            touching global RNG state); ``None`` (default) defers to the ambient global</span>
+<span class="sd">            ``np.random`` stream (e.g. one set by ``with_tmp_seed``). Global state is never reseeded.</span>
+<span class="sd">        full (bool, optional): Whether or not to run the full DOE. Default is ``False``, which</span>
+<span class="sd">            will lead to an efficient Res4+ design.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ndarray: An (m)-by-(d) array of experiments in the (0,1) domain</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        UnsupportedError: If the number of dimensions exceeds 12</span>
+<span class="sd">        ValueError: If d &lt; 1 or n_CP &lt; 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">factorial_DOE_n_level</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_CP</span><span class="o">=</span><span class="n">n_CP</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="n">full</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

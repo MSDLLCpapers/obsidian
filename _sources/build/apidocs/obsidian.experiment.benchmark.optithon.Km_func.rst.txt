@@ -1,0 +1,6 @@
+Km\_func
+========
+
+.. currentmodule:: obsidian.experiment.benchmark.optithon
+
+.. autofunction:: Km_func

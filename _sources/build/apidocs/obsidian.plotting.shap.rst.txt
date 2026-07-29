@@ -1,0 +1,17 @@
+shap
+====
+
+.. automodule:: obsidian.plotting.shap
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+   
+      ~one_shap_value
+      ~partial_dependence
+   
+
+
+

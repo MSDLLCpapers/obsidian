@@ -1,0 +1,36 @@
+AdvExpDesigner
+==============
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autoclass:: AdvExpDesigner
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AdvExpDesigner.__init__
+      ~AdvExpDesigner.compare_frequencies
+      ~AdvExpDesigner.evaluate_design
+      ~AdvExpDesigner.extend_design
+      ~AdvExpDesigner.generate_design
+      ~AdvExpDesigner.initialize
+      ~AdvExpDesigner.load_state
+      ~AdvExpDesigner.optimize_design
+      ~AdvExpDesigner.plot_correlation
+      ~AdvExpDesigner.plot_histograms
+      ~AdvExpDesigner.plot_mds
+      ~AdvExpDesigner.plot_pca
+      ~AdvExpDesigner.plot_quality_evolution
+      ~AdvExpDesigner.plot_umap
+      ~AdvExpDesigner.save_state
+   
+   
+
+   
+   
+   

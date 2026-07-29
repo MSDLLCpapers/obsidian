@@ -1,0 +1,6 @@
+factorial\_DOE\_n\_level
+========================
+
+.. currentmodule:: obsidian.experiment.utils
+
+.. autofunction:: factorial_DOE_n_level

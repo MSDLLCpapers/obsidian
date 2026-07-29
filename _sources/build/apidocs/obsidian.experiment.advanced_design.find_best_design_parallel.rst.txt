@@ -1,0 +1,6 @@
+find\_best\_design\_parallel
+============================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: find_best_design_parallel

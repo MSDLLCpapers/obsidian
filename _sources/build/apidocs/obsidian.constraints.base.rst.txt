@@ -1,0 +1,16 @@
+base
+====
+
+.. automodule:: obsidian.constraints.base
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~Constraint
+   
+
+
+

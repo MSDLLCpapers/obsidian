@@ -1,0 +1,25 @@
+﻿plotting
+========
+
+.. automodule:: obsidian.plotting
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module_shallow.rst
+   :recursive:
+
+
+   branding
+
+   mpl
+
+   plotly
+
+   shap
+

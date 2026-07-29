@@ -1,0 +1,23 @@
+Simulator
+=========
+
+.. currentmodule:: obsidian.experiment.simulator
+
+.. autoclass:: Simulator
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Simulator.__init__
+      ~Simulator.simulate
+   
+   
+
+   
+   
+   

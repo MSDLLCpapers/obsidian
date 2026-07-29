@@ -1,0 +1,26 @@
+characterization
+================
+
+.. automodule:: obsidian.acquisition.characterization
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+   
+      ~chi2_sampler
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~qMultiRandomizedStraddle
+      ~qMultiStraddle
+      ~qRandomizedStraddle
+      ~qStraddle
+   
+
+
+

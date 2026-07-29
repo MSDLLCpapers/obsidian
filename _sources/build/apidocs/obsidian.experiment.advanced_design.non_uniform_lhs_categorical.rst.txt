@@ -1,0 +1,6 @@
+non\_uniform\_lhs\_categorical
+==============================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: non_uniform_lhs_categorical

@@ -1,0 +1,112 @@
+PriorGP
+=======
+
+.. currentmodule:: obsidian.surrogates.custom_GP
+
+.. autoclass:: PriorGP
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PriorGP.__init__
+      ~PriorGP.add_module
+      ~PriorGP.added_loss_terms
+      ~PriorGP.apply
+      ~PriorGP.bfloat16
+      ~PriorGP.buffers
+      ~PriorGP.children
+      ~PriorGP.compile
+      ~PriorGP.condition_on_observations
+      ~PriorGP.constraint_for_parameter_name
+      ~PriorGP.constraints
+      ~PriorGP.construct_inputs
+      ~PriorGP.cpu
+      ~PriorGP.cuda
+      ~PriorGP.double
+      ~PriorGP.eval
+      ~PriorGP.extra_repr
+      ~PriorGP.float
+      ~PriorGP.forward
+      ~PriorGP.get_buffer
+      ~PriorGP.get_extra_state
+      ~PriorGP.get_fantasy_model
+      ~PriorGP.get_parameter
+      ~PriorGP.get_submodule
+      ~PriorGP.half
+      ~PriorGP.hyperparameters
+      ~PriorGP.initialize
+      ~PriorGP.ipu
+      ~PriorGP.load_state_dict
+      ~PriorGP.load_strict_shapes
+      ~PriorGP.local_load_samples
+      ~PriorGP.modules
+      ~PriorGP.named_added_loss_terms
+      ~PriorGP.named_buffers
+      ~PriorGP.named_children
+      ~PriorGP.named_constraints
+      ~PriorGP.named_hyperparameters
+      ~PriorGP.named_modules
+      ~PriorGP.named_parameters
+      ~PriorGP.named_parameters_and_constraints
+      ~PriorGP.named_priors
+      ~PriorGP.named_variational_parameters
+      ~PriorGP.parameters
+      ~PriorGP.posterior
+      ~PriorGP.pyro_load_from_samples
+      ~PriorGP.pyro_sample_from_prior
+      ~PriorGP.register_added_loss_term
+      ~PriorGP.register_backward_hook
+      ~PriorGP.register_buffer
+      ~PriorGP.register_constraint
+      ~PriorGP.register_forward_hook
+      ~PriorGP.register_forward_pre_hook
+      ~PriorGP.register_full_backward_hook
+      ~PriorGP.register_full_backward_pre_hook
+      ~PriorGP.register_load_state_dict_post_hook
+      ~PriorGP.register_module
+      ~PriorGP.register_parameter
+      ~PriorGP.register_prior
+      ~PriorGP.register_state_dict_pre_hook
+      ~PriorGP.requires_grad_
+      ~PriorGP.sample_from_prior
+      ~PriorGP.set_extra_state
+      ~PriorGP.set_train_data
+      ~PriorGP.share_memory
+      ~PriorGP.state_dict
+      ~PriorGP.subset_output
+      ~PriorGP.to
+      ~PriorGP.to_empty
+      ~PriorGP.to_pyro_random_module
+      ~PriorGP.to_random_module
+      ~PriorGP.train
+      ~PriorGP.transform_inputs
+      ~PriorGP.type
+      ~PriorGP.update_added_loss_term
+      ~PriorGP.variational_parameters
+      ~PriorGP.xpu
+      ~PriorGP.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PriorGP.T_destination
+      ~PriorGP.batch_shape
+      ~PriorGP.call_super_init
+      ~PriorGP.dtypes_of_buffers
+      ~PriorGP.dump_patches
+      ~PriorGP.num_outputs
+      ~PriorGP.train_targets
+      ~PriorGP.likelihood
+      ~PriorGP.training
+   
+   

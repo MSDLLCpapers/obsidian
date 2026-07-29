@@ -1,0 +1,6 @@
+generate\_and\_evaluate
+=======================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: generate_and_evaluate

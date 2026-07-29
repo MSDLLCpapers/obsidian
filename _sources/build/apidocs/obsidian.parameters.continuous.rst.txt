@@ -1,0 +1,19 @@
+continuous
+==========
+
+.. automodule:: obsidian.parameters.continuous
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~Param_Continuous
+      ~Param_Observational
+   
+
+
+
+

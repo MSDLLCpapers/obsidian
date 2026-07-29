@@ -1,0 +1,18 @@
+botorch
+=======
+
+.. automodule:: obsidian.surrogates.botorch
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~SurrogateBoTorch
+   
+
+
+
+

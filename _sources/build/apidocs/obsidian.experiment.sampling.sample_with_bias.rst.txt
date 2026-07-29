@@ -1,0 +1,6 @@
+sample\_with\_bias
+==================
+
+.. currentmodule:: obsidian.experiment.sampling
+
+.. autofunction:: sample_with_bias

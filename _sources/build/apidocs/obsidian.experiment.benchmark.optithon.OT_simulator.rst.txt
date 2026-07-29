@@ -1,0 +1,6 @@
+OT\_simulator
+=============
+
+.. currentmodule:: obsidian.experiment.benchmark.optithon
+
+.. autofunction:: OT_simulator

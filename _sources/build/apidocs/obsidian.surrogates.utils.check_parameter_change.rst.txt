@@ -1,0 +1,6 @@
+check\_parameter\_change
+========================
+
+.. currentmodule:: obsidian.surrogates.utils
+
+.. autofunction:: check_parameter_change

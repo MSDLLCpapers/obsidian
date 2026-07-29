@@ -1,0 +1,22 @@
+custom
+======
+
+.. automodule:: obsidian.objectives.custom
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~Bounded_Target
+      ~Divide_Objective
+      ~Feature_Objective
+      ~Identity_Objective
+      ~Index_Objective
+      ~Product_Objective
+      ~Utopian_Distance
+   
+
+
+

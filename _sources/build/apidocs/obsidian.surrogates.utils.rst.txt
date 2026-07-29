@@ -1,0 +1,19 @@
+utils
+=====
+
+.. automodule:: obsidian.surrogates.utils
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~check_parameter_change
+      ~fit_pytorch
+   
+
+
+
+

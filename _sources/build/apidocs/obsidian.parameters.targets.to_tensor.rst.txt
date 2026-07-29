@@ -1,0 +1,6 @@
+to\_tensor
+==========
+
+.. currentmodule:: obsidian.parameters.targets
+
+.. autofunction:: to_tensor

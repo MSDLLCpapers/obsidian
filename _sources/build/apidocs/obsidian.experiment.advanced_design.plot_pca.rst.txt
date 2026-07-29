@@ -1,0 +1,6 @@
+plot\_pca
+=========
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: plot_pca

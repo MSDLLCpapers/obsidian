@@ -1,0 +1,27 @@
+targets
+=======
+
+.. automodule:: obsidian.parameters.targets
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~resolve_target_names
+      ~to_tensor
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~Target
+   
+
+
+
+

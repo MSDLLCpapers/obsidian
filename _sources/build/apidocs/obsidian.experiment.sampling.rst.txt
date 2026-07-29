@@ -1,0 +1,20 @@
+sampling
+========
+
+.. automodule:: obsidian.experiment.sampling
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~best_sample
+      ~generate_weights
+      ~sample_with_bias
+   
+
+
+
+

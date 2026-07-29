@@ -1,0 +1,18 @@
+design
+======
+
+.. automodule:: obsidian.experiment.design
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~ExpDesigner
+   
+
+
+
+

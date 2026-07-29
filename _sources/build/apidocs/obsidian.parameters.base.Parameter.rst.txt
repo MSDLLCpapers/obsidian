@@ -1,0 +1,27 @@
+Parameter
+=========
+
+.. currentmodule:: obsidian.parameters.base
+
+.. autoclass:: Parameter
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Parameter.__init__
+      ~Parameter.decode
+      ~Parameter.encode
+      ~Parameter.load_state
+      ~Parameter.save_state
+      ~Parameter.set_search
+   
+   
+
+   
+   
+   

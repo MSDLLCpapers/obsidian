@@ -1,0 +1,22 @@
+discrete
+========
+
+.. automodule:: obsidian.parameters.discrete
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~Param_Categorical
+      ~Param_Discrete
+      ~Param_Discrete_Numeric
+      ~Param_Ordinal
+      ~Task
+   
+
+
+
+

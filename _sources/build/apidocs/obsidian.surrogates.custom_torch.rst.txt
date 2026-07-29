@@ -1,0 +1,19 @@
+custom\_torch
+=============
+
+.. automodule:: obsidian.surrogates.custom_torch
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~DNN
+      ~DNNPosterior
+   
+
+
+
+

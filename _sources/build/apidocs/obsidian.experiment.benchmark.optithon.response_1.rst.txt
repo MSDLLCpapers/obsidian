@@ -1,0 +1,6 @@
+response\_1
+===========
+
+.. currentmodule:: obsidian.experiment.benchmark.optithon
+
+.. autofunction:: response_1

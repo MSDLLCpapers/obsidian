@@ -1,0 +1,6 @@
+two\_leaves
+===========
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: two_leaves

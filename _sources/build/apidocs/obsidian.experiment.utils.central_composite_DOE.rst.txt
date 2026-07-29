@@ -1,0 +1,6 @@
+central\_composite\_DOE
+=======================
+
+.. currentmodule:: obsidian.experiment.utils
+
+.. autofunction:: central_composite_DOE

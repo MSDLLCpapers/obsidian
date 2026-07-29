@@ -1,0 +1,19 @@
+input
+=====
+
+.. automodule:: obsidian.constraints.input
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+   
+      ~BatchVariance_Constraint
+      ~Input_Constraint
+      ~Linear_Constraint
+      ~Nonlinear_Constraint
+   
+
+
+

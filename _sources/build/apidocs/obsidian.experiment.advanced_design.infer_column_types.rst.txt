@@ -1,0 +1,6 @@
+infer\_column\_types
+====================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: infer_column_types

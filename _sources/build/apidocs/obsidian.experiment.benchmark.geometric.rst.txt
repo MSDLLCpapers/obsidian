@@ -1,0 +1,27 @@
+geometric
+=========
+
+.. automodule:: obsidian.experiment.benchmark.geometric
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~ackley
+      ~branin_currin
+      ~cornered_parab
+      ~paraboloid
+      ~perm
+      ~rosenbrock
+      ~shifted_parab
+      ~sixhump_camel
+      ~threehump_camel
+      ~two_leaves
+   
+
+
+
+

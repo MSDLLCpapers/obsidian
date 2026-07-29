@@ -1,0 +1,6 @@
+assign\_conditional\_subparameter
+=================================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: assign_conditional_subparameter

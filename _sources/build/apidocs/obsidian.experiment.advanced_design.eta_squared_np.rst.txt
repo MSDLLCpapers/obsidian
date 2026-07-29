@@ -1,0 +1,6 @@
+eta\_squared\_np
+================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: eta_squared_np

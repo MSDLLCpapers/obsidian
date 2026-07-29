@@ -1,0 +1,6 @@
+sample\_design
+==============
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: sample_design

@@ -1,0 +1,38 @@
+Optimizer
+=========
+
+.. currentmodule:: obsidian.optimizer.base
+
+.. autoclass:: Optimizer
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Optimizer.__init__
+      ~Optimizer.fit
+      ~Optimizer.hypervolume
+      ~Optimizer.load_state
+      ~Optimizer.maximize
+      ~Optimizer.pareto
+      ~Optimizer.pf_distance
+      ~Optimizer.predict
+      ~Optimizer.save_state
+      ~Optimizer.set_X_space
+      ~Optimizer.suggest
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Optimizer.X_space
+   
+   

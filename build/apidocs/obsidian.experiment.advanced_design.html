@@ -1,0 +1,1072 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>advanced_design &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'build/apidocs/obsidian.experiment.advanced_design';</script>
+    <link rel="icon" href="../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="assign_conditional_subparameter" href="obsidian.experiment.advanced_design.assign_conditional_subparameter.html" />
+    <link rel="prev" title="experiment" href="obsidian.experiment.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="obsidian.parameters.html">parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.campaign.html">campaign</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.optimizer.html">optimizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.surrogates.html">surrogates</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="obsidian.experiment.html">experiment</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">advanced_design</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.assign_conditional_subparameter.html">assign_conditional_subparameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_a_optimality.html">calculate_a_optimality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_condition_number.html">calculate_condition_number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_d_optimality.html">calculate_d_optimality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_max_categorical_correlation.html">calculate_max_categorical_correlation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_max_continuous_correlation.html">calculate_max_continuous_correlation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_max_mixed_correlation.html">calculate_max_mixed_correlation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_mixed_correlation_matrix.html">calculate_mixed_correlation_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_pairwise_distance_uniformity.html">calculate_pairwise_distance_uniformity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.cramers_v_np.html">cramers_v_np</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.eta_squared_np.html">eta_squared_np</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.evaluate_candidate.html">evaluate_candidate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.evaluate_design.html">evaluate_design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.extend_design.html">extend_design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.find_best_design_parallel.html">find_best_design_parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.generate_and_evaluate.html">generate_and_evaluate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.infer_column_types.html">infer_column_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.infer_subparam_mapping.html">infer_subparam_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.non_uniform_lhs_categorical.html">non_uniform_lhs_categorical</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.optimize_category_assignment_parallel.html">optimize_category_assignment_parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.plot_correlation_matrix.html">plot_correlation_matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.plot_design_histograms.html">plot_design_histograms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.plot_design_quality_evolution.html">plot_design_quality_evolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.plot_mds.html">plot_mds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.plot_pca.html">plot_pca</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.plot_umap.html">plot_umap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.sample_continuous_lhs.html">sample_continuous_lhs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.sample_design.html">sample_design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="obsidian.experiment.advanced_design.AdvExpDesigner.html">AdvExpDesigner</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="obsidian.experiment.benchmark.html">benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsidian.experiment.design.html">design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsidian.experiment.sampling.html">sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsidian.experiment.simulator.html">simulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="obsidian.experiment.utils.html">utils</a></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="obsidian.acquisition.html">acquisition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.objectives.html">objectives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.plotting.html">plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.constraints.html">constraints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obsidian.exceptions.html">exceptions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../stubs/api_docs.html" class="nav-link">API Documentation</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="obsidian.experiment.html" class="nav-link">experiment</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">advanced_design</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-obsidian.experiment.advanced_design">
+<span id="advanced-design"></span><h1>advanced_design<a class="headerlink" href="#module-obsidian.experiment.advanced_design" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.assign_conditional_subparameter.html#obsidian.experiment.advanced_design.assign_conditional_subparameter" title="obsidian.experiment.advanced_design.assign_conditional_subparameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assign_conditional_subparameter</span></code></a>(cat_samples, ...)</p></td>
+<td><p>Sample subparameter values conditioned on the parent category assignment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_a_optimality.html#obsidian.experiment.advanced_design.calculate_a_optimality" title="obsidian.experiment.advanced_design.calculate_a_optimality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_a_optimality</span></code></a>(design, ...)</p></td>
+<td><p>Calculate A-optimality (trace of the inverse information matrix) for the continuous and subparameter columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_condition_number.html#obsidian.experiment.advanced_design.calculate_condition_number" title="obsidian.experiment.advanced_design.calculate_condition_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_condition_number</span></code></a>(design, ...)</p></td>
+<td><p>Calculate the condition number of the information matrix for the continuous and subparameter columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_d_optimality.html#obsidian.experiment.advanced_design.calculate_d_optimality" title="obsidian.experiment.advanced_design.calculate_d_optimality"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_d_optimality</span></code></a>(design, ...)</p></td>
+<td><p>Calculate D-optimality (determinant of the information matrix) for the continuous and subparameter columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_max_categorical_correlation.html#obsidian.experiment.advanced_design.calculate_max_categorical_correlation" title="obsidian.experiment.advanced_design.calculate_max_categorical_correlation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_max_categorical_correlation</span></code></a>(...)</p></td>
+<td><p>Calculate the maximum Cramér's V association among all pairs of categorical columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_max_continuous_correlation.html#obsidian.experiment.advanced_design.calculate_max_continuous_correlation" title="obsidian.experiment.advanced_design.calculate_max_continuous_correlation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_max_continuous_correlation</span></code></a>(design, ...)</p></td>
+<td><p>Calculate the maximum absolute Pearson correlation among all pairs of continuous and subparameter columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_max_mixed_correlation.html#obsidian.experiment.advanced_design.calculate_max_mixed_correlation" title="obsidian.experiment.advanced_design.calculate_max_mixed_correlation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_max_mixed_correlation</span></code></a>(design, ...)</p></td>
+<td><p>Calculate the maximum association between categorical and continuous/subparameter columns using eta-squared (sqrt).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_mixed_correlation_matrix.html#obsidian.experiment.advanced_design.calculate_mixed_correlation_matrix" title="obsidian.experiment.advanced_design.calculate_mixed_correlation_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_mixed_correlation_matrix</span></code></a>(df[, ...])</p></td>
+<td><p>Compute a pairwise correlation matrix that handles mixed variable types:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.calculate_pairwise_distance_uniformity.html#obsidian.experiment.advanced_design.calculate_pairwise_distance_uniformity" title="obsidian.experiment.advanced_design.calculate_pairwise_distance_uniformity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_pairwise_distance_uniformity</span></code></a>(...)</p></td>
+<td><p>Calculate the coefficient of variation (CV) of pairwise Euclidean distances between design points in the continuous/subparameter space.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.cramers_v_np.html#obsidian.experiment.advanced_design.cramers_v_np" title="obsidian.experiment.advanced_design.cramers_v_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cramers_v_np</span></code></a>(contingency)</p></td>
+<td><p>Compute Cramér's V association statistic for a contingency table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.eta_squared_np.html#obsidian.experiment.advanced_design.eta_squared_np" title="obsidian.experiment.advanced_design.eta_squared_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eta_squared_np</span></code></a>(cat_codes, num_values)</p></td>
+<td><p>Compute the eta-squared effect size between a categorical and a numeric variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.evaluate_candidate.html#obsidian.experiment.advanced_design.evaluate_candidate" title="obsidian.experiment.advanced_design.evaluate_candidate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_candidate</span></code></a>(i, seed_start, n, ...[, ...])</p></td>
+<td><p>Generate <code class="docutils literal notranslate"><span class="pre">n</span></code> new samples, append them to <code class="docutils literal notranslate"><span class="pre">existing_design</span></code>, and compute quality metrics for the combined design.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.evaluate_design.html#obsidian.experiment.advanced_design.evaluate_design" title="obsidian.experiment.advanced_design.evaluate_design"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate_design</span></code></a>(design, continuous_keys, ...)</p></td>
+<td><p>Evaluate a design using the specified quality metrics.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.extend_design.html#obsidian.experiment.advanced_design.extend_design" title="obsidian.experiment.advanced_design.extend_design"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend_design</span></code></a>(existing_design, n, ...[, ...])</p></td>
+<td><p>Extend an existing design by finding the best set of <code class="docutils literal notranslate"><span class="pre">n</span></code> new samples from among multiple candidates evaluated in parallel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.find_best_design_parallel.html#obsidian.experiment.advanced_design.find_best_design_parallel" title="obsidian.experiment.advanced_design.find_best_design_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_best_design_parallel</span></code></a>(n, n_samples, ...)</p></td>
+<td><p>Generate <code class="docutils literal notranslate"><span class="pre">n</span></code> candidate designs in parallel and return the one with the highest composite score.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.generate_and_evaluate.html#obsidian.experiment.advanced_design.generate_and_evaluate" title="obsidian.experiment.advanced_design.generate_and_evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_and_evaluate</span></code></a>(seed, n_samples, ...)</p></td>
+<td><p>Generate a single candidate design and compute its quality metrics.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.infer_column_types.html#obsidian.experiment.advanced_design.infer_column_types" title="obsidian.experiment.advanced_design.infer_column_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_column_types</span></code></a>(df)</p></td>
+<td><p>Canonical column-type rule: object/category dtype -&gt; categorical, else numerical.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.infer_subparam_mapping.html#obsidian.experiment.advanced_design.infer_subparam_mapping" title="obsidian.experiment.advanced_design.infer_subparam_mapping"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_subparam_mapping</span></code></a>(conditional_subparameters)</p></td>
+<td><p>Infer the subparameter mapping from <code class="docutils literal notranslate"><span class="pre">conditional_subparameters</span></code> by finding categorical variables that have exactly one subparameter across all their levels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.non_uniform_lhs_categorical.html#obsidian.experiment.advanced_design.non_uniform_lhs_categorical" title="obsidian.experiment.advanced_design.non_uniform_lhs_categorical"><code class="xref py py-obj docutils literal notranslate"><span class="pre">non_uniform_lhs_categorical</span></code></a>(level_dict, ...)</p></td>
+<td><p>Draw LHS-stratified categorical samples using inverse-transform sampling with per-level frequency weights.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.optimize_category_assignment_parallel.html#obsidian.experiment.advanced_design.optimize_category_assignment_parallel" title="obsidian.experiment.advanced_design.optimize_category_assignment_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_category_assignment_parallel</span></code></a>(...[, ...])</p></td>
+<td><p>Search for the category assignment (for the variable that has a subparam mapping) that minimizes the maximum inter-category correlation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.plot_correlation_matrix.html#obsidian.experiment.advanced_design.plot_correlation_matrix" title="obsidian.experiment.advanced_design.plot_correlation_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_correlation_matrix</span></code></a>(design, categorical_vars)</p></td>
+<td><p>Plot a heatmap of the mixed correlation matrix.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.plot_design_histograms.html#obsidian.experiment.advanced_design.plot_design_histograms" title="obsidian.experiment.advanced_design.plot_design_histograms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_design_histograms</span></code></a>(design, ...[, ...])</p></td>
+<td><p>Plot histograms for continuous parameters and bar charts for categorical variables, with stacked histograms for subparameters colored by parent category.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.plot_design_quality_evolution.html#obsidian.experiment.advanced_design.plot_design_quality_evolution" title="obsidian.experiment.advanced_design.plot_design_quality_evolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_design_quality_evolution</span></code></a>(metrics_df)</p></td>
+<td><p>Plot per-metric bar charts over trial seeds to visualize design quality evolution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.plot_mds.html#obsidian.experiment.advanced_design.plot_mds" title="obsidian.experiment.advanced_design.plot_mds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_mds</span></code></a>(design, continuous_params_keys, ...)</p></td>
+<td><p>Plot an MDS projection of the continuous and subparameter columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.plot_pca.html#obsidian.experiment.advanced_design.plot_pca" title="obsidian.experiment.advanced_design.plot_pca"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_pca</span></code></a>(design, continuous_params_keys, ...)</p></td>
+<td><p>Plot a PCA projection of the continuous and subparameter columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.plot_umap.html#obsidian.experiment.advanced_design.plot_umap" title="obsidian.experiment.advanced_design.plot_umap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_umap</span></code></a>(design, continuous_params_keys, ...)</p></td>
+<td><p>Plot a UMAP projection of the continuous and subparameter columns.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.sample_continuous_lhs.html#obsidian.experiment.advanced_design.sample_continuous_lhs" title="obsidian.experiment.advanced_design.sample_continuous_lhs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_continuous_lhs</span></code></a>(continuous_params, ...)</p></td>
+<td><p>Draw LHS samples for all continuous parameters, mapping [0, 1) uniform samples to the discrete level sets defined in <code class="docutils literal notranslate"><span class="pre">continuous_params</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.sample_design.html#obsidian.experiment.advanced_design.sample_design" title="obsidian.experiment.advanced_design.sample_design"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_design</span></code></a>(seed, n_samples, ...[, ...])</p></td>
+<td><p>Generate a complete experimental design by LHS-sampling all continuous and categorical parameters.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="obsidian.experiment.advanced_design.AdvExpDesigner.html#obsidian.experiment.advanced_design.AdvExpDesigner" title="obsidian.experiment.advanced_design.AdvExpDesigner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AdvExpDesigner</span></code></a>([continuous_params, ...])</p></td>
+<td><p>An advanced experimental designer that extends ExpDesigner with support for biased/constrained sampling, categorical subparameters, and design quality metrics.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">obsidian.experiment.advanced_design.</span></span><span class="sig-name descname"><span class="pre">AdvExpDesigner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">continuous_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditional_subparameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subparam_mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_category_trials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corr_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="obsidian.experiment.design.ExpDesigner.html#obsidian.experiment.design.ExpDesigner" title="obsidian.experiment.design.ExpDesigner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpDesigner</span></code></a></p>
+<p>An advanced experimental designer that extends ExpDesigner with support for
+biased/constrained sampling, categorical subparameters, and design quality metrics.</p>
+<p>Extends ExpDesigner so it can be passed directly to Campaign as the <code class="docutils literal notranslate"><span class="pre">designer</span></code>
+argument. When <code class="docutils literal notranslate"><span class="pre">X_space</span></code> is provided, <code class="docutils literal notranslate"><span class="pre">campaign.initialize()</span></code> will call
+<code class="docutils literal notranslate"><span class="pre">generate_design()</span></code> and honor all biases and constraints defined in
+<code class="docutils literal notranslate"><span class="pre">continuous_params</span></code> and <code class="docutils literal notranslate"><span class="pre">conditional_subparameters</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.compare_frequencies">
+<span class="sig-name descname"><span class="pre">compare_frequencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.compare_frequencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.compare_frequencies" title="Link to this definition">#</a></dt>
+<dd><p>Compares the empirical frequencies of categorical variables in the design
+with the expected frequencies defined in <code class="docutils literal notranslate"><span class="pre">conditional_subparameters</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design</strong> – The design DataFrame to analyze.</p></li>
+<li><p><strong>verbose</strong> – If True, print the frequency table to stdout. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A DataFrame with columns</dt><dd><p><code class="docutils literal notranslate"><span class="pre">['categorical_var',</span> <span class="pre">'level',</span> <span class="pre">'expected',</span> <span class="pre">'empirical']</span></code> containing
+one row per level of each categorical variable.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.evaluate_design">
+<span class="sig-name descname"><span class="pre">evaluate_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_optimize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.evaluate_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.evaluate_design" title="Link to this definition">#</a></dt>
+<dd><p>Evaluates the quality of the given design based on specified metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design</strong> – The design DataFrame to evaluate.</p></li>
+<li><p><strong>metrics_to_optimize</strong> – List of metric names to evaluate. Defaults to all
+metrics in <code class="docutils literal notranslate"><span class="pre">DEFAULT_METRICS</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Computed metric values keyed by metric name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.extend_design">
+<span class="sig-name descname"><span class="pre">extend_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">existing_design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_optimize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximize_metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.extend_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.extend_design" title="Link to this definition">#</a></dt>
+<dd><p>Extends an existing design by appending the best-scoring set of new samples
+chosen from multiple candidates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>existing_design</strong> – The existing design DataFrame to extend.</p></li>
+<li><p><strong>n</strong> – Number of new samples to add.</p></li>
+<li><p><strong>seed</strong> – Optional random seed for reproducibility.</p></li>
+<li><p><strong>n_trials</strong> – Number of candidate extensions to evaluate. Defaults to 10.</p></li>
+<li><p><strong>metrics_to_optimize</strong> – List of metric names to include in scoring. Defaults
+to all seven standard metrics.</p></li>
+<li><p><strong>maximize_metrics</strong> – List of booleans indicating whether to maximize each
+metric. Defaults to <code class="docutils literal notranslate"><span class="pre">[True,</span> <span class="pre">False,</span> <span class="pre">False,</span> <span class="pre">...]</span></code>.</p></li>
+<li><p><strong>max_workers</strong> – Number of parallel worker processes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">(extended_design,</span> <span class="pre">metrics_summary)</span></code> where <code class="docutils literal notranslate"><span class="pre">extended_design</span></code></dt><dd><p>contains all original rows plus the best new rows, and
+<code class="docutils literal notranslate"><span class="pre">metrics_summary</span></code> is a pd.DataFrame of candidate scores.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.generate_design">
+<span class="sig-name descname"><span class="pre">generate_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.generate_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.generate_design" title="Link to this definition">#</a></dt>
+<dd><p>Generates a design by sampling from the given parameter space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – Random seed for reproducibility.</p></li>
+<li><p><strong>n_samples</strong> – Number of samples to generate.</p></li>
+<li><p><strong>optimize_categories</strong> – Whether to optimize categorical assignments to reduce
+inter-category correlation. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated sample design.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">optimize_categories=True</span></code>, only the first subparam-mapped category
+(as determined by <code class="docutils literal notranslate"><span class="pre">subparam_mapping</span></code>) is optimized. Additional categorical
+variables are assigned with a single random draw.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_initial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'LHS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_custom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.initialize" title="Link to this definition">#</a></dt>
+<dd><p>Generates an initial experimental design honoring all biases and constraints
+defined in <code class="docutils literal notranslate"><span class="pre">continuous_params</span></code> and <code class="docutils literal notranslate"><span class="pre">conditional_subparameters</span></code>.</p>
+<p>Overrides <code class="docutils literal notranslate"><span class="pre">ExpDesigner.initialize()</span></code> so that a Campaign whose <code class="docutils literal notranslate"><span class="pre">designer</span></code>
+is an AdvExpDesigner will automatically use biased/constrained sampling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>m_initial</strong> – Number of initial experiments. Defaults to <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">n_dim</span></code> when
+X_space is provided, or raises if neither is available.</p></li>
+<li><p><strong>method</strong> – <p>Sampling strategy.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">'LHS'</span></code> (default): calls <code class="docutils literal notranslate"><span class="pre">generate_design()</span></code> with LHS + biases.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Optimized'</span></code>: calls <code class="docutils literal notranslate"><span class="pre">optimize_design()</span></code> to maximize D-optimality
+across multiple trials (slower but higher-quality).</p></li>
+</ul>
+</p></li>
+<li><p><strong>sample_custom</strong> – Ignored; retained for API compatibility with ExpDesigner.</p></li>
+<li><p><strong>optimize_categories</strong> – Whether to optimize categorical assignments to minimize
+correlation (passed to <code class="docutils literal notranslate"><span class="pre">generate_design()</span></code>). Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated design.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If m_initial cannot be inferred (no X_space and no m_initial
+    given).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.load_state">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="obsidian.experiment.advanced_design.AdvExpDesigner.html#obsidian.experiment.advanced_design.AdvExpDesigner" title="obsidian.experiment.advanced_design.AdvExpDesigner"><span class="pre">AdvExpDesigner</span></a></span></span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.load_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.load_state" title="Link to this definition">#</a></dt>
+<dd><p>Reconstruct an <a class="reference internal" href="obsidian.experiment.advanced_design.AdvExpDesigner.html#obsidian.experiment.advanced_design.AdvExpDesigner" title="obsidian.experiment.advanced_design.AdvExpDesigner"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvExpDesigner</span></code></a> from a saved state dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj_dict</strong> (<em>dict</em>) – Output of <a class="reference internal" href="obsidian.experiment.advanced_design.AdvExpDesigner.html#obsidian.experiment.advanced_design.AdvExpDesigner.save_state" title="obsidian.experiment.advanced_design.AdvExpDesigner.save_state"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save_state()</span></code></a>.</p></li>
+<li><p><strong>X_space</strong> – Override for the parameter space. When provided
+(typically by <code class="xref py py-meth docutils literal notranslate"><span class="pre">Campaign.load_state()</span></code>), the X_space payload
+in <code class="docutils literal notranslate"><span class="pre">obj_dict</span></code> is ignored. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Override for the seed. When provided,
+<code class="docutils literal notranslate"><span class="pre">obj_dict['seed']</span></code> is ignored. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new designer instance equivalent to the saved one.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="obsidian.experiment.advanced_design.AdvExpDesigner.html#obsidian.experiment.advanced_design.AdvExpDesigner" title="obsidian.experiment.advanced_design.AdvExpDesigner">AdvExpDesigner</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.optimize_design">
+<span class="sig-name descname"><span class="pre">optimize_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_trials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics_to_optimize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximize_metrics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.optimize_design"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.optimize_design" title="Link to this definition">#</a></dt>
+<dd><p>Optimizes the design by generating multiple candidates and selecting the best
+according to a composite score over the specified metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_trials</strong> – Number of candidate designs to generate and evaluate.</p></li>
+<li><p><strong>n_samples</strong> – Number of experiments in each candidate design.</p></li>
+<li><p><strong>metrics_to_optimize</strong> – List of metric names to include in the composite
+score. Defaults to all seven standard metrics.</p></li>
+<li><p><strong>maximize_metrics</strong> – List of booleans, one per metric, indicating whether
+each metric should be maximized (True) or minimized (False). Defaults
+to <code class="docutils literal notranslate"><span class="pre">[True,</span> <span class="pre">False,</span> <span class="pre">False,</span> <span class="pre">...]</span></code> — maximize D-optimality only.</p></li>
+<li><p><strong>seed_start</strong> – Starting random seed for candidate generation. Defaults to 0.</p></li>
+<li><p><strong>max_workers</strong> – Maximum number of parallel worker processes. Defaults to
+<code class="docutils literal notranslate"><span class="pre">None</span></code> (uses all available CPUs).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">(best_design,</span> <span class="pre">metrics_df)</span></code> where <code class="docutils literal notranslate"><span class="pre">best_design</span></code> is the</dt><dd><p>highest-scoring pd.DataFrame and <code class="docutils literal notranslate"><span class="pre">metrics_df</span></code> is a pd.DataFrame
+summarizing all candidates.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.plot_correlation">
+<span class="sig-name descname"><span class="pre">plot_correlation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.plot_correlation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_correlation" title="Link to this definition">#</a></dt>
+<dd><p>Plots a mixed correlation matrix heatmap for the design’s parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>design</strong> – The design DataFrame to visualize.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.plot_histograms">
+<span class="sig-name descname"><span class="pre">plot_histograms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.plot_histograms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_histograms" title="Link to this definition">#</a></dt>
+<dd><p>Plots histograms (continuous) and bar charts (categorical) for each parameter
+in the design.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>design</strong> – The design DataFrame to visualize.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.plot_mds">
+<span class="sig-name descname"><span class="pre">plot_mds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.plot_mds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_mds" title="Link to this definition">#</a></dt>
+<dd><p>Performs Multidimensional Scaling (MDS) on the continuous parameters and
+plots the two-dimensional embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design</strong> – The design DataFrame to analyze.</p></li>
+<li><p><strong>hue</strong> – Name of a categorical column to use for color-coding points.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.plot_pca">
+<span class="sig-name descname"><span class="pre">plot_pca</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.plot_pca"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_pca" title="Link to this definition">#</a></dt>
+<dd><p>Performs PCA on the continuous parameters and plots the first two components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design</strong> – The design DataFrame to analyze.</p></li>
+<li><p><strong>hue</strong> – Name of a categorical column to use for color-coding points.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.plot_quality_evolution">
+<span class="sig-name descname"><span class="pre">plot_quality_evolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.plot_quality_evolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_quality_evolution" title="Link to this definition">#</a></dt>
+<dd><p>Plots per-metric bar charts over trial seeds to visualize design quality
+evolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>metrics_df</strong> – DataFrame containing trial metrics (must include a ‘seed’
+column).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.plot_umap">
+<span class="sig-name descname"><span class="pre">plot_umap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.plot_umap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_umap" title="Link to this definition">#</a></dt>
+<dd><p>Performs UMAP dimensionality reduction on the continuous parameters and
+plots the two-dimensional embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design</strong> – The design DataFrame to analyze.</p></li>
+<li><p><strong>hue</strong> – Name of a categorical column to use for color-coding points.</p></li>
+<li><p><strong>verbose</strong> – Whether to show UMAP’s internal progress log. Defaults to
+False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="obsidian.experiment.advanced_design.AdvExpDesigner.save_state">
+<span class="sig-name descname"><span class="pre">save_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/obsidian/experiment/advanced_design.html#AdvExpDesigner.save_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#obsidian.experiment.advanced_design.AdvExpDesigner.save_state" title="Link to this definition">#</a></dt>
+<dd><p>Save the designer state to a JSON-serializable dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>JSON-safe payload containing every constructor argument plus</dt><dd><p>the class name for polymorphic dispatch.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="obsidian.experiment.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">experiment</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="obsidian.experiment.advanced_design.assign_conditional_subparameter.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">assign_conditional_subparameter</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.compare_frequencies"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.compare_frequencies()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.evaluate_design"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.evaluate_design()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.extend_design"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.extend_design()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.generate_design"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.generate_design()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.initialize"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.initialize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.load_state"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.load_state()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.optimize_design"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.optimize_design()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_correlation"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.plot_correlation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_histograms"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.plot_histograms()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_mds"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.plot_mds()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_pca"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.plot_pca()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_quality_evolution"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.plot_quality_evolution()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.plot_umap"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.plot_umap()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obsidian.experiment.advanced_design.AdvExpDesigner.save_state"><code class="docutils literal notranslate"><span class="pre">AdvExpDesigner.save_state()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/build/apidocs/obsidian.experiment.advanced_design.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

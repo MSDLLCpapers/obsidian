@@ -1,0 +1,86 @@
+DNN
+===
+
+.. currentmodule:: obsidian.surrogates.custom_torch
+
+.. autoclass:: DNN
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DNN.__init__
+      ~DNN.add_module
+      ~DNN.apply
+      ~DNN.bfloat16
+      ~DNN.buffers
+      ~DNN.children
+      ~DNN.compile
+      ~DNN.condition_on_observations
+      ~DNN.construct_inputs
+      ~DNN.cpu
+      ~DNN.cuda
+      ~DNN.double
+      ~DNN.eval
+      ~DNN.extra_repr
+      ~DNN.fantasize
+      ~DNN.float
+      ~DNN.forward
+      ~DNN.get_buffer
+      ~DNN.get_extra_state
+      ~DNN.get_parameter
+      ~DNN.get_submodule
+      ~DNN.half
+      ~DNN.ipu
+      ~DNN.load_state_dict
+      ~DNN.modules
+      ~DNN.named_buffers
+      ~DNN.named_children
+      ~DNN.named_modules
+      ~DNN.named_parameters
+      ~DNN.parameters
+      ~DNN.posterior
+      ~DNN.register_backward_hook
+      ~DNN.register_buffer
+      ~DNN.register_forward_hook
+      ~DNN.register_forward_pre_hook
+      ~DNN.register_full_backward_hook
+      ~DNN.register_full_backward_pre_hook
+      ~DNN.register_load_state_dict_post_hook
+      ~DNN.register_module
+      ~DNN.register_parameter
+      ~DNN.register_state_dict_pre_hook
+      ~DNN.requires_grad_
+      ~DNN.set_extra_state
+      ~DNN.share_memory
+      ~DNN.state_dict
+      ~DNN.subset_output
+      ~DNN.to
+      ~DNN.to_empty
+      ~DNN.train
+      ~DNN.transform_inputs
+      ~DNN.type
+      ~DNN.xpu
+      ~DNN.zero_grad
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DNN.T_destination
+      ~DNN.batch_shape
+      ~DNN.call_super_init
+      ~DNN.dtypes_of_buffers
+      ~DNN.dump_patches
+      ~DNN.num_outputs
+      ~DNN.training
+   
+   

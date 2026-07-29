@@ -1,0 +1,6 @@
+plot\_design\_histograms
+========================
+
+.. currentmodule:: obsidian.experiment.advanced_design
+
+.. autofunction:: plot_design_histograms

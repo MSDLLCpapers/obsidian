@@ -1,0 +1,26 @@
+﻿campaign
+========
+
+.. automodule:: obsidian.campaign
+
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template: module.rst
+   :recursive:
+
+
+   analysis
+
+   campaign
+
+   characterization
+
+   explainer
+
+

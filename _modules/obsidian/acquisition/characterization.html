@@ -1,0 +1,1255 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>obsidian.acquisition.characterization &#8212; obsidian  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mycss.css?v=6334c041" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-BPMFV2DMZE"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-BPMFV2DMZE');
+            </script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/obsidian/acquisition/characterization';</script>
+    <link rel="icon" href="../../../_static/obsidian_logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/obsidian_logo.svg" class="logo__image only-light" alt="obsidian - Home"/>
+    <script>document.write(`<img src="../../../_static/obsidian_logo_dark.svg" class="logo__image only-dark" alt="obsidian - Home"/>`);</script>
+  
+  
+    <p class="title logo__title">obsidian APO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/MSDLLCpapers/obsidian/">
+    GitHub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/api_docs.html">
+    API Documentation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/wiki.html">
+    Wiki
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../stubs/reference.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MSDLLCpapers/obsidian/" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/obsidian-apo/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">obsidian.acq...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for obsidian.acquisition.characterization</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCAcquisitionFunction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.acquisition.multi_objective.objective</span><span class="w"> </span><span class="kn">import</span> <span class="n">IdentityMCMultiOutputObjective</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.models.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.sampling.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCSampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">botorch.utils.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">t_batch_mode_transform</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span> <span class="n">TORCH_DTYPE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..parameters.targets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Target</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..rng</span><span class="w"> </span><span class="kn">import</span> <span class="n">derive_seed</span><span class="p">,</span> <span class="n">get_new_seed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParserContext</span><span class="p">,</span> <span class="n">default_sampler</span>
+
+<span class="n">_SYNC_WARNING</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Note: Synchronized beta across objectives is enabled. Empirically, synced beta performs worse &quot;</span>
+    <span class="s2">&quot;than independent per-objective beta sampling. If you are willing to provide a datapoint &quot;</span>
+    <span class="s2">&quot;to support or dispute this observation, please contact the developers.&quot;</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_thresholds</span><span class="p">(</span>
+    <span class="n">threshold_spec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Target</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve threshold specification into a list of transformed threshold values.</span>
+
+<span class="sd">    Supported formats:</span>
+<span class="sd">    1. number - for single-objective (len(targets) == 1)</span>
+<span class="sd">    2. list - for multi-objective, must have len(list) == len(targets)</span>
+<span class="sd">    3. dict {target_name: value} - keys must exactly match all target names</span>
+<span class="sd">       (warns if single-objective since redundant)</span>
+<span class="sd">    4. None - use target.threshold from all Target objects (encouraged)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        threshold_spec: Threshold value(s) from hyperparameters, or None</span>
+<span class="sd">        targets: List of Target objects from context</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of transformed threshold values, one per target, in same order as targets</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If threshold specification is invalid or incompatible with targets</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># None</span>
+    <span class="k">if</span> <span class="n">threshold_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_threshold</span><span class="p">(</span><span class="n">transformed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;No threshold specified for target &#39;</span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; and target.threshold is not set. &quot;</span>
+                    <span class="s2">&quot;Either pass threshold in hyperparameters or set threshold on Target object.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;Explicit threshold specification in hyperparameters is not recommended. For better modularity and &quot;</span>
+        <span class="s2">&quot;encapsulation, please set threshold values directly on Target objects. This allows the acquisition function &quot;</span>
+        <span class="s2">&quot;to automatically use the correct thresholds without needing to pass them through hyperparameters, and keeps &quot;</span>
+        <span class="s2">&quot;the acquisition function decoupled from specific target names or ordering.&quot;</span><span class="p">,</span>
+        <span class="ne">UserWarning</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Dict {target_name: threshold_value}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># Warn if single-objective (redundant)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Using dict for single-objective threshold is redundant. Use a number instead.&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Validate: keys must exactly match all target names</span>
+        <span class="n">target_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">}</span>
+        <span class="n">spec_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">threshold_spec</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">spec_names</span> <span class="o">!=</span> <span class="n">target_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Threshold dict keys </span><span class="si">{</span><span class="n">spec_names</span><span class="si">}</span><span class="s2"> do not exactly match target names </span><span class="si">{</span><span class="n">target_names</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;All targets must have thresholds specified.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Return in same order as targets list, transformed</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">transform_f</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">])</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">]</span>
+
+    <span class="c1"># List of numbers</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Threshold list has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">)</span><span class="si">}</span><span class="s2"> values but </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="si">}</span><span class="s2"> targets. &quot;</span>
+                <span class="s2">&quot;Must provide exactly one threshold per target.&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># Transform all thresholds</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">target</span><span class="o">.</span><span class="n">transform_f</span><span class="p">(</span><span class="n">t_val</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">t_val</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">,</span> <span class="n">targets</span><span class="p">)]</span>
+
+    <span class="c1"># Single number (single-objective)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Scalar threshold </span><span class="si">{</span><span class="n">threshold_spec</span><span class="si">}</span><span class="s2"> is only valid for single-target characterization, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span><span class="si">}</span><span class="s2"> targets. Provide a list or dict with one threshold per target.&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># Transform the threshold</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transform_f</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid threshold type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">threshold_spec</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. Must be number, list, dict, or None.&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="chi2_sampler">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.characterization.html#obsidian.acquisition.characterization.chi2_sampler">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">chi2_sampler</span><span class="p">(</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">TORCH_DTYPE</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sample from chi-squared distribution with 2 degrees of freedom.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n: Number of samples to draw</span>
+<span class="sd">        generator: Random number generator for reproducibility</span>
+<span class="sd">        device: Device to create tensor on</span>
+<span class="sd">        dtype: Data type of output tensor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tensor of shape (n,) if n &gt; 1, scalar if n == 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">,)</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">()</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">clamp_min</span><span class="p">(</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">U</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sample_beta</span><span class="p">(</span>
+    <span class="n">m_batch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_targets</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">sync_beta</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample beta values for single-objective (using sync_beta) or multi-objective randomized straddle.</span>
+
+<span class="sd">    Returns β ~ χ²₂ directly, following the GP-UCB convention.</span>
+<span class="sd">    The σ-multiplier used by the kernel is √β.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sync_beta</span><span class="p">:</span>
+        <span class="c1"># (m_batch,) shape for both single-objective and multi-objective cases</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">chi2_sampler</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">m_batch</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_targets</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">m_batch</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">m_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Full independence: (m_batch, num_targets) shape</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">chi2_sampler</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">m_batch</span> <span class="o">*</span> <span class="n">num_targets</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m_batch</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">m_batch</span><span class="p">,</span> <span class="n">num_targets</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">beta</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_beta</span><span class="p">(</span>
+    <span class="n">beta_in</span><span class="p">,</span>
+    <span class="n">m_batch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_targets</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">generator</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span>
+    <span class="n">sync_beta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize user-provided beta values or sample automatically if None.</span>
+<span class="sd">    ensuring correct shape and broadcasting for both qRandomizedStraddle and qMultiRandomizedStraddle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Single-objective is inherently synced, normalize the flag</span>
+    <span class="k">if</span> <span class="n">num_targets</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">sync_beta</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">sync_beta</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="n">_SYNC_WARNING</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">beta_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Note: User-provided beta values. Users are solely responsible for this choice.&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># User provided explicit beta value(s)</span>
+        <span class="n">beta_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">beta_in</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">TORCH_DTYPE</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">n_values</span> <span class="o">=</span> <span class="n">beta_tensor</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
+
+        <span class="c1"># for multi-objective case,</span>
+        <span class="c1"># any 0D, (num_targets), (q, 1), (q, num_targets) shape can work with broadcasting rules</span>
+        <span class="c1"># For single-objective case</span>
+        <span class="c1"># any 0D, (q) shape can work with broadcasting rules</span>
+        <span class="k">if</span> <span class="n">n_values</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Scalar beta - use as-is</span>
+            <span class="k">return</span> <span class="n">beta_tensor</span>
+
+        <span class="k">if</span> <span class="n">m_batch</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Multi-objective, batched</span>
+            <span class="k">if</span> <span class="n">num_targets</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Full (q, num_targets) specification</span>
+                <span class="k">if</span> <span class="n">n_values</span> <span class="o">==</span> <span class="n">m_batch</span> <span class="o">*</span> <span class="n">num_targets</span><span class="p">:</span>
+                    <span class="c1"># return as (m_batch, num_targets) for broadcasting in forward pass</span>
+                    <span class="k">return</span> <span class="n">beta_tensor</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">m_batch</span><span class="p">,</span> <span class="n">num_targets</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">n_values</span> <span class="o">==</span> <span class="n">m_batch</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">sync_beta</span><span class="p">:</span>
+                        <span class="n">warn</span><span class="p">(</span>
+                            <span class="s2">&quot;Using the same beta for all targets, but m_batch &gt; 1. If you intended to have different&quot;</span>
+                            <span class="s2">&quot; betas per target, please provide num_targets values or set sync_objective_beta=True.&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">return</span> <span class="n">beta_tensor</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">m_batch</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Single-objective, batched</span>
+            <span class="k">elif</span> <span class="n">n_values</span> <span class="o">==</span> <span class="n">m_batch</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">beta_tensor</span>
+        <span class="k">elif</span> <span class="n">n_values</span> <span class="o">==</span> <span class="n">num_targets</span><span class="p">:</span>
+            <span class="c1"># Multi-objective, non-batched</span>
+            <span class="k">return</span> <span class="n">beta_tensor</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;beta must be scalar, shape (</span><span class="si">{</span><span class="n">m_batch</span><span class="si">}</span><span class="s2">,), (</span><span class="si">{</span><span class="n">num_targets</span><span class="si">}</span><span class="s2">,), or (</span><span class="si">{</span><span class="n">m_batch</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">num_targets</span><span class="si">}</span><span class="s2">), got&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">n_values</span><span class="si">}</span><span class="s2"> values&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_sample_beta</span><span class="p">(</span><span class="n">m_batch</span><span class="p">,</span> <span class="n">num_targets</span><span class="p">,</span> <span class="n">sync_beta</span><span class="p">,</span> <span class="n">generator</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_base_parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">hps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">ParserContext</span><span class="p">):</span>
+    <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hps</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span>
+    <span class="c1"># Only forward device when context actually provides one</span>
+    <span class="k">if</span> <span class="n">context</span><span class="p">:</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;device&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;device&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">device</span>
+    <span class="c1"># Prefer generator from hps if provided, otherwise don&#39;t set (stays None)</span>
+    <span class="c1"># This allows fresh generator to inherit global RNG seed from context manager.</span>
+    <span class="c1"># `generator` is a declared hp only for the randomized straddle variants, so this</span>
+    <span class="c1"># block is reached only for them; forward the data-state fingerprint (n_obs) so the</span>
+    <span class="c1"># beta draw varies across iterations while staying idempotent within a suggest().</span>
+    <span class="k">if</span> <span class="s2">&quot;generator&quot;</span> <span class="ow">in</span> <span class="n">hps</span><span class="p">:</span>
+        <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;generator&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hps</span><span class="p">[</span><span class="s2">&quot;generator&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;n_obs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;n_obs&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aq_kwargs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_base_single_parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">hps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">ParserContext</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Context is required for parsing characterization functions.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Validate single-objective</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Single-objective characterization requires exactly one target, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Parse and transform threshold (returns list of transformed values)</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="n">_parse_thresholds</span><span class="p">(</span><span class="n">hps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">),</span> <span class="n">context</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Assign single transformed threshold value</span>
+    <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thresholds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">_base_parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">,</span> <span class="n">hps</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_base_multi_parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">hps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">ParserContext</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Context is required for parsing characterization functions.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Parse and transform thresholds (returns list of transformed values)</span>
+    <span class="n">thresholds_transformed</span> <span class="o">=</span> <span class="n">_parse_thresholds</span><span class="p">(</span><span class="n">hps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;threshold&quot;</span><span class="p">),</span> <span class="n">context</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">])</span>
+
+    <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">thresholds_transformed</span>
+    <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;k_decay&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;k_decay&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;tau&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tau&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;kernel_reduction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kernel_reduction&quot;</span><span class="p">,</span> <span class="s2">&quot;softmin&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_base_parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">,</span> <span class="n">hps</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_straddle_kernel</span><span class="p">(</span>
+    <span class="n">obj</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">clamp_zero</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the straddle kernel component: max(0, k * σ - |μ - h|)</span>
+
+<span class="sd">    This is the &quot;boundary-seeking&quot; part of the straddle acquisition function that</span>
+<span class="sd">    seeks high uncertainty near the threshold boundary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: Objective samples with shape (num_samples, batch_shape, q, [num_targets])</span>
+<span class="sd">        k: Confidence parameter. Can be:</span>
+<span class="sd">            - Scalar: same k for all points</span>
+<span class="sd">            - Shape (num_targets,): per-target k</span>
+<span class="sd">            - Shape (1, 1, q): per-q-point k (for single-target randomized straddle)</span>
+<span class="sd">            - Shape (1, 1, q, 1): per-q-point k broadcasted to all targets</span>
+<span class="sd">            - Shape (1, 1, 1, num_targets): per-target k</span>
+<span class="sd">            - Shape (1, 1, q, num_targets): full per-point-per-target k</span>
+<span class="sd">        h: Threshold values, scalar or shape (num_targets,)</span>
+<span class="sd">        clamp_zero: Whether to clamp negative values to zero</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Kernel values with same shape as obj</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute mean and deviation</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 1 x batch_shape x q x [num_targets]</span>
+    <span class="n">dev</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>  <span class="c1"># num_samples x batch_shape x q x [num_targets]</span>
+    <span class="n">dist_to_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean</span> <span class="o">-</span> <span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>  <span class="c1"># 1 x batch_shape x q x [num_targets]</span>
+
+    <span class="c1"># Straddle kernel: exploration bonus minus distance to threshold</span>
+    <span class="n">kernel</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">dev</span> <span class="o">-</span> <span class="n">dist_to_t</span>  <span class="c1"># num_samples x batch_shape x q x [num_targets]</span>
+
+    <span class="k">if</span> <span class="n">clamp_zero</span><span class="p">:</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">kernel</span>
+
+
+<div class="viewcode-block" id="qStraddle">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.characterization.html#obsidian.acquisition.characterization.qStraddle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qStraddle</span><span class="p">(</span><span class="n">MCAcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    qStraddle implements the classic &quot;straddle&quot; acquisition function for level set estimation (LSE)</span>
+<span class="sd">    with Monte Carlo sampling in BoTorch style.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    Bryan, B., Nichol, R. C., Genovese, C. R., Schneider, J., Miller, C. J., &amp; Wasserman, L. (2005).</span>
+<span class="sd">    &quot;Active Learning For Identifying Function Threshold Boundaries.&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">beta</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">MCSampler</span> <span class="o">=</span> <span class="n">default_sampler</span><span class="p">,</span>
+        <span class="n">objective</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">TORCH_DTYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="c1"># β is the squared confidence parameter (GP-UCB convention)</span>
+        <span class="k">if</span> <span class="n">beta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.96</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="c1"># Any no more than 3D shape that can be broadcasted with (a, b, q) is valid for beta,</span>
+        <span class="c1"># Example: scalar, (q,), (1, q)</span>
+        <span class="c1"># However, for non-randomized flavor, we do not anticipate users to use anything than a scalar</span>
+        <span class="c1"># As for randomized cases, `_normalize_beta` will ensure correct shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clamp_zero</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_base_single_parser</span><span class="p">)</span>
+
+<div class="viewcode-block" id="qStraddle.forward">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.characterization.html#obsidian.acquisition.characterization.qStraddle.forward">[docs]</a>
+    <span class="nd">@t_batch_mode_transform</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">samples</span><span class="p">,</span> <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_samples_and_objectives</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="c1"># obj: num_samples x batch_shape x q</span>
+
+        <span class="c1"># Compute straddle kernel</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">_compute_straddle_kernel</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clamp_zero</span><span class="p">)</span>
+
+        <span class="c1"># Average over samples, then max over q</span>
+        <span class="n">acq</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">return</span> <span class="n">acq</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="qRandomizedStraddle">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.characterization.html#obsidian.acquisition.characterization.qRandomizedStraddle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qRandomizedStraddle</span><span class="p">(</span><span class="n">qStraddle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    qRandomizedStraddle implements the randomized straddle acquisition for level set estimation (LSE),</span>
+<span class="sd">    replacing the fixed confidence parameter with a chi-squared random draw and clipping the score at zero.</span>
+
+<span class="sd">    Following the UCB/LSE convention, ``beta`` is the **squared** confidence</span>
+<span class="sd">    parameter; the multiplier used by the kernel is √β.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: A fitted single-output GP model.</span>
+<span class="sd">        threshold: The target threshold value for level set estimation.</span>
+<span class="sd">        beta: Optional squared confidence parameter(s). Can be:</span>
+<span class="sd">            - None: Sample β ~ χ²₂ (default; the multiplier √β is then ~ √χ²₂)</span>
+<span class="sd">            - Scalar: Use single β for all q points</span>
+<span class="sd">            - 1D tensor of shape (q,): Per-q-point β for batch optimization</span>
+<span class="sd">              (typically pre-sampled by the parser when m_batch &gt; 1)</span>
+<span class="sd">        generator: Random number generator for reproducibility when sampling beta.</span>
+<span class="sd">        device: Device to create tensors on.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        Inatsu, R., Abe, K., &amp; Nishikawa, M. (2024).</span>
+<span class="sd">        &quot;Active Learning for Level Set Estimation Using Randomized Straddle Algorithms.&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">MCSampler</span> <span class="o">=</span> <span class="n">default_sampler</span><span class="p">,</span>
+        <span class="n">objective</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">generator</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">beta</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">generator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Mix the effective RNG seed with the data-state fingerprint (n_obs) so the</span>
+            <span class="c1"># beta draw varies across iterations but is idempotent within a suggest().</span>
+            <span class="n">base</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_new_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">derive_seed</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">n_obs</span><span class="p">)</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">generator</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">_normalize_beta</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+            <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clamp_zero</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">hps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">ParserContext</span><span class="p">):</span>
+        <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;m_batch&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_base_single_parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">,</span> <span class="n">hps</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="qMultiStraddle">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.characterization.html#obsidian.acquisition.characterization.qMultiStraddle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qMultiStraddle</span><span class="p">(</span><span class="n">MCAcquisitionFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multi-target straddle acquisition using smooth masking for level set estimation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        threshold: 1D tensor or list of thresholds, one per target</span>
+<span class="sd">        beta: Confidence parameter(s) for UCB computation</span>
+<span class="sd">        k_decay: Decay rate for the smooth plateau (default: 2.0)</span>
+<span class="sd">        kernel_reduction: How to combine kernel values across targets (&quot;sum&quot;, &quot;max&quot;, or &quot;softmin&quot;)</span>
+<span class="sd">        tau: Temperature for softmin reduction (scalar, must be &gt; 0). Lower tau enforces</span>
+<span class="sd">            balanced criticality across targets (soft-AND); higher tau tolerates candidates</span>
+<span class="sd">            critical on only one target (approaches the mean). Default 0.5.</span>
+<span class="sd">        weights: Per-target weights. For &quot;sum&quot; reduction, these are direct multipliers.</span>
+<span class="sd">            For &quot;softmin&quot; reduction, these act as focus multipliers (higher = more attention</span>
+<span class="sd">            to that target). Default is uniform weights.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">beta</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">k_decay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">kernel_reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;softmin&quot;</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">MCSampler</span> <span class="o">=</span> <span class="n">default_sampler</span><span class="p">,</span>
+        <span class="n">objective</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># An objective is required if this aq is used on a multi-output model</span>
+        <span class="k">if</span> <span class="n">objective</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">num_outputs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">objective</span> <span class="o">=</span> <span class="n">IdentityMCMultiOutputObjective</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;For single-objective characterization, please use STR or RANDSTR instead.&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Validate and setup threshold</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">TORCH_DTYPE</span>
+        <span class="n">num_targets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_targets</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No thresholds provided.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">num_targets</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;For single-objective characterization, please use STR or RANDSTR instead.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">threshold</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;threshold must be a 1D tensor or list for multi-target straddle, got shape </span><span class="si">{</span><span class="n">threshold</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_targets</span> <span class="o">=</span> <span class="n">num_targets</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">weights</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_targets</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;weights must be a 1D tensor or list of length </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_targets</span><span class="si">}</span><span class="s2">, got shape </span><span class="si">{</span><span class="n">weights</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Setup beta (squared confidence parameter for UCB and kernel)</span>
+        <span class="k">if</span> <span class="n">beta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="mf">1.96</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="c1"># Any no more than 3D shape that can be broadcasted with (1, q, num_targets) is valid for beta,</span>
+        <span class="c1"># Example: scalar, (num_targets,), (q, 1), (q, num_targets)</span>
+        <span class="c1"># However, for non-randomized flavor, we do not anticipate users to use anything than a scalar</span>
+        <span class="c1"># As for randomized cases, `_normalize_beta` will ensure correct shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># k for the straddle kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+
+        <span class="c1"># k_decay for the smooth plateau mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_decay</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">k_decay</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tau</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tau must be strictly positive, got </span><span class="si">{</span><span class="n">tau</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># Kernel reduction method</span>
+        <span class="k">if</span> <span class="n">kernel_reduction</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;softmin&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kernel_reduction must be &#39;sum&#39;, &#39;max&#39; or &#39;softmin&#39;, got </span><span class="si">{</span><span class="n">kernel_reduction</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_reduction</span> <span class="o">=</span> <span class="n">kernel_reduction</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_base_multi_parser</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_softmin_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Soft-AND across per-target kernels.</span>
+
+<span class="sd">        Smoothly interpolates between the mean (tau -&gt; inf) and the minimum (tau -&gt; 0+).</span>
+<span class="sd">        Smaller tau enforces balance, so candidates critical on only one target are suppressed;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x: kernel values, shape (batch x q x num_targets), non-negative</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            weights: shape (batch x q x num_targets), sum to 1 along last dim</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Negate so softmax over scores acts as softmin over x</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="o">-</span><span class="n">x</span>  <span class="c1"># batch x q x num_targets, non-positive</span>
+
+        <span class="c1"># Apply weights as focus multiplier. Scores are non-positive, so we divide by weights</span>
+        <span class="c1"># self.weights has shape (1, num_targets), broadcast to (batch, q, num_targets)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Apply temperature</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scores</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># batch x q x num_targets</span>
+
+        <span class="k">return</span> <span class="n">w</span>
+
+<div class="viewcode-block" id="qMultiStraddle.forward">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.characterization.html#obsidian.acquisition.characterization.qMultiStraddle.forward">[docs]</a>
+    <span class="nd">@t_batch_mode_transform</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">samples</span><span class="p">,</span> <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_samples_and_objectives</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="c1"># obj: num_samples x batch_shape x q x num_targets</span>
+
+        <span class="c1"># Compute mean and std for UCB</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># batch_shape x q x num_targets</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># batch_shape x q x num_targets</span>
+
+        <span class="c1"># Compute UCB per target: μ + √β · σ</span>
+        <span class="n">ucb</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">std</span>  <span class="c1"># batch_shape x q x num_targets</span>
+
+        <span class="c1"># Distance to passing for each target: UCB - threshold</span>
+        <span class="n">d_per_target</span> <span class="o">=</span> <span class="n">ucb</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>  <span class="c1"># batch_shape x q x num_targets</span>
+
+        <span class="c1"># Worst-case distance, min across targets</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d_per_target</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># batch_shape x q</span>
+
+        <span class="c1"># Soft smooth mask: 1 if d &gt;= 0, else sech(k_decay * d)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">negative_mask</span> <span class="o">=</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">negative_mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">mask</span><span class="p">[</span><span class="n">negative_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">cosh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_decay</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">negative_mask</span><span class="p">])</span>
+
+        <span class="c1"># Compute straddle kernel per target</span>
+        <span class="n">kernel_per_target</span> <span class="o">=</span> <span class="n">_compute_straddle_kernel</span><span class="p">(</span>
+            <span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="n">clamp_zero</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>  <span class="c1"># num_samples x batch_shape x q x num_targets</span>
+
+        <span class="c1"># Average over samples</span>
+        <span class="n">kernel_per_target</span> <span class="o">=</span> <span class="n">kernel_per_target</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># batch_shape x q x num_targets</span>
+
+        <span class="c1"># Reduce across targets</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_reduction</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel_per_target</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># batch_shape x q</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_reduction</span> <span class="o">==</span> <span class="s2">&quot;softmin&quot;</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_softmin_weights</span><span class="p">(</span><span class="n">kernel_per_target</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span>
+            <span class="c1"># TODO: use einsum or tensor product</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="p">(</span><span class="n">kernel_per_target</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># batch_shape x q</span>
+
+        <span class="c1"># Apply mask to kernel</span>
+        <span class="n">acq</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">kernel</span>  <span class="c1"># batch_shape x q</span>
+
+        <span class="c1"># Max over q</span>
+        <span class="n">acq</span> <span class="o">=</span> <span class="n">acq</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>  <span class="c1"># batch_shape</span>
+
+        <span class="k">return</span> <span class="n">acq</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="qMultiRandomizedStraddle">
+<a class="viewcode-back" href="../../../build/apidocs/obsidian.acquisition.characterization.html#obsidian.acquisition.characterization.qMultiRandomizedStraddle">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">qMultiRandomizedStraddle</span><span class="p">(</span><span class="n">qMultiStraddle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multi-target randomized straddle with smooth plateau masking.</span>
+
+<span class="sd">    Extends qMultiStraddle by sampling beta independently per target from a</span>
+<span class="sd">    chi-squared distribution, following the randomized straddle algorithm.</span>
+<span class="sd">    Following GP-UCB convention, ``beta`` is the **squared** confidence parameter;</span>
+<span class="sd">    the σ-multiplier used by the kernel is √β.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        threshold: 1D tensor or list of thresholds, one per target.</span>
+<span class="sd">        beta: Squared confidence parameter(s). When sampled automatically, β ~ χ²₂.</span>
+<span class="sd">            Can be:</span>
+<span class="sd">            - None: For m_batch=1, samples independently per-target (legacy behavior).</span>
+<span class="sd">            - Scalar: Use single β for all q points and all targets.</span>
+<span class="sd">            - 1D tensor of shape (q,): Per-q-point β, same across all targets.</span>
+<span class="sd">              This is the default when m_batch &gt; 1 (sampled by parser).</span>
+<span class="sd">            - 1D tensor of shape (num_targets,): Per-target β (legacy mode).</span>
+<span class="sd">            - 2D tensor of shape (q, num_targets): Full specification.</span>
+<span class="sd">        generator: Random generator for reproducible sampling.</span>
+<span class="sd">        tau: Temperature for softmin reduction (scalar, must be &gt; 0). Lower tau enforces</span>
+<span class="sd">            balanced criticality across targets (soft-AND); higher tau tolerates candidates</span>
+<span class="sd">            critical on only one target (approaches the mean). Default 0.5.</span>
+<span class="sd">        weights: Per-target weights. For &quot;softmin&quot; reduction, acts as focus multiplier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">threshold</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">beta</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">sync_objective_beta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">k_decay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">tau</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">kernel_reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;softmin&quot;</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">MCSampler</span> <span class="o">=</span> <span class="n">default_sampler</span><span class="p">,</span>
+        <span class="n">objective</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">posterior_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">X_pending</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">generator</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_obs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DEVICE</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># Determine number of targets from threshold</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">TORCH_DTYPE</span>
+            <span class="n">threshold</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">num_targets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">generator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Mix the effective RNG seed with the data-state fingerprint (n_obs) so the</span>
+            <span class="c1"># beta draw varies across iterations but is idempotent within a suggest().</span>
+            <span class="n">base</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_new_seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">derive_seed</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">n_obs</span><span class="p">)</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gen</span> <span class="o">=</span> <span class="n">generator</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">_normalize_beta</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_targets</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">sync_objective_beta</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
+            <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span>
+            <span class="n">k_decay</span><span class="o">=</span><span class="n">k_decay</span><span class="p">,</span>
+            <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span>
+            <span class="n">kernel_reduction</span><span class="o">=</span><span class="n">kernel_reduction</span><span class="p">,</span>
+            <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+            <span class="n">objective</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+            <span class="n">posterior_transform</span><span class="o">=</span><span class="n">posterior_transform</span><span class="p">,</span>
+            <span class="n">X_pending</span><span class="o">=</span><span class="n">X_pending</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">hps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">ParserContext</span><span class="p">):</span>
+        <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;m_batch&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">aq_kwargs</span><span class="p">[</span><span class="s2">&quot;sync_objective_beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sync_objective_beta&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_base_multi_parser</span><span class="p">(</span><span class="n">aq_kwargs</span><span class="p">,</span> <span class="n">hps</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright Merck &amp; Co., Inc., Rahway, NJ, USA and its affiliates. All rights reserved..
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+advanced\_design
+================
+
+.. automodule:: obsidian.experiment.advanced_design
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :template: base.rst
+      :toctree:
+   
+      ~assign_conditional_subparameter
+      ~calculate_a_optimality
+      ~calculate_condition_number
+      ~calculate_d_optimality
+      ~calculate_max_categorical_correlation
+      ~calculate_max_continuous_correlation
+      ~calculate_max_mixed_correlation
+      ~calculate_mixed_correlation_matrix
+      ~calculate_pairwise_distance_uniformity
+      ~cramers_v_np
+      ~eta_squared_np
+      ~evaluate_candidate
+      ~evaluate_design
+      ~extend_design
+      ~find_best_design_parallel
+      ~generate_and_evaluate
+      ~infer_column_types
+      ~infer_subparam_mapping
+      ~non_uniform_lhs_categorical
+      ~optimize_category_assignment_parallel
+      ~plot_correlation_matrix
+      ~plot_design_histograms
+      ~plot_design_quality_evolution
+      ~plot_mds
+      ~plot_pca
+      ~plot_umap
+      ~sample_continuous_lhs
+      ~sample_design
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :template: class.rst
+      :toctree:
+   
+      ~AdvExpDesigner
+   
+
+
+
+

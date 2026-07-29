@@ -1,0 +1,6 @@
+branin\_currin
+==============
+
+.. currentmodule:: obsidian.experiment.benchmark.geometric
+
+.. autofunction:: branin_currin

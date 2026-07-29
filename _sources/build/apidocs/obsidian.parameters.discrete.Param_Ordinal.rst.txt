@@ -1,0 +1,38 @@
+Param\_Ordinal
+==============
+
+.. currentmodule:: obsidian.parameters.discrete
+
+.. autoclass:: Param_Ordinal
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Param_Ordinal.__init__
+      ~Param_Ordinal.decode
+      ~Param_Ordinal.encode
+      ~Param_Ordinal.load_state
+      ~Param_Ordinal.open_search
+      ~Param_Ordinal.save_state
+      ~Param_Ordinal.set_search
+      ~Param_Ordinal.unit_demap
+      ~Param_Ordinal.unit_map
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Param_Ordinal.max
+      ~Param_Ordinal.min
+      ~Param_Ordinal.nc
+   
+   

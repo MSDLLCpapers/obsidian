@@ -1,0 +1,6 @@
+best\_sample
+============
+
+.. currentmodule:: obsidian.experiment.sampling
+
+.. autofunction:: best_sample

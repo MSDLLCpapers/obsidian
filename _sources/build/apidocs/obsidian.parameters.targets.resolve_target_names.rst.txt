@@ -1,0 +1,6 @@
+resolve\_target\_names
+======================
+
+.. currentmodule:: obsidian.parameters.targets
+
+.. autofunction:: resolve_target_names
