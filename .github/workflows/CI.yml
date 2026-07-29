@@ -1,6 +1,9 @@
 name: Continuous Integration
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -10,34 +13,35 @@ jobs:
     runs-on: ubuntu-latest
     name: PyTest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v2
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.10'
     - name: Install requirements
-      run: pip install obsidian-apo[dev]
+      run: |
+        pip install --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple ".[dev]" pytest-xdist[psutil]
     - name: Run tests and collect coverage
-      run: pytest --cov=.
+      run: pytest -n logical --cov=obsidian --cov-report=xml
     - name: Upload coverage reports to Codecov with GitHub Action
-      uses: codecov/codecov-action@v4.2.0
+      uses: codecov/codecov-action@v5
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.10'
       - name: Install dependencies
         run: |
-          pip install obsidian-apo[docs]
+          pip install --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple .[docs]
       - name: Sphinx build
         run: |
           sphinx-build docs _build
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           publish_branch: gh-pages
@@ -48,9 +52,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
-      - name: flake8 Lint
-        uses: py-actions/flake8@v2
+      - uses: astral-sh/ruff-action@v4.1.0
+      - name: Ruff Lint (critical errors only for now before enforce a formatter)
+        run: ruff check .
+      - name: Ruff Format Check
+        run: ruff format --check . || true

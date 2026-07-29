@@ -1,5 +1,6 @@
 """Surrogate model class definition"""
 
+import obsidian
 from obsidian.config import TORCH_DTYPE
 
 from abc import ABC, abstractmethod
@@ -46,7 +47,8 @@ class SurrogateModel(ABC):
 
         # Handle randomization seed, considering all 3 sources (torch, random, numpy)
         self.seed = seed
-        if self.seed is not None:
+        # TODO: this part is only for backward compatibility, we should drop it eventually
+        if self.seed is not None and obsidian.USE_OLD_RNG_CONTROL:
             torch.manual_seed(self.seed)
             torch.use_deterministic_algorithms(True)
             np.random.seed(self.seed)

@@ -1,14 +1,7 @@
 """PyTests for obsidian.plotting"""
 
 from obsidian import Campaign
-from obsidian.plotting import (
-    parity_plot,
-    factor_plot,
-    surface_plot,
-    visualize_inputs,
-    optim_progress,
-    MDS_plot
-)
+from obsidian.plotting import parity_plot, factor_plot, surface_plot, visualize_inputs, optim_progress, MDS_plot
 
 from obsidian.objectives import Scalar_WeightedSum
 
@@ -16,12 +9,11 @@ import pytest
 from obsidian.tests.utils import DEFAULT_MOO_PATH
 import json
 
-# Avoid using TkAgg which causes Tcl issues during testing
-import matplotlib
-matplotlib.use('inline')
-
 with open(DEFAULT_MOO_PATH) as json_file:
     obj_dict = json.load(json_file)
+    # Override seeds for determinism with new RNG control
+    obj_dict["seed"] = 114514
+    obj_dict["optimizer"]["opt_attrs"]["seed"] = 114514
 
 campaign = Campaign.load_state(obj_dict)
 optimizer = campaign.optimizer
@@ -32,13 +24,15 @@ def test_parity_plot():
     fig = parity_plot(optimizer)
 
 
-plots_and_objects = [pytest.param(parity_plot, optimizer, marks=pytest.mark.fast),
-                     pytest.param(visualize_inputs, campaign, marks=pytest.mark.fast),
-                     pytest.param(factor_plot, optimizer, marks=pytest.mark.fast),
-                     (surface_plot, optimizer)]
+plots_and_objects = [
+    pytest.param(parity_plot, optimizer, marks=pytest.mark.fast),
+    pytest.param(visualize_inputs, campaign, marks=pytest.mark.fast),
+    pytest.param(factor_plot, optimizer, marks=pytest.mark.fast),
+    (surface_plot, optimizer),
+]
 
 
-@pytest.mark.parametrize('plot_type, acting_object', plots_and_objects)
+@pytest.mark.parametrize("plot_type, acting_object", plots_and_objects)
 def test_plots_fast(plot_type, acting_object):
     fig = plot_type(acting_object)
 
@@ -46,7 +40,7 @@ def test_plots_fast(plot_type, acting_object):
 feature_ids = [i for i in range(len(optimizer.X_space))]
 
 
-@pytest.mark.parametrize('feature_id', feature_ids)
+@pytest.mark.parametrize("feature_id", feature_ids)
 def test_factor_plot(feature_id):
     fig = factor_plot(optimizer, feature_id=feature_id)
 
@@ -57,7 +51,7 @@ def test_factor_plot_options():
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize('feature_id', feature_ids)
+@pytest.mark.parametrize("feature_id", feature_ids)
 def test_surface_plot(feature_id):
     fig = surface_plot(optimizer, feature_ids=[0, feature_id])
 
@@ -76,20 +70,20 @@ def test_optim_progress_plot():
     obj = Scalar_WeightedSum(weights=[1, 1])
     campaign.set_objective(obj)
     fig = optim_progress(campaign, X_suggest=X_suggest)
-    
-    
+
+
 @pytest.mark.fast
 def test_MDS_plot():
     # Test with default data
     fig = MDS_plot(campaign)
-    
+
     # Test with no iteration data
     data = campaign.data
-    data = data.drop(columns='Iteration')
+    data = data.drop(columns="Iteration")
     campaign.clear_data()
     campaign.add_data(data)
     fig = MDS_plot(campaign)
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-m', 'not slow'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-m", "not slow"])

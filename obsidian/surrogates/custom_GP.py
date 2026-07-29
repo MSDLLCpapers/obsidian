@@ -65,7 +65,13 @@ class FlatGP(ExactGP, GPyTorchModel):
 
     def __init__(self, train_X, train_Y, nu=2.5):
 
-        super().__init__(train_X, train_Y.squeeze(-1), GaussianLikelihood())
+        likelihood = GaussianLikelihood()
+        # Add a safeguard to prevent failures from singular kernel matrix at the initialization step
+        # The default value is softplus(0) + GreaterThan(1e-4) = ln(2) + 1e-4 = 0.6932471805599453
+        # This makes the initial raw noise exactly 0, which can cause non-PSD problems
+        # Anything not exactly ln(2) + 1e-4 will mitigate this issue
+        likelihood.noise = torch.Tensor([0.6932])
+        super().__init__(train_X, train_Y.squeeze(-1), likelihood)
         
         n_dims = train_X.shape[-1]
         

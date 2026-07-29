@@ -13,8 +13,6 @@ In this **_obsidian_** library:
 
 The `Optimizer` class object in [optimizer](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/optimizer) submodule is the main portal that connects all the key components in the APO algorithm. 
 
-The [dash](https://github.com/MSDLLCpapers/obsidian/tree/main/obsidian/dash) submodule contains the source code for a web GUI using the Dash library. 
-
 The [demo](https://github.com/MSDLLCpapers/obsidian/tree/main/demo) folder contains step-by-step Jupyter notebook usage examples as well as scripts for benchmark studies. 
 
 

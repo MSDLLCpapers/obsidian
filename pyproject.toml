@@ -1,17 +1,24 @@
 [tool.poetry]
 name = "obsidian-apo"
-version = "0.8.6"
-description = "Automated experiment design and black-box optimization"
+version = "1.0.0"
+description = "Automated experiment design and black-box optimization (internal)"
 authors = [
-    "Kevin Stone <kevin.stone38@gmail.com>",
-    "Yuting Xu <yuting.xu@merck.com>"
+    "Kevin Stone",
+    "Yuting Xu",
 ]
-readme = "readme.md"
+maintainers = [
+    "Spencer McMinn",
+    "Fima Margovskiy",
+    "Xinyang Li"
+]
+readme = "README.md"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Operating System :: OS Independent"
+    "Operating System :: OS Independent",
 ]
 keywords = [
     "optimization",
@@ -19,54 +26,74 @@ keywords = [
     "Bayesian optimization",
     "process development",
     "APO",
-    "DOE"
+    "DOE",
 ]
-homepage = "https://msdllcpapers.github.io/obsidian/"
 repository = "https://github.com/MSDLLCpapers/obsidian/"
-packages = [
-    { include = "obsidian" },
-]
+packages = [{ include = "obsidian" }]
 
 [tool.poetry.urls]
 Documentation = "https://msdllcpapers.github.io/obsidian/stubs/api_docs.html"
 Changelog = "https://msdllcpapers.github.io/obsidian/stubs/changelog.html"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-torch = "2.3.0"
+python = ">=3.10,<3.13"  # torch 2.3.x only built for 3.8-3.12
 botorch = "^0.11.1"
 gpytorch = "^1.11"
 pandas = "^2.2.2"
-numpy = "^1.26"
+numpy = "^1.26,<2.0"    # Add upper bound - NumPy 2.0 has breaking changes
 scipy = "^1.13.1"
 pyyaml = "^6.0.1"
 shap = "^0.45.1"
 matplotlib = "^3.9.0"
 plotly = "^5.22.0"
 
-flask = { version =  "^3.0.3", optional = true}
-dash = { version =  "^2.17.1", optional = true}
-dash-daq = { version =  "^0.5.0", optional = true}
-dash-bootstrap-components = { version =  "^1.6.0", optional = true}
-pytest = { version =  "^8.2.2", optional = true}
-xlrd = { version =  "^2.0.1", optional = true}
-ipykernel = { version =  "^6.29.4", optional = true}
-jupyterlab = { version =  "^4.2.2", optional = true}
-flake8 = { version =  "^7.1.0", optional = true}
-pytest-cov = { version =  "^5.0.0", optional = true}
-sphinx = { version =  "^7.3.7", optional = true}
-myst-parser = { version =  "^3.0.1", optional = true}
-pydata-sphinx-theme = { version =  "^0.15.4", optional = true}
-linkify-it-py = { version =  "^2.0.3", optional = true}
-scikit-learn = { version = "^1.5.1", optional = true}
+pytest = { version = "^8.2.2", optional = true }
+xlrd = { version = "^2.0.1", optional = true }
+ipykernel = { version = "^6.29.4", optional = true }
+jupyterlab = { version = "^4.2.2", optional = true }
+ruff = { version = "^0.15.0", optional = true }
+pytest-cov = { version = "^5.0.0", optional = true }
+sphinx = { version = "^7.3.7", optional = true }
+myst-parser = { version = "^3.0.1", optional = true }
+pydata-sphinx-theme = { version = "^0.15.4", optional = true }
+linkify-it-py = { version = "^2.0.3", optional = true }
+scikit-learn = { version = "^1.5.1", optional = true }
+seaborn = { version = "^0.13.0", optional = true}
+umap-learn = { version = "^0.5.0", optional = true}
+torch = { version = "~2.3.0", source = "pytorch-cpu" }  # patch-only (2.3.x); avoid minor bumps that break numerical reproducibility
+
+[[tool.poetry.source]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
 
 
 [tool.poetry.extras]
-app = ["flask", "dash", "dash-daq", "dash-bootstrap-components"]
-dev = ["pytest", "xlrd", "ipykernel", "jupyterlab", "flake8", "pytest-cov", "scikit-learn"]
+dev = ["pytest", "xlrd", "ipykernel", "jupyterlab", "ruff", "pytest-cov", "scikit-learn", "seaborn", "umap-learn"]
 docs = ["sphinx", "myst-parser", "pydata-sphinx-theme", "linkify-it-py"]
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+exclude = [
+    "projects",
+    "demo",
+    "logs",
+    "dev",
+    "docs",
+]
+
+[tool.ruff.lint]
+# Only enable Pyflakes (F) rules - catches actual code errors like undefined variables
+# Disable E (line length, whitespace), W (warnings), I (import order) - these are style only
+select = ["F"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]  # Imported but unused / Unable to detect names
+"obsidian/tests/*" = ["F401", "F841"]  # Importing and creating unaccessed objects during testing
+"obsidian/tests/utils.py" = ["E721"]  # Type comparison needed for recursive state-dict comparison

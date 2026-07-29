@@ -36,6 +36,6 @@ Home
       <img src="https://github.com/MSDLLCpapers/obsidian/blob/main/docs/_static/obsidian_logo_dark.svg?raw=true" class="only-dark" width="100" alt = "obsidian logo">
    </div>
 
-.. include:: ../readme.md
+.. include:: ../README.md
     :parser: myst_parser.sphinx_
 

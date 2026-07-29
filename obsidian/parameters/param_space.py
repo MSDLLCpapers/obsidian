@@ -28,6 +28,8 @@ from obsidian.constraints import (
 from obsidian.exceptions import UnsupportedError
 from obsidian.utils import tensordict_to_dict
 
+from typing import Sequence
+
 import torch
 import numpy as np
 import pandas as pd
@@ -66,9 +68,9 @@ class ParamSpace(IParamSpace):
 
     """
     def __init__(self,
-                 params: list[Parameter]):
+                 params: Sequence[Parameter]):
         
-        # Convert to immutable dtype to presever order
+        # Convert to immutable dtype to preserve order
         self.params = tuple(params)
         self.X_names = tuple([x.name for x in self])
         if len(set(self.X_names)) != len(self.X_names):

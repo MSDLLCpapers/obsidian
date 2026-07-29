@@ -146,8 +146,8 @@ def MDS_plot(campaign: Campaign) -> Figure:
         from sklearn.manifold import MDS
     except ImportError:
         raise ImportError(
-            "The `sklearn` package (>1.0) is required for the MDS plot. \
-                          Please install it using `pip install scikit-learn`"
+            "The `sklearn` package (>1.0) is required for the MDS plot. "
+            "Please install it using `pip install scikit-learn`"
         )
 
     mds = MDS(n_components=2)
@@ -267,8 +267,10 @@ def parity_plot(
     y_pred = y_pred[y_name + " (pred)"].values
     y_true = y_true[y_name].values
 
-    RMSE = ((y_true - y_pred) / y_true) ** 2
-    NRMSE = RMSE / (y_true.max() - y_true.min())
+    y_denom = np.where(y_true != 0, y_true, np.nan)
+    RMSE = np.nan_to_num(((y_true - y_pred) / y_denom) ** 2, nan=0.0)
+    y_range = y_true.max() - y_true.min()
+    NRMSE = RMSE / y_range if y_range > 0 else np.zeros_like(RMSE)
 
     y_min = np.min([y_true.min(), y_pred.min()])
     y_max = np.max([y_true.max(), y_pred.max()])
@@ -285,8 +287,8 @@ def parity_plot(
             x=y_true,
             y=y_pred,
             error_y={
-                "array": [f"{y:.3G}" for y in error_y],
-                "arrayminus": [f"{y:.3G}" for y in error_y_minus],
+                "array": error_y,
+                "arrayminus": error_y_minus,
                 "color": "gray",
                 "thickness": 0.5,
             },
@@ -470,7 +472,7 @@ def factor_plot(
 
 def surface_plot(
     optimizer: Optimizer,
-    feature_ids: list[int, int] = [0, 1],
+    feature_ids: list[int] | None = None,
     response_id: int = 0,
     f_transform: bool = False,
     plot_bands: bool = True,
@@ -504,6 +506,12 @@ def surface_plot(
         ValueError: If the feature_ids are not valid feature indices
         ValueError: If the response_id is not a valid response index
     """
+    if feature_ids is None:
+        feature_ids = [0, 1]
+    if len(feature_ids) != 2:
+        raise ValueError(
+            f"feature_ids must contain exactly 2 indices, got {len(feature_ids)}"
+        )
     if not isinstance(optimizer, Optimizer):
         raise TypeError("Optimizer must be an instance of obsidian Optimizer")
     for feature_id in feature_ids:
@@ -642,9 +650,10 @@ def optim_progress(
 
     Args:
         campaign (Campaign): The campaign object containing the data.
-        response_ids (list[int], optional): The indices of the responses to plot. Defaults to ``[0, 1]``.
-        color_feature_id (int | None, optional): The index of the feature to use for coloring the markers.
-            Defaults to ``None``, which will color by iteration.
+        response_ids (int | tuple[int] | None, optional): The index or indices of the responses to plot.
+            Defaults to ``0`` for single-response campaigns and ``(0, 1)`` for multi-objective campaigns.
+        color_feature_id (int | str | None, optional): The index of the feature to use for coloring the
+            markers, or ``'Iteration'`` to color by iteration. Defaults to ``'Iteration'``.
         X_suggest (pd.DataFrame | None, optional): The suggested next experiments to evaluate.
             Defaults to ``None``.
 
@@ -758,7 +767,7 @@ def optim_progress(
 
     if X_suggest is not None:
         if not all(x in X_suggest.columns for x in campaign.X.columns):
-            raise ValueError("Suggested data must contain all responses")
+            raise ValueError("Suggested data must contain all required input feature columns")
 
         eval_suggest = campaign.evaluate(X_suggest)
 

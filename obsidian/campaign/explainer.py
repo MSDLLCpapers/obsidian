@@ -1,8 +1,10 @@
 """Explainer Class: Surrogate Model Interpretation Methods"""
 
+import obsidian
 from obsidian.parameters import Param_Continuous, ParamSpace
 from obsidian.optimizer import Optimizer
 from obsidian.exceptions import UnfitError
+from obsidian.rng import get_new_seed, with_tmp_seed
 
 import shap
 from shap import KernelExplainer, Explanation
@@ -10,9 +12,9 @@ from obsidian.plotting.shap import partial_dependence, one_shap_value
 
 import numpy as np
 import pandas as pd
-import torch
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from contextlib import nullcontext
 
 
 class Explainer():
@@ -102,15 +104,31 @@ class Explainer():
             y_pred = self.optimizer.predict(X, return_f_inv=True)
             mu = y_pred[y_name+' (pred)'].values
             return mu
-        
+
+
         self.shap['pred_func'] = pred_func
         self.shap['explainer'] = KernelExplainer(pred_func,  X_ref)
-        self.shap['X_sample'] = self.X_space.unit_demap(
-            pd.DataFrame(torch.rand(size=(n, self.X_space.n_dim)).numpy(),
-                         columns=X_ref.columns)
+        if obsidian.USE_OLD_RNG_CONTROL:
+            np_rng = np.random.default_rng(seed)
+            # dummy context manager
+            ctx_mgr = nullcontext()
+        else:
+            np_rng = getattr(self.optimizer, "np_rng", None)
+            # temporarily override global random states
+            tmp_seed: int = get_new_seed(1, np_rng) # type: ignore
+            ctx_mgr = with_tmp_seed(tmp_seed)
+
+        X_sample_array = np_rng.random((n, self.X_space.n_dim))
+
+        self.shap["X_sample"] = self.X_space.unit_demap(
+            pd.DataFrame(X_sample_array, columns=X_ref.columns)
+        )
+        with ctx_mgr:
+            self.shap["values"] = self.shap["explainer"].shap_values(
+                self.shap["X_sample"],
+                seed=seed,
+                l1_reg="aic",
             )
-        self.shap['values'] = self.shap['explainer'].shap_values(self.shap['X_sample'],
-                                                                 seed=seed, l1_reg='aic')
         self.shap['explanation'] = Explanation(self.shap['values'], feature_names=X_ref.columns)
 
         return

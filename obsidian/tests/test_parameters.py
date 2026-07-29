@@ -1,29 +1,28 @@
 """PyTests for obsidian.parameters"""
 
-from obsidian.tests.param_configs import test_X_space
-from obsidian.experiment import ExpDesigner
-from obsidian.parameters import (
-    Param_Continuous,
-    Param_Observational,
-    Param_Discrete_Numeric,
-    Param_Categorical,
-    Param_Ordinal,
-    Param_Discrete,
-    Task,
-    ParamSpace,
-    Target,
-    Standard_Scaler,
-    Logit_Scaler
-)
-
-from obsidian.exceptions import UnsupportedError, UnfitError
-from obsidian.tests.utils import equal_state_dicts
-
 import numpy as np
 import pandas as pd
-from pandas.testing import assert_frame_equal
-import torch
 import pytest
+import torch
+from pandas.testing import assert_frame_equal
+
+from obsidian.exceptions import UnfitError, UnsupportedError
+from obsidian.experiment import ExpDesigner
+from obsidian.parameters import (
+    Logit_Scaler,
+    Param_Categorical,
+    Param_Continuous,
+    Param_Discrete,
+    Param_Discrete_Numeric,
+    Param_Observational,
+    Param_Ordinal,
+    ParamSpace,
+    Standard_Scaler,
+    Target,
+    Task,
+)
+from obsidian.tests.param_configs import test_X_space
+from obsidian.tests.utils import equal_state_dicts
 
 
 # Iterate over several preset parameter spaces
@@ -35,7 +34,7 @@ def X_space(request):
 @pytest.fixture
 def X0(X_space):
     designer = ExpDesigner(X_space, seed=0)
-    X0 = designer.initialize(m_initial=20, method='LHS')
+    X0 = designer.initialize(m_initial=20, method="LHS")
     return X0
 
 
@@ -47,7 +46,7 @@ def test_param_loading(X_space):
         param.__repr__()
     X_space2.__repr__()
     obj_dict2 = X_space2.save_state()
-    assert equal_state_dicts(obj_dict, obj_dict2), 'Error during serialization'
+    assert equal_state_dicts(obj_dict, obj_dict2), "Error during serialization"
 
 
 @pytest.mark.fast
@@ -66,8 +65,9 @@ def test_param_encoding(X0, X_space):
 
     # Also need to make sure that if certain parameters are excluded from the encoding, the returned df contains 0s for other categories
     designer = ExpDesigner(X_space, seed=0)
-    X_zeros = designer.initialize(m_initial=10, method='Custom',
-                                  sample_custom=np.zeros(shape=(10, len(X_space.params))))
+    X_zeros = designer.initialize(
+        m_initial=10, method="Custom", sample_custom=np.zeros(shape=(10, len(X_space.params)))
+    )
     X_zeros_encode = X_space.encode(X_zeros)
     assert X_zeros_encode.shape[1] == X0_encode.shape[1]
 
@@ -80,28 +80,29 @@ def test_param_transform_mapping(X_space):
 
 # Set up a sampling of parameter types for testing encoding/decoding
 test_params = [
-        Param_Continuous('Parameter 1', 0, 10),
-        Param_Observational('Parameter 2', 0, 10),
-        Param_Discrete_Numeric('Parameter 3', [-2, -1, 1, 2]),
-        Param_Categorical('Parameter 4', ['A', 'B', 'C', 'D']),
-        Param_Ordinal('Parameter 5', 'A, B, C, D'),
-        Task('Parameter 6', ['A', 'B', 'C', 'D']),
-    ]
+    Param_Continuous("Parameter 1", 0, 10),
+    Param_Observational("Parameter 2", 0, 10),
+    Param_Discrete_Numeric("Parameter 3", [-2, -1, 1, 2]),
+    Param_Categorical("Parameter 4", ["A", "B", "C", "D"]),
+    Param_Ordinal("Parameter 5", "A, B, C, D"),
+    Task("Parameter 6", ["A", "B", "C", "D"]),
+]
 
 # Set up a numbe of different data types for testing encoding/decoding
-test_type = [lambda x: list(x),
-             lambda x: np.array(x),
-             lambda x: list(x)[0][-2],  # Single value
-             ]
+test_type = [
+    lambda x: list(x),
+    lambda x: np.array(x),
+    lambda x: list(x)[0][-2],  # Single value
+]
 
 
 @pytest.mark.fast
-@pytest.mark.parametrize('param, type_i', zip(test_params, test_type))
+@pytest.mark.parametrize("param, type_i", zip(test_params, test_type))
 def test_param_encoding_types(param, type_i):
-    
+
     # Set up a variety of value types to test
     cont_vals = [0, 1, 2, 3, 4]
-    cat_vals = ['A', 'B', 'C', 'D']
+    cat_vals = ["A", "B", "C", "D"]
     num_disc_vals = [-2, -1, 1, 2]
 
     # Make sure that 2D arrays also work!
@@ -113,7 +114,7 @@ def test_param_encoding_types(param, type_i):
         d_2 = [num_disc_vals] * 3
 
     X = type_i(d_2)
-    
+
     # Unit map and demap
     X_u = param.unit_map(X)
     X_u_inv = param.unit_demap(X_u)
@@ -137,60 +138,59 @@ def test_param_encoding_types(param, type_i):
 
 numeric_list = [1, 2, 3, 4]
 number = 1
-string = 'A'
-string_list = ['A', 'B', 'C', 'D']
+string = "A"
+string_list = ["A", "B", "C", "D"]
 
 
 @pytest.mark.fast
 def test_param_indexing():
     X_space = ParamSpace(test_params)
     p0 = X_space[0]
-    p0 = X_space['Parameter 1']
+    p0 = X_space["Parameter 1"]
 
 
 @pytest.mark.fast
 def test_numeric_param_validation():
     # Strings for numeric
     with pytest.raises(TypeError):
-        param = Param_Continuous('test', min=string, max=string)
-        
+        param = Param_Continuous("test", min=string, max=string)
+
     # Value outside of range
     with pytest.raises(ValueError):
-        param = Param_Continuous('test', min=1, max=0)
+        param = Param_Continuous("test", min=1, max=0)
         param._validate_value(2)
-        
+
     # Strings for numeric
     with pytest.raises(TypeError):
-        Param_Observational('test', min=string, max=string)
+        Param_Observational("test", min=string, max=string)
 
 
 @pytest.mark.fast
 def test_discrete_param_validation():
     # Numeric for categorical
     with pytest.raises(TypeError):
-        param = Param_Categorical('test', categories=numeric_list)
+        param = Param_Categorical("test", categories=numeric_list)
 
     # Too long of a string
     with pytest.raises(ValueError):
-        param = Param_Categorical('test', categories=string_list
-                                  + ['test'*64])
+        param = Param_Categorical("test", categories=string_list + ["test" * 64])
 
     # Value not in categories
     with pytest.raises(ValueError):
-        param = Param_Categorical('test', categories=string_list)
-        param._validate_value('E')
-        
+        param = Param_Categorical("test", categories=string_list)
+        param._validate_value("E")
+
     # Numeric for ordinal
     with pytest.raises(TypeError):
-        param = Param_Ordinal('test', categories=numeric_list)
-        
+        param = Param_Ordinal("test", categories=numeric_list)
+
     # Strings for discrete numeric
     with pytest.raises(TypeError):
-        param = Param_Discrete_Numeric('test', categories=string_list)
-    
+        param = Param_Discrete_Numeric("test", categories=string_list)
+
     # Value outside of range
     with pytest.raises(ValueError):
-        param = Param_Discrete_Numeric('test', categories=numeric_list)
+        param = Param_Discrete_Numeric("test", categories=numeric_list)
         param._validate_value(5)
 
 
@@ -199,71 +199,224 @@ def test_paramspace_validation():
     # Overlapping namespace
     with pytest.raises(ValueError):
         X_space = ParamSpace([test_params[0], test_params[0]])
-    
+
     # Misuse of categorical separator
-    cat_sep_param = Param_Continuous('Parameter^1', 0, 10)
+    cat_sep_param = Param_Continuous("Parameter^1", 0, 10)
     with pytest.raises(ValueError):
         X_space = ParamSpace([test_params[0], cat_sep_param])
-    
+
     # >1 Task
     with pytest.raises(UnsupportedError):
-        X_space = ParamSpace([Task('Parameter X', ['A', 'B', 'C', 'D']),
-                              Task('Parameter Y', ['A', 'B', 'C', 'D'])])
+        X_space = ParamSpace([Task("Parameter X", ["A", "B", "C", "D"]), Task("Parameter Y", ["A", "B", "C", "D"])])
 
-    test_data = pd.DataFrame(np.random.uniform(0, 1, (10, 2)), columns=['Parameter X', 'Parameter Z'])
-    X_space = ParamSpace([Param_Continuous('Parameter X', min=0, max=1),
-                          Param_Continuous('Parameter Y', min=0, max=1)])
-    
+    test_data = pd.DataFrame(np.random.uniform(0, 1, (10, 2)), columns=["Parameter X", "Parameter Z"])
+    X_space = ParamSpace([Param_Continuous("Parameter X", min=0, max=1), Param_Continuous("Parameter Y", min=0, max=1)])
+
     # Missing X names
     with pytest.raises(KeyError):
         test_encoded = X_space.encode(test_data)
-        
-        
+
+
 @pytest.mark.fast
 def test_target_validation():
-    
+
     # Invalid aim
     with pytest.raises(ValueError):
-        Target('Response1', aim='maximize')
+        Target("Response1", aim="maximize")
+
+    # Tracking-only target is valid and keeps neutral multiplier for max aim
+    tracking_target = Target('Response1', aim='max', tracking_only=True)
+    assert tracking_target.multiplier == 1
+    assert tracking_target.tracking_only == True
     
     # Invalid f_transform
     with pytest.raises(KeyError):
-        Target('Response1', f_transform='quadratic')
-    
+        Target("Response1", f_transform="quadratic")
+
     test_response = torch.rand(10)
-    
+
     # Transform before fit
     with pytest.raises(UnfitError):
-        Target('Response1').transform_f(test_response)
-    
+        Target("Response1").transform_f(test_response)
+
     # Transform non-arraylike
     with pytest.raises(TypeError):
-        Target('Response1').transform_f('ABC')
-        
+        Target("Response1").transform_f("ABC")
+
     # Transform non-numerical arraylike
     with pytest.raises(TypeError):
-        Target('Response1').transform_f(['A', 'B', 'C'])
-    
+        Target("Response1").transform_f(["A", "B", "C"])
+
     # Transform before fit
     with pytest.raises(UnfitError):
         transform_func = Standard_Scaler()
         transform_func.forward(test_response)
-    
-    test_neg_response = -0.5 - torch.rand(10)
-    
-    # Values outside of logit range, refitting
-    with pytest.warns(UserWarning):
+
+    # Logit_Scaler: calling fit=False before fitting raises UnfitError
+    with pytest.raises(UnfitError):
         transform_func = Logit_Scaler(range_response=100)
-        transform_func.forward(test_neg_response, fit=False)
+        transform_func.forward(test_response, fit=False)
+
+    # Logit_Scaler: calling fit=False with data clearly outside [0,1] raises ValueError
+    # First fit on valid data, then pass out-of-range data
+    test_neg_response = -0.5 - torch.rand(10)
+    transform_func = Logit_Scaler()
+    transform_func.forward(test_response, fit=True)  # fit on valid data
+    with pytest.raises(ValueError):
+        transform_func.forward(test_neg_response, fit=False)  # out-of-range raises ValueError
 
     # Transform constant target values
     test_constant_response = torch.zeros(10) + 9.0
     with pytest.warns(UserWarning):
-        Target('Response1', f_transform='Standard').transform_f(test_constant_response, fit=True)
+        Target("Response1", f_transform="Standard").transform_f(test_constant_response, fit=True)
 
     # Corner case for Logit_Scaler
     transform_func = Logit_Scaler(standardize=False)
     transform_func.forward(test_response, fit=True)
+
+
+@pytest.mark.fast
+def test_logit_scaler():
+
+    # --- 1. Basic fit + forward: 1D tensor ---
+    X = torch.rand(10)
+    scaler = Logit_Scaler()
+    X_t = scaler.forward(X, fit=True)
+    assert X_t.shape == X.shape
+    assert X_t.isfinite().all()
+
+    # 2D tensor
+    X_2d = torch.rand(5, 3)
+    scaler_2d = Logit_Scaler()
+    X_t_2d = scaler_2d.forward(X_2d, fit=True)
+    assert X_t_2d.shape == X_2d.shape
+    assert X_t_2d.isfinite().all()
+
+    # Single-element tensor (std() is nan → hits zero-variance fallback)
+    X_single = torch.tensor([0.5])
+    with pytest.warns(UserWarning):
+        scaler_single = Logit_Scaler()
+        X_t_single = scaler_single.forward(X_single, fit=True)
+    assert X_t_single.shape == X_single.shape
+
+    # --- 2. Transform without fit raises UnfitError ---
+    with pytest.raises(UnfitError):
+        Logit_Scaler().forward(X, fit=False)
+
+    # --- 3. Round-trip: forward then inverse ---
+    X_rt = torch.rand(20) * 0.8 + 0.1  # avoid exact 0/1 boundaries
+    scaler_rt = Logit_Scaler()
+    X_t_rt = scaler_rt.forward(X_rt, fit=True)
+    X_inv_rt = scaler_rt.inverse(X_t_rt)
+    assert torch.allclose(X_rt, X_inv_rt, atol=1e-5)
+
+    # --- 4. NaN in input during fit: NaN excluded, output shape preserved ---
+    X_nan = X.clone()
+    X_nan[::3] = float("nan")
+    scaler_nan = Logit_Scaler()
+    X_t_nan = scaler_nan.forward(X_nan, fit=True)
+    assert X_t_nan.shape == X_nan.shape
+
+    # --- 5. NaN in input during fit=False: range check skips NaNs ---
+    X_t_nan2 = scaler_nan.forward(X_nan, fit=False)
+    assert X_t_nan2.shape == X_nan.shape
+
+    # --- 6. Constant data: UserWarning + zeros_like output ---
+    X_const = torch.ones(10) * 0.5
+    with pytest.warns(UserWarning):
+        scaler_const = Logit_Scaler()
+        X_t_const = scaler_const.forward(X_const, fit=True)
+    assert torch.all(X_t_const == 0)
+
+    # Inverse of constant data returns the original constant value
+    X_inv_const = scaler_const.inverse(X_t_const)
+    assert torch.allclose(X_inv_const, X_const)
+
+    # --- 7. fit=False slightly out of range (within tol): UserWarning + rescale ---
+    # Directly set one value just below loc so X_s barely dips below 0
+    scaler_eps = Logit_Scaler()
+    scaler_eps.forward(X, fit=True)
+    X_eps = X.clone()
+    # Place one value just below loc so scale*(X_eps - loc) = -5e-7
+    X_eps[0] = scaler_eps.params["loc"] - 5e-7 / scaler_eps.params["scale"]
+    with pytest.warns(UserWarning):
+        X_t_eps = scaler_eps.forward(X_eps, fit=False)
+    # Shape is preserved; boundary values may be ±inf (logit(0) / logit(1))
+    assert X_t_eps.shape == X_eps.shape
+
+    # --- 8. fit=False clearly out of range (beyond tol): ValueError ---
+    scaler_oor = Logit_Scaler()
+    scaler_oor.forward(X, fit=True)
+    X_oor = torch.rand(10) * 2 + 1  # all > 1, well beyond tol
+    with pytest.raises(ValueError):
+        scaler_oor.forward(X_oor, fit=False)
+
+    # --- 9. Logit_Percentage (override_fit=True, range_response=100) ---
+    X_pct = torch.rand(10) * 80 + 10  # [10, 90] percent range
+    scaler_pct = Logit_Scaler(range_response=100, override_fit=True)
+    X_t_pct = scaler_pct.forward(X_pct, fit=True)
+    assert X_t_pct.shape == X_pct.shape
+    assert X_t_pct.isfinite().all()
+
+    # Round-trip for Logit_Percentage
+    X_inv_pct = scaler_pct.inverse(X_t_pct)
+    assert torch.allclose(X_pct, X_inv_pct, atol=1e-5)
+
+    # --- 10. standardize=False: logit output without standardization ---
+    scaler_nstd = Logit_Scaler(standardize=False)
+    X_t_nstd = scaler_nstd.forward(X, fit=True)
+    assert X_t_nstd.shape == X.shape
+    assert X_t_nstd.isfinite().all()
+
+    # --- 11. Inverse before fitting raises UnfitError ---
+    with pytest.raises(UnfitError):
+        Logit_Scaler().inverse(X_t)
+
+    # --- 12. override_fit=True with out-of-range data raises ValueError ---
+    # Logit_Percentage expects [0, 100]; passing values > 100 should raise
+    X_oor_pct = torch.rand(10) * 50 + 110  # all > 110, scaled > 1.1
+    with pytest.raises(ValueError):
+        Logit_Scaler(range_response=100, override_fit=True).forward(X_oor_pct, fit=True)
+
+    # --- 13. Tier-2 zero-range: constant value slightly outside [0,1] → warn + map to 0.5 ---
+    scaler_zr = Logit_Scaler()
+    scaler_zr.forward(X, fit=True)
+    # Construct X so all X_s values equal -5e-7 (constant, within tol)
+    X_zr = torch.full((5,), scaler_zr.params["loc"] - 5e-7 / scaler_zr.params["scale"])
+    with pytest.warns(UserWarning):
+        X_t_zr = scaler_zr.forward(X_zr, fit=False)
+    assert X_t_zr.shape == X_zr.shape
+
+
+@pytest.mark.fast
+def test_standard_scaler_edge_cases():
+
+    # --- All-NaN input: warn + zeros_like ---
+    X_all_nan = torch.full((5,), float("nan"))
+    with pytest.warns(UserWarning):
+        scaler_nan = Standard_Scaler()
+        X_t = scaler_nan.forward(X_all_nan, fit=True)
+    assert torch.all(X_t == 0)
+
+    # --- Single non-NaN element: std=nan → treated as zero variance → warn + zeros_like ---
+    X_single = torch.tensor([3.14])
+    with pytest.warns(UserWarning):
+        scaler_single = Standard_Scaler()
+        X_t_single = scaler_single.forward(X_single, fit=True)
+    assert torch.all(X_t_single == 0)
+
+
+def test_target_save_load_tracking_only_state():
+    target = Target('Response1', f_transform='Standard', aim='min', tracking_only=True)
+    obj_dict = target.save_state()
+
+    assert obj_dict['init_attrs']['tracking_only'] == True
+    target_loaded = Target.load_state(obj_dict)
+
+    assert target_loaded.name == target.name
+    assert target_loaded.aim == target.aim
+    assert target_loaded.multiplier == -1
+    assert target_loaded.tracking_only == True
 
 
 if __name__ == '__main__':

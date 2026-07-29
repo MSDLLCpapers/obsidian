@@ -5,6 +5,7 @@ Simulation functions used for an optimization hackathon (OptiThon) in March 2024
 import numpy as np
 import pandas as pd
 from scipy.special import gamma
+from numpy.random import Generator
 
 
 def Vm_func(X):
@@ -61,19 +62,21 @@ def response_2(X):
     return E_curve
 
 
-def OT_simulator(X, addNoise=False):
+def OT_simulator(X, addNoise=False, generator=None):
     if isinstance(X, pd.DataFrame):
         X = X.to_numpy()
     if isinstance(X, np.ndarray) and X.ndim == 1:
         X = X[np.newaxis, :]
 
-    if X.shape[1] != 6:
+    if not addNoise:
+        if X.shape[1] != 5 and X.shape[1] != 6:
+            raise ValueError(f'Input to simulate must have 5 or 6 columns for no noise case, not {X.shape[1]}')
+    elif X.shape[1] != 6:
         raise ValueError(f'Input to simulate must have 6 columns, not {X.shape[1]}')
     
     # Break down the data into 3 parts for separate functions
     X123 = X[:, 0:3]
     X45 = X[:, 3:5]
-    X6 = X[:, 5]
     
     # First three cols represented in an enzyme kinetics problem
     y1 = response_1(X123)
@@ -87,8 +90,12 @@ def OT_simulator(X, addNoise=False):
     # Final column has a mean 0 effect, but determines the scale of noise
     # Note: The overall problem is slightly heteroskedastic
     if addNoise:
+        X6 = X[:, 5]
         sd = 0.01+0.02*X6
-        rel_error = np.random.normal(loc=1, scale=sd, size=y.shape[0])
+        if isinstance(generator, Generator):
+            rel_error = generator.normal(loc=1, scale=sd, size=y.shape[0])
+        else:
+            rel_error = np.random.normal(loc=1, scale=sd, size=y.shape[0])
         y *= rel_error
     
     return y
